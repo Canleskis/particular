@@ -1,7 +1,7 @@
 use glam::Vec3;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 
-use crate::particle::{Particle, PointMass, ToPointMass};
+use crate::particle::{Particle, ToPointMass};
 
 #[derive(Default)]
 pub struct ParticleSet<P: Particle + Sync> {
@@ -30,8 +30,8 @@ impl<P: Particle + Sync> ParticleSet<P> {
 
 impl<P: Particle + Sync> ParticleSet<P> {
     fn get_accelerations(&self) -> Vec<Vec3> {
-        let massive = self.massive.iter().map(P::point_mass).collect::<Vec<_>>();
-        let massless = self.massless.iter().map(P::point_mass).collect::<Vec<_>>();
+        let massive = self.massive.iter().map(P::to_point_mass).collect::<Vec<_>>();
+        let massless = self.massless.iter().map(P::to_point_mass).collect::<Vec<_>>();
 
         let accelerations = massive.par_iter().chain(&massless).map(|particle1| {
             massive.iter().fold(Vec3::ZERO, |acceleration, particle2| {
@@ -62,6 +62,11 @@ impl<P: Particle + Sync> ParticleSet<P> {
     }
 
     /// Returns a vector holding tuples of a mutable reference to a [`Particle`]-like object and its computed gravitational acceleration.
+    /// ```
+    /// for (particle, acceleration) in particle_set.result() {
+    ///     // Here you can modify your type implementing `Particle` according to its computed acceleration.
+    /// }
+    /// ```
     pub fn result(&mut self) -> Vec<(&mut P, Vec3)> {
         let accelerations = self.get_accelerations();
         let particles = self.iter_mut();
