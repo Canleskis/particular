@@ -10,9 +10,7 @@ keywords = ["n-body", "gravity"]
 categories = ["aerospace", "simulation"]
 exclude = ["particular_5000_bodies.gif"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 rayon = "1.5.3"
 glam = "0.21.3"
-particular_derive = { path = "particular_derive" }
+particular_derive = { path = "particular_derive", version = "0.1.0" }

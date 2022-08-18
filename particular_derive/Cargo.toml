@@ -2,6 +2,9 @@
 name = "particular_derive"
 version = "0.1.0"
 edition = "2021"
+authors = ["Canleskis"]
+description = "Derive macro for the 'particular' crate."
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
