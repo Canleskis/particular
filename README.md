@@ -41,8 +41,8 @@ particle_set.add(Body { position, mu });
 ## Computing and using the gravitational acceleration.
 Finally, using the `result` method of `ParticleSet`, you can iterate over the computed gravitational acceleration of each particle.
 ```
-for (body, acceleration) in particle_set.result() {
+for (particle, acceleration) in particle_set.result() {
     ...
 }
 ```
-`body` here being the type you used for the `ParticleSet`.
+`body` here being of the type you used for the `ParticleSet`.
