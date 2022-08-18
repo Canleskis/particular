@@ -40,7 +40,7 @@
 //!     ...
 //! }
 //! ```
-//! `particle` here being of the type you used for the [`ParticleSet`].
+//! `particle` here being of the type you used for the [`ParticleSet`] that implements [`Particle`].
 
 mod particle;
 mod particle_set;
