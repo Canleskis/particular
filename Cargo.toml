@@ -6,6 +6,7 @@ authors = ["Canleskis"]
 description = "Particular is crate providing a simple way to simulate N-body gravitational interaction of particles in Rust."
 license-file = "LICENSE"
 repository = "https://github.com/Canleskis/particular"
+documentation = "https://docs.rs/particular"
 keywords = ["n-body", "gravity"]
 categories = ["aerospace", "simulation"]
 exclude = ["particular_5000_bodies.gif"]
