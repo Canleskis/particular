@@ -4,7 +4,7 @@
   <img src="./particular_5000_bodies.gif">
 </p>
  
-Particular is crate that provides a simple way to simulate N-body gravitational interaction of particles in Rust.
+Particular is a crate providing a simple way to simulate N-body gravitational interaction of particles in Rust.
 The API to setup a simulation is straightforward:
 
 ## Implementing the `Particle` trait. 
