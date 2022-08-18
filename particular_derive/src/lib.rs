@@ -2,7 +2,6 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn;
 
 #[proc_macro_derive(Particle)]
 pub fn particle_derive(input: TokenStream) -> TokenStream {
