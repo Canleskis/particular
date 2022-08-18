@@ -1,8 +1,9 @@
 use glam::Vec3;
 
+/// Trait to describe a particle which consists of a `position` and a gravitational parameter `mu`.
 pub trait Particle {
     fn position(&self) -> Vec3;
-    
+
     fn mu(&self) -> f32;
 }
 

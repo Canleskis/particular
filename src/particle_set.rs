@@ -29,17 +29,10 @@ impl<P: Particle + Sync> ParticleSet<P> {
 }
 
 impl<P: Particle + Sync> ParticleSet<P> {
-    fn massive(&self) -> Vec<PointMass> {
-        self.massive.iter().map(P::point_mass).collect::<Vec<_>>()
-    }
-
-    fn massless(&self) -> Vec<PointMass> {
-        self.massless.iter().map(P::point_mass).collect::<Vec<_>>()
-    }
-
     fn get_accelerations(&self) -> Vec<Vec3> {
-        let massive = self.massive();
-        let massless = self.massless();
+        let massive = self.massive.iter().map(P::point_mass).collect::<Vec<_>>();
+        let massless = self.massless.iter().map(P::point_mass).collect::<Vec<_>>();
+
         let accelerations = massive.par_iter().chain(&massless).map(|particle1| {
             massive.iter().fold(Vec3::ZERO, |acceleration, particle2| {
                 let dir = particle2.0 - particle1.0;
@@ -58,14 +51,17 @@ impl<P: Particle + Sync> ParticleSet<P> {
         accelerations.collect()
     }
 
-    pub fn iter(&mut self) -> impl Iterator<Item = &P> {
+    /// Iterates over the `massive` particles, then the `massless` ones.
+    pub fn iter(&self) -> impl Iterator<Item = &P> {
         self.massive.iter().chain(&self.massless)
     }
 
+    /// Mutably iterates over the `massive` particles, then the `massless` ones.
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut P> {
         self.massive.iter_mut().chain(&mut self.massless)
     }
 
+    /// Returns a vector holding tuples of a mutable reference to a [`Particle`]-like object and its computed gravitational acceleration.
     pub fn result(&mut self) -> Vec<(&mut P, Vec3)> {
         let accelerations = self.get_accelerations();
         let particles = self.iter_mut();
