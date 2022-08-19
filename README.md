@@ -21,7 +21,7 @@ The API to setup a simulation is straightforward:
 #### Deriving
 
 Used in most cases, when your type has fields named `position` and `mu`.
-```
+```rust
 #[derive(Particle)]
 pub struct Body {
     position: Vec3,
@@ -32,7 +32,7 @@ pub struct Body {
 #### Manual implementation
 
 Used when your type has more complex fields and cannot directly provide a position and a gravitational parameter.
-```
+```rust
 struct Body {
     position: Vec3,
     mass: f32,
@@ -53,16 +53,16 @@ impl Particle for Body {
 Using your type implementing `Particle`, you will need to create a `ParticleSet` that will contain the particles.
 
 Currently, it stores the particles in two different vectors depending on if the particle has mass or doesn't. This allows optimizations in the case of massless particles (which can represent objects that do not need to affect other objects, like a spaceship).
-```
+```rust
 let mut particle_set = ParticleSet::new();
 // If the type cannot be inferred, use the turbofish syntax:
-// let mut particle_set = ParticleSet::<Body>::new();
+let mut particle_set = ParticleSet::<Body>::new();
 
 particle_set.add(Body { position, mu });
 ```
 ## Computing and using the gravitational acceleration
 Finally, using the `result` method of `ParticleSet`, you can iterate over the computed gravitational acceleration of each particle.
-```
+```rust
 for (particle, acceleration) in particle_set.result() {
     particle.velocity += acceleration * dt;
     particle.position += particle.velocity * dt;
