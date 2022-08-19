@@ -37,6 +37,7 @@ Currently, it stores the particles in two different vectors depending on if the 
 let mut particle_set = ParticleSet::new();
 // If the type cannot be inferred, use the turbofish syntax:
 let mut particle_set = ParticleSet::<Body>::new();
+
 particle_set.add(Body { position, mu });
 ```
 ## Computing and using the gravitational acceleration.
