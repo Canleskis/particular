@@ -4,7 +4,7 @@ use glam::Vec3;
 /// 
 /// ### Deriving:
 /// 
-/// Used in most cases, when your type has fields names `position` and `mu`
+/// Used in most cases, when your type has fields named `position` and `mu`
 /// ```
 /// #[derive(Particle)]
 /// pub struct Body {
