@@ -2,22 +2,36 @@ use glam::Vec3;
 
 /// Trait to describe a particle which consists of a `position` and a gravitational parameter `mu`.
 /// 
-/// ### Deriving:
+/// #### Deriving:
 /// 
 /// Used in most cases, when your type has fields named `position` and `mu`
 /// ```
+/// # use particular::prelude::Particle;
+/// # use glam::Vec3;
+/// #
 /// #[derive(Particle)]
 /// pub struct Body {
 ///     position: Vec3,
 ///     mu: f32,
-///     ...
+/// //  ...
 /// }
 /// ```
 /// 
-/// ### Manual implementation:
+/// #### Manual implementation:
 /// 
 /// Used when your type has more complex fields and cannot directly provide a position and a gravitational parameter.
 /// ```
+/// # const G: f32 = 1.0;
+/// #
+/// # use particular::Particle;
+/// # use glam::Vec3;
+/// #
+/// struct Body {
+///     position: Vec3,
+///     mass: f32,
+/// //  ...
+/// }
+/// 
 /// impl Particle for Body {
 ///     fn position(&self) -> Vec3 {
 ///         self.position

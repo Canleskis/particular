@@ -63,8 +63,22 @@ impl<P: Particle + Sync> ParticleSet<P> {
 
     /// Returns a vector holding tuples of a mutable reference to a [`Particle`]-like object and its computed gravitational acceleration.
     /// ```
+    /// # use particular::prelude::Particle;
+    /// # use particular::ParticleSet;
+    /// # use glam::Vec3;
+    /// # 
+    /// # const dt: f32 = 1.0 / 60.0;
+    /// #
+    /// # #[derive(Particle)]
+    /// # pub struct Body {
+    /// #     position: Vec3,
+    /// #     velocity: Vec3,
+    /// #     mu: f32,
+    /// # }
+    /// # let mut particle_set = ParticleSet::<Body>::new();
     /// for (particle, acceleration) in particle_set.result() {
-    ///     // Here you can modify your type implementing `Particle` according to its computed acceleration.
+    ///     particle.velocity += acceleration * dt;
+    ///     particle.position += particle.velocity * dt;
     /// }
     /// ```
     pub fn result(&mut self) -> Vec<(&mut P, Vec3)> {
