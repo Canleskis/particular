@@ -1,11 +1,11 @@
 //! Particular is a crate providing a simple way to simulate N-body gravitational interaction of particles in Rust.
-//! 
+//!
 //! The API to setup a simulation is straightforward:
-//! 
+//!
 //! ## Implementing the [`Particle`] trait.
-//! 
+//!
 //! #### Deriving:
-//! 
+//!
 //! Used in most cases, when your type has fields named `position` and `mu`.
 //! ```
 //! # use particular::prelude::Particle;
@@ -19,7 +19,7 @@
 //! }
 //! ```
 //! #### Manual implementation:
-//! 
+//!
 //! Used when your type has more complex fields and cannot directly provide a position and a gravitational parameter.
 //! ```
 //! # const G: f32 = 1.0;
@@ -32,7 +32,7 @@
 //!     mass: f32,
 //! //  ...
 //! }
-//! 
+//!
 //! impl Particle for Body {
 //!     fn position(&self) -> Vec3 {
 //!         self.position
@@ -45,7 +45,7 @@
 //! ```
 //! ## Setting up the simulation.
 //! Using your type implementing [`Particle`], you will need to create a [`ParticleSet`] that will contain the particles.
-//! 
+//!
 //! Currently, it stores the particles in two different vectors depending on if the particle has mass or doesn't. This allows optimizations in the case of massless particles (which can represent objects that do not need to affect other objects, like a spaceship).
 //! ```
 //! # use particular::prelude::Particle;
@@ -64,7 +64,7 @@
 //! let mut particle_set = ParticleSet::new();
 //! // If the type cannot be inferred, use the turbofish syntax:
 //! // let mut particle_set = ParticleSet::<Body>::new();
-//! 
+//!
 //! particle_set.add(Body { position, mu });
 //! ```
 //! ## Computing and using the gravitational acceleration.
@@ -73,8 +73,8 @@
 //! # use particular::prelude::Particle;
 //! # use particular::ParticleSet;
 //! # use glam::Vec3;
-//! # 
-//! # const dt: f32 = 1.0 / 60.0;
+//! #
+//! # const DT: f32 = 1.0 / 60.0;
 //! #
 //! # #[derive(Particle)]
 //! # pub struct Body {
@@ -84,8 +84,8 @@
 //! # }
 //! # let mut particle_set = ParticleSet::<Body>::new();
 //! for (particle, acceleration) in particle_set.result() {
-//!     particle.velocity += acceleration * dt;
-//!     particle.position += particle.velocity * dt;
+//!     particle.velocity += acceleration * DT;
+//!     particle.position += particle.velocity * DT;
 //! }
 //! ```
 //! `particle` here being of the type you used for the [`ParticleSet`] that implements [`Particle`].
