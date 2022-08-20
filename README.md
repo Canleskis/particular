@@ -68,8 +68,8 @@ particle_set.add(Body { position, mu });
 Finally, using the `result` method of `ParticleSet`, you can iterate over the computed gravitational acceleration of each particle.
 ```rust
 for (particle, acceleration) in particle_set.result() {
-    particle.velocity += acceleration * dt;
-    particle.position += particle.velocity * dt;
+    particle.velocity += acceleration * DT;
+    particle.position += particle.velocity * DT;
 }
 ```
 `particle` here being of the type you used for the `ParticleSet` that implements `Particle`.
