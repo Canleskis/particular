@@ -1,6 +1,6 @@
 [package]
 name = "particular"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 authors = ["Canleskis"]
 description = "Particular is crate providing a simple way to simulate N-body gravitational interaction of particles in Rust."
