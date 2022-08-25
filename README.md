@@ -13,9 +13,9 @@ Particular is a crate providing a simple way to simulate N-body gravitational in
 ## Goals
 The main goal of this crate is to provide users with a simple API to setup N-body gravitational simulations that can easily be integrated in existing game and physics engines. Thus, it does not include numerical integration or other similar tools and instead only focuses on the acceleration calculations.
 
-Particular tries to be fast by using parallelization on the CPU thanks to the [rayon](https://github.com/rayon-rs/rayon) crate.
-
 Currently, acceleration calculations are computed naively by iterating over all the particles and summing the acceleration caused by all the `massive` particles. In the future, I would like to implement other algorithms such as [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) or even use compute shaders on the GPU for faster calculations.
+
+Particular can be used with a parallel implementation on the CPU thanks to the [rayon](https://github.com/rayon-rs/rayon) crate. Use the "parallel" feature to enable it, which can lead to huge performance improvements.
 
 # Using Particular
 
