@@ -1,4 +1,6 @@
 use glam::Vec3;
+
+#[cfg(feature = "parallel")]
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 
 use crate::particle::{Particle, ToPointMass};
@@ -32,6 +34,30 @@ impl<P: Particle + Sync> ParticleSet<P> {
 }
 
 impl<P: Particle + Sync> ParticleSet<P> {
+    #[cfg(not(feature = "parallel"))]
+    fn get_accelerations(&self) -> Vec<Vec3> {
+        let massive = self.massive.iter().map(P::point_mass).collect::<Vec<_>>();
+        let massless = self.massless.iter().map(P::point_mass).collect::<Vec<_>>();
+
+        let accelerations = massive.iter().chain(&massless).map(|particle1| {
+            massive.iter().fold(Vec3::ZERO, |acceleration, particle2| {
+                let dir = particle2.0 - particle1.0;
+                let mag_2 = dir.length_squared();
+
+                let grav_acc = if mag_2 != 0.0 {
+                    particle2.1 * dir / (mag_2 * mag_2.sqrt())
+                } else {
+                    dir
+                };
+
+                acceleration + grav_acc
+            })
+        });
+
+        accelerations.collect()
+    }
+
+    #[cfg(feature = "parallel")]
     fn get_accelerations(&self) -> Vec<Vec3> {
         let massive = self.massive.iter().map(P::point_mass).collect::<Vec<_>>();
         let massless = self.massless.iter().map(P::point_mass).collect::<Vec<_>>();

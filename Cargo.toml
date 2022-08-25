@@ -12,6 +12,9 @@ categories = ["aerospace", "simulation"]
 exclude = ["particular_5000_bodies.gif"]
 
 [dependencies]
-rayon = "1.5.3"
+rayon = { version = "1.5.3", optional = true }
 glam = "0.21.3"
-particular_derive = { path = "particular_derive", version = "0.1.0" }
+particular_derive = { path = "particular_derive", version = "0.1.1" }
+
+[features]
+parallel = ["dep:rayon"]
