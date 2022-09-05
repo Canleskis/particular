@@ -1,9 +1,8 @@
-use glam::Vec3;
+use crate::particle::{Particle, ToPointMass};
 
+use glam::Vec3;
 #[cfg(feature = "parallel")]
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
-
-use crate::particle::{Particle, ToPointMass};
 
 #[derive(Default)]
 pub struct ParticleSet<P: Particle + Sync> {
@@ -21,9 +20,9 @@ impl<P: Particle + Sync> ParticleSet<P> {
 }
 
 impl<P: Particle + Sync> ParticleSet<P> {
-    /// Adds a [`Particle`] to the [`ParticleSet`]. 
-    /// 
-    /// Particles are stored in two different vectors, `massive` or `massless`, depending on if they have mass or not.
+    /// Adds a [`Particle`] to the [`ParticleSet`].
+    ///
+    /// Particles are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
     pub fn add(&mut self, particle: P) {
         if particle.mu() != 0.0 {
             self.massive.push(particle);
@@ -170,13 +169,10 @@ pub mod tests {
         let grav_acc = dir / (mag_2 * mag_2.sqrt());
 
         for (particle, acceleration) in with_two_particles(p1, p2).result() {
-            match particle.point_mass() == p1 {
-                true => {
-                    assert!(acceleration.distance_squared(grav_acc * p2.1) < EPSILON);
-                }
-                false => {
-                    assert!(acceleration.distance_squared(-grav_acc * p1.1) < EPSILON);
-                }
+            if particle.point_mass() == p1 {
+                assert!(acceleration.distance_squared(grav_acc * p2.1) < EPSILON);
+            } else {
+                assert!(acceleration.distance_squared(-grav_acc * p1.1) < EPSILON);
             }
         }
     }

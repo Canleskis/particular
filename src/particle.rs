@@ -1,7 +1,7 @@
 use glam::Vec3;
 
 /// Trait to describe a particle which consists of a `position` and a gravitational parameter `mu`.
-/// 
+///
 /// ## Implementing the [`Particle`] trait.
 ///
 /// #### Deriving:
@@ -45,8 +45,12 @@ use glam::Vec3;
 /// }
 /// ```
 pub trait Particle {
+    /// The position of the particle described by a [`Vec3`].
     fn position(&self) -> Vec3;
 
+    /// The [standard gravitational parameter](https://en.wikipedia.org/wiki/Standard_gravitational_parameter) of the particle, annoted `µ`.
+    ///
+    /// `µ = gravitational constant * mass of the particle`.
     fn mu(&self) -> f32;
 }
 

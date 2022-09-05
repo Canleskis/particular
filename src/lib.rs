@@ -1,12 +1,12 @@
 //! Particular is a crate providing a simple way to simulate N-body gravitational interaction of particles in Rust.
-//! 
+//!
 //! ## Goals
 //! The main goal of this crate is to provide users with a simple API to setup N-body gravitational simulations that can easily be integrated in existing game and physics engines. Thus, it does not include numerical integration or other similar tools and instead only focuses on the acceleration calculations.
-//! 
+//!
 //! Currently, acceleration calculations are computed naively by iterating over all the particles and summing the acceleration caused by all the `massive` particles. In the future, I would like to implement other algorithms such as [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) or even use compute shaders on the GPU for faster calculations.
-//! 
+//!
 //! Particular can be used with a parallel implementation on the CPU thanks to the [rayon](https://github.com/rayon-rs/rayon) crate. Use the "parallel" feature to enable it, which can lead to huge performance improvements.
-//! 
+//!
 //! # Using Particular
 //!
 //! The API to setup a simulation is straightforward:
@@ -55,7 +55,7 @@
 //! ## Setting up the simulation
 //! Using your type implementing [`Particle`], you will need to create a [`ParticleSet`] that will contain the particles.
 //!
-//! Currently, it stores the particles in two different vectors depending on if the particle has mass or doesn't. This allows optimizations in the case of massless particles (which can represent objects that do not need to affect other objects, like a spaceship).
+//! Currently, it stores the particles in two vectors depending on if the particle has mass or doesn't. This allows optimizations in the case of massless particles (which can represent objects that do not need to affect other objects, like a spaceship).
 //! ```
 //! # use particular::prelude::Particle;
 //! # use particular::ParticleSet;

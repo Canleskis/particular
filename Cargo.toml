@@ -1,14 +1,14 @@
 [package]
 name = "particular"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 authors = ["Canleskis"]
-description = "Particular is crate providing a simple way to simulate N-body gravitational interaction of particles in Rust."
+description = "A simple, parallel N-body simulation library written in Rust."
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/Canleskis/particular"
 documentation = "https://docs.rs/particular"
 keywords = ["n-body", "gravity"]
-categories = ["aerospace", "simulation"]
+categories = ["simulation"]
 exclude = ["particular_5000_bodies.gif"]
 
 [dependencies]
