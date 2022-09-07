@@ -73,3 +73,7 @@ for (particle, acceleration) in particle_set.result() {
 }
 ```
 `particle` here being of the type you used for the `ParticleSet` that implements `Particle`.
+
+## Contribution
+
+PRs are welcome!
