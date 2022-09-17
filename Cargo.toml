@@ -1,6 +1,6 @@
 [package]
 name = "particular"
-version = "0.1.6"
+version = "0.2.0"
 edition = "2021"
 authors = ["Canleskis"]
 description = "A simple, parallel N-body simulation library written in Rust."
@@ -11,10 +11,16 @@ keywords = ["n-body", "gravity"]
 categories = ["simulation"]
 exclude = ["particular_5000_bodies.gif"]
 
-[dependencies]
-rayon = { version = "1.5.3", optional = true }
-glam = "0.21.3"
-particular_derive = { path = "particular_derive", version = "0.1.1" }
-
 [features]
+default = ["glam"]
 parallel = ["dep:rayon"]
+nalgebra = ["dep:nalgebra"]
+glam = ["dep:glam"]
+cgmath = ["dep:cgmath"]
+
+[dependencies]
+particular_derive = { path = "particular_derive", version = "0.2.0" }
+rayon = { version = "1", optional = true }
+nalgebra = { version = "0", optional = true }
+glam = { version = "0", optional = true }
+cgmath = { version = "0", optional = true }
