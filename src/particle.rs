@@ -1,4 +1,4 @@
-use crate::NormedVector;
+use crate::vector::{Descriptor, FromVector, IntoVector, SIMD};
 
 /// Trait to describe a particle which consists of a [position](Particle::position) and a [gravitational parameter mu](Particle::mu).
 ///
@@ -6,13 +6,14 @@ use crate::NormedVector;
 ///
 /// #### Deriving:
 ///
-/// Used in most cases, when your type has fields named `position` and `mu`
+/// Used in most cases, when your type has a field named `mu`, annotating the position field with `#[dim]`:
 /// ```
-/// # use particular::prelude::Particle;
+/// # use particular::prelude::*;
 /// # use glam::Vec3;
 /// #
 /// #[derive(Particle)]
 /// pub struct Body {
+///     #[dim(3)]
 ///     position: Vec3,
 ///     mu: f32,
 /// //  ...
@@ -25,7 +26,7 @@ use crate::NormedVector;
 /// ```
 /// # const G: f32 = 1.0;
 /// #
-/// # use particular::Particle;
+/// # use particular::prelude::*;
 /// # use glam::Vec3;
 /// #
 /// struct Body {
@@ -35,7 +36,7 @@ use crate::NormedVector;
 /// }
 ///
 /// impl Particle for Body {
-///     type Vector = Vec3;
+///     type Vector = VectorDescriptor<3, Vec3>;
 ///
 ///     fn position(&self) -> Vec3 {
 ///         self.position
@@ -47,25 +48,39 @@ use crate::NormedVector;
 /// }
 /// ```
 pub trait Particle {
-    /// The type used to describe the particle's position.
-    type Vector: NormedVector;
+    /// Descriptor for the the type used for the particle's position.
+    ///
+    /// Use a [`VectorDescriptor`](crate::vector::VectorDescriptor).
+    type Vector: FromVector + IntoVector;
 
-    /// The position of the particle described by a [`NormedVector`](crate::NormedVector).
-    fn position(&self) -> Self::Vector;
+    /// The position of the particle.
+    ///
+    /// Expects to return the type described by [`Particle::Vector`]
+    fn position(&self) -> <Self::Vector as Descriptor>::Type;
 
     /// The [standard gravitational parameter](https://en.wikipedia.org/wiki/Standard_gravitational_parameter) of the particle, annoted `µ`.
     ///
-    /// `µ = gravitational constant * mass of the particle`.
+    /// `µ = gravitational constant * mass`.
     fn mu(&self) -> f32;
 }
 
-pub(crate) trait ToPointMass<T> {
-    fn point_mass(&self) -> (T, f32);
+/// Convertion to a point-mass.
+///
+/// A point-mass is a tuple of the position and the gravitational parameter of the particle.
+pub(crate) trait ToPointMass {
+    fn point(&self) -> SIMD;
+
+    fn point_mass(&self) -> (SIMD, f32);
 }
 
-impl<P: Particle> ToPointMass<P::Vector> for P {
+impl<P: Particle> ToPointMass for P {
     #[inline]
-    fn point_mass(&self) -> (P::Vector, f32) {
-        (self.position(), self.mu())
+    fn point(&self) -> SIMD {
+        P::Vector::into_simd(self.position())
+    }
+
+    #[inline]
+    fn point_mass(&self) -> (SIMD, f32) {
+        (self.point(), self.mu())
     }
 }

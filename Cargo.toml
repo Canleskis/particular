@@ -1,6 +1,6 @@
 [package]
 name = "particular"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Canleskis"]
 description = "A simple, parallel N-body simulation library written in Rust."
@@ -12,15 +12,22 @@ categories = ["simulation"]
 exclude = ["particular_5000_bodies.gif"]
 
 [features]
-default = ["glam"]
 parallel = ["dep:rayon"]
-nalgebra = ["dep:nalgebra"]
-glam = ["dep:glam"]
-cgmath = ["dep:cgmath"]
+gpu = ["dep:wgpu", "dep:bytemuck"]
 
 [dependencies]
-particular_derive = { path = "particular_derive", version = "0.2.0" }
+particular_derive = { path = "particular_derive", version = "0.3.0" }
+glam = "0"
+
 rayon = { version = "1", optional = true }
-nalgebra = { version = "0", optional = true }
-glam = { version = "0", optional = true }
-cgmath = { version = "0", optional = true }
+
+wgpu = { version = "0.13", optional = true }
+bytemuck = { version = "1", features = ["derive"], optional = true }
+
+[dev-dependencies]
+criterion = "0.4"
+rand = "0.8"
+
+[[bench]]
+name = "benchmark"
+harness = false

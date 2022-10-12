@@ -27,15 +27,17 @@ The API to setup a simulation is straightforward:
 
 #### Deriving
 
-Used in most cases, when the type has fields named `position` and `mu`.
+Used in most cases, when your type has a field named `mu`:
 ```rust
 #[derive(Particle)]
 pub struct Body {
+    #[dim(3)]
     position: Vec3,
     mu: f32,
 //  ...
 }
 ```
+The #[dim] attribute is used to describe the dimension of the vector used.
 #### Manual implementation
 
 Used when the type has more complex fields and cannot directly provide a position and a gravitational parameter.
@@ -47,7 +49,7 @@ struct Body {
 }
 
 impl Particle for Body {
-    type Vector = Vec3;
+    type Vector = VectorDescriptor<3, Vec3>;
     
     fn position(&self) -> Vec3 {
         self.position
@@ -64,9 +66,10 @@ Using the type implementing `Particle`, create a `ParticleSet` that will contain
 Particles are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
 This allows optimizations in the case of massless particles (which represents objects that do not need to affect other objects, like a spaceship).
 ```rust
-let mut particle_set = ParticleSet::new();
 // If the type cannot be inferred, use the turbofish syntax:
 let mut particle_set = ParticleSet::<Body>::new();
+// Otherwise:
+let mut particle_set = ParticleSet::new();
 
 particle_set.add(Body { position, mu });
 ```
