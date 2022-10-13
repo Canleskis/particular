@@ -1,9 +1,6 @@
 use crate::vector::SIMD;
 use std::borrow::Cow;
 
-// number of boid particles to simulate
-// const NUM_PARTICLES: u32 = 1001;
-
 // number of single-particle calculations (invocations) in each gpu work group
 const PARTICLES_PER_GROUP: u32 = 128;
 
