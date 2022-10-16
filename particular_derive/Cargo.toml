@@ -1,15 +1,13 @@
 [package]
 name = "particular_derive"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Canleskis"]
 description = "Derive macro for the 'particular' crate."
 license = "MIT OR Apache-2.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-syn = "1"
+syn = { version = "1", features = ["full"] }
 quote = "1"
 
 [lib]

@@ -1,92 +1,59 @@
-use std::ops::{Add, Div, Mul, Sub};
+pub(crate) use glam::Vec3A as SIMD;
 
-/// Representation of a vector as a type that is thread-safe, copyable, capable of standard arithmetic operations and with a "zero" value.
-/// 
-/// ---
-/// **Favor using the [`vector_normed`](crate::vector_normed) macro instead of a manual implementation.
-/// You shouldn't need to manually implement [`Vector`] but if you do, ensure [`zero_value`](Vector::zero_value) is inlined.**
-pub trait Vector
-where
-    Self: Send
-        + Sync
-        + Copy
-        + Add<Output = Self>
-        + Sub<Output = Self>
-        + Mul<f32, Output = Self>
-        + Div<f32, Output = Self>,
-{
-    fn zero_value() -> Self;
+/// Types that are able to be converted from and into an array of length N.
+pub trait Vector<const N: usize>: Into<[f32; N]> + From<[f32; N]> {}
+impl<const N: usize, T: Into<[f32; N]> + From<[f32; N]>> Vector<N> for T {}
+
+/// Trait for the type of an arbitrary vector.
+pub trait Descriptor {
+    /// Return type of the computed accelerations.
+    type Type;
 }
 
-/// Trait to describe a vector's norm/length.
+/// Trait to convert a [`SIMD`](glam::Vec3A) vector to an arbitrary vector.
+pub trait FromVector: Descriptor {
+    fn from_simd(vector: SIMD) -> Self::Type;
+}
+
+/// Trait to convert an arbitrary vector to a [`SIMD`](glam::Vec3A) vector.
+pub trait IntoVector: Descriptor {
+    fn into_simd(vector: Self::Type) -> SIMD;
+}
+
+/// Describes an arbitrary vector of a given dimension `DIM`.
 ///
-/// This allows [`Particle`](crate::Particle) to be generic over the type describing its position.
-/// 
-/// ---
-/// **Favor using the [`vector_normed`](crate::vector_normed) macro instead of a manual implementation.**
-/// **You shouldn't need to manually implement [`NormedVector`] but if you do, ensure [`norm_sq`](NormedVector::norm_sq) is inlined.**
-pub trait NormedVector: Vector {
-    /// Squared length of the vector. Used by [`ParticleSet`](crate::ParticleSet) to compute the acceleration.
-    fn norm_sq(self) -> f32;
+/// It allows an association between a dimension and an arbitrary vector so that `Particular` can use the appropriate SIMD conversion.
+pub struct VectorDescriptor<const DIM: usize, V: Vector<DIM>>(std::marker::PhantomData<V>);
+
+impl<const N: usize, T: Vector<N>> Descriptor for VectorDescriptor<N, T> {
+    type Type = T;
 }
 
-/// Convenience macro to implement the [`NormedVector`] trait.
-#[macro_export]
-macro_rules! vector_normed {
-    ($zero: ident, $norm: ident, $($t: ty),*) => { $(
-        impl $crate::Vector for $t {
-            #[inline]
-            fn zero_value() -> Self {
-                Self::$zero()
-            }
-        }
-
-        impl $crate::NormedVector for $t {
-            #[inline]
-            fn norm_sq(self) -> f32 {
-                self.$norm()
-            }
-        }
-    )* };
-
-    ($norm:ident, $($t:ty),*) => { $(
-        $crate::vector_normed!(default, $norm, $t);
-    )* };
+impl<T: Vector<2>> FromVector for VectorDescriptor<2, T> {
+    #[inline]
+    fn from_simd(vector: SIMD) -> T {
+        T::from(vector.truncate().into())
+    }
 }
 
-#[cfg(feature = "glam")]
-mod glam {
-    crate::vector_normed!(
-        length_squared,
-        glam::Vec2,
-        glam::Vec3,
-        glam::Vec3A,
-        glam::Vec4
-    );
+impl<T: Vector<2>> IntoVector for VectorDescriptor<2, T> {
+    #[inline]
+    fn into_simd(vector: T) -> SIMD {
+        let array = vector.into();
+        SIMD::from((array[0], array[1], 0.0))
+    }
 }
 
-#[cfg(feature = "nalgebra")]
-mod nalgebra {
-    crate::vector_normed!(
-        norm_squared,
-        nalgebra::Vector1<f32>,
-        nalgebra::Vector2<f32>,
-        nalgebra::Vector3<f32>,
-        nalgebra::Vector4<f32>,
-        nalgebra::Vector5<f32>,
-        nalgebra::Vector6<f32>
-    );
+impl<T: Vector<3>> FromVector for VectorDescriptor<3, T> {
+    #[inline]
+    fn from_simd(vector: SIMD) -> T {
+        T::from(vector.into())
+    }
 }
 
-#[cfg(feature = "cgmath")]
-mod cgmath {
-    use cgmath::{InnerSpace, Zero};
-    crate::vector_normed!(
-        zero,
-        magnitude2,
-        cgmath::Vector1<f32>,
-        cgmath::Vector2<f32>,
-        cgmath::Vector3<f32>,
-        cgmath::Vector4<f32>
-    );
+impl<T: Vector<3>> IntoVector for VectorDescriptor<3, T> {
+    #[inline]
+    fn into_simd(vector: T) -> SIMD {
+        SIMD::from(vector.into())
+    }
 }
