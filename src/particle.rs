@@ -24,7 +24,8 @@ use crate::vector::{Descriptor, FromVector, IntoVector, SIMD};
 /// # use particular::prelude::*;
 /// # use glam::Vec3;
 /// #
-/// #[particle(3)]
+/// #[derive(Particle)]
+/// #[dim(3)]
 /// pub struct Body {
 ///     position: Vec3,
 ///     mu: f32,
