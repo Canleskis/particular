@@ -185,13 +185,13 @@ impl<P: Particle> ParticleSet<P> {
 
     /// Iterates over the accelerations of the `massive` [particles](Particle) then the `massless` ones.
     ///
-    /// When this method is called, the acceleration of all the particles in the [`ParticleSet`] will be computed.
+    /// When this method is called, the acceleration of all the particles in the [`ParticleSet`] is computed before iteration.
     #[inline]
     pub fn accelerations(&self) -> impl Iterator<Item = <P::Vector as Descriptor>::Type> {
         self.compute().into_iter().map(P::Vector::from_simd)
     }
 
-    /// Returns an iterator over a mutable reference to the [`Particle`] and its computed gravitational acceleration.
+    /// Returns an iterator over a mutable reference to a [`Particle`] and its computed gravitational acceleration.
     ///
     /// Equivalent to:
     /// ```ignore
