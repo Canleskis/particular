@@ -4,20 +4,24 @@ use rand::{thread_rng, Rng};
 use glam::Vec2;
 use particular::prelude::*;
 
-#[particle(2)]
+#[derive(Particle)]
 pub struct Body {
     position: Vec2,
     mu: f32,
 }
 
-fn get_acceleration(mut set: ParticleSet<Body>) {
-    _ = set.result();
+type Bodies = ParticleSet<Body>;
+
+fn get_acceleration(set: &Bodies, cm: &mut impl ComputeMethod<glam::Vec3A, f32>) {
+    _ = set.accelerations(cm).collect::<Vec<_>>();
 }
 
-fn random_bodies(i: usize) -> ParticleSet<Body> {
+fn random_bodies(i: usize) -> Bodies {
     let mut rng = thread_rng();
     let mut gen = |range| rng.gen_range(range);
-    let mut particle_set = ParticleSet::new();
+
+    let mut particle_set = Bodies::new();
+
     for _ in 0..i {
         let body = Body {
             position: Vec2::splat(gen(0.0..10000.0)),
@@ -25,18 +29,37 @@ fn random_bodies(i: usize) -> ParticleSet<Body> {
         };
         particle_set.add(body);
     }
+
     particle_set
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
     #[cfg(not(feature = "parallel"))]
-    let mut group = c.benchmark_group("Particular single-threaded");
-    #[cfg(feature = "parallel")]
-    let mut group = c.benchmark_group("Particular multi-threaded");
+    #[cfg(not(feature = "gpu"))]
+    let (mut group, mut cm) = {
+        (
+            c.benchmark_group("Particular single-threaded"),
+            sequential::BruteForce,
+        )
+    };
 
-    for i in (500..=5000).step_by(500) {
-        group.bench_with_input(BenchmarkId::new("Body count", i), &i, |b, i| {
-            b.iter(|| get_acceleration(black_box(random_bodies(*i))))
+    #[cfg(feature = "parallel")]
+    #[cfg(not(feature = "gpu"))]
+    let (mut group, mut cm) = {
+        (
+            c.benchmark_group("Particular multi-threaded"),
+            parallel::BruteForce,
+        )
+    };
+
+    #[cfg(feature = "gpu")]
+    let (mut group, mut cm) = { (c.benchmark_group("Particular GPU"), gpu::Naive::new(128)) };
+
+    for i in (5000..=5000).step_by(500) {
+        let bb = black_box(random_bodies(i));
+
+        group.bench_function(BenchmarkId::new("Body count", i), |b| {
+            b.iter(|| get_acceleration(&bb, &mut cm))
         });
     }
 

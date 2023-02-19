@@ -1,0 +1,41 @@
+#[cfg(feature = "gpu")]
+pub mod gpu;
+#[cfg(feature = "parallel")]
+pub mod parallel;
+pub mod sequential;
+
+/// Trait for algorithms used to compute the gravitational forces between [`Particles`](crate::particle::Particle)
+pub trait ComputeMethod<V, U> {
+    fn compute(&mut self, massive: Vec<(V, U)>, massless: Vec<(V, U)>) -> Vec<V>;
+}
+
+#[cfg(test)]
+pub(crate) mod tests {
+    use crate::prelude::*;
+    use glam::Vec3A;
+
+    pub fn acceleration_computation<C>(mut cm: C)
+    where
+        C: ComputeMethod<Vec3A, f32>,
+    {
+        let massive = vec![(Vec3A::splat(0.0), 2.0), (Vec3A::splat(1.0), 3.0)];
+        let massless = vec![(Vec3A::splat(5.0), 0.0)];
+
+        let computed = cm.compute(massive.clone(), massless.clone());
+
+        for (&point_mass1, computed) in massive.iter().chain(massless.iter()).zip(computed) {
+            let mut acceleration = Vec3A::ZERO;
+
+            for &point_mass2 in massive.iter() {
+                let dir = point_mass2.0 - point_mass1.0;
+                let mag_2 = dir.length_squared();
+
+                if mag_2 != 0.0 {
+                    acceleration += dir * point_mass2.1 / (mag_2 * mag_2.sqrt());
+                }
+            }
+
+            assert!((acceleration).abs_diff_eq(computed, f32::EPSILON))
+        }
+    }
+}

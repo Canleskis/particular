@@ -7,7 +7,7 @@ description = "Derive macro for the 'particular' crate."
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-syn = { version = "1", features = ["full"] }
+syn = "1"
 quote = "1"
 
 [lib]
