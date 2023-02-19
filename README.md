@@ -20,6 +20,8 @@ I will likely provide algorithms such as e.g. [Barnes-Hut](https://en.wikipedia.
 
 Particular can be used with a parallel implementation on the CPU thanks to the [rayon](https://github.com/rayon-rs/rayon) crate. Enable the "parallel" feature to access the available compute methods.
 
+Particular can also be used on the GPU thanks to [wgpu](https://github.com/gfx-rs/wgpu). Enable the "gpu" feature to access the available compute methods.
+
 # Using Particular
 
 The API to setup a simulation is straightforward:
