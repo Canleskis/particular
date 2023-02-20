@@ -34,6 +34,48 @@ pub trait ComputeMethod<V, U> {
     fn compute(&mut self, massive: Vec<(V, U)>, massless: Vec<(V, U)>) -> Vec<V>;
 }
 
+trait Computable<V, U> {
+    fn compute<F, G>(
+        massive: Vec<(V, U)>,
+        massless: Vec<(V, U)>,
+        length_squared: F,
+        sqrt: G,
+    ) -> Vec<V>
+    where
+        F: Fn(V) -> U + Sync,
+        G: Fn(U) -> U + Sync;
+}
+
+macro_rules! computable {
+    ($scalar: ty, $internal: ty) => {
+        impl<B> ComputeMethod<$internal, $scalar> for B
+        where
+            B: Computable<$internal, $scalar>,
+        {
+            #[inline]
+            fn compute(
+                &mut self,
+                massive: Vec<($internal, $scalar)>,
+                massless: Vec<($internal, $scalar)>,
+            ) -> Vec<$internal> {
+                B::compute(
+                    massive,
+                    massless,
+                    <$internal>::length_squared,
+                    <$scalar>::sqrt,
+                )
+            }
+        }
+    };
+}
+
+computable!(f32, glam::Vec3A);
+computable!(f32, glam::Vec4);
+
+computable!(f64, glam::DVec2);
+computable!(f64, glam::DVec3);
+computable!(f64, glam::DVec4);
+
 #[cfg(test)]
 pub(crate) mod tests {
     use crate::prelude::*;
