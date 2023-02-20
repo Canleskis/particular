@@ -1,6 +1,6 @@
 use std::ops::{AddAssign, Div, Mul, Sub, SubAssign};
 
-use crate::{compute_method::Computable};
+use crate::compute_method::Computable;
 
 /// A brute-force [`ComputeMethod`] using the CPU.
 pub struct BruteForce;
@@ -18,12 +18,7 @@ where
     U: Clone + Copy + Mul<Output = U>,
 {
     #[inline]
-    fn compute<F, G>(
-        massive: Vec<(V, U)>,
-        massless: Vec<(V, U)>,
-        length_squared: F,
-        sqrt: G,
-    ) -> Vec<V>
+    fn compute<F, G>(massive: Vec<(V, U)>, massless: Vec<(V, U)>, mag_sq: F, sqrt: G) -> Vec<V>
     where
         F: Fn(V) -> U,
         G: Fn(U) -> U,
@@ -43,7 +38,7 @@ where
                 let (pos2, mu2) = particles[j];
 
                 let dir = pos2 - pos1;
-                let mag_2 = length_squared(dir);
+                let mag_2 = mag_sq(dir);
 
                 let f = dir / (mag_2 * sqrt(mag_2));
 

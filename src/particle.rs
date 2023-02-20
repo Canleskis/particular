@@ -85,10 +85,12 @@ where
     P::Scalar: Scalar,
     P::Vector: Vector<DIM, Self::Scalar>,
 {
+    #[inline]
     fn point(&self) -> VectorInternal<DIM, P> {
         self.position().into_internal()
     }
 
+    #[inline]
     fn point_mass(&self) -> (VectorInternal<DIM, P>, Self::Scalar) {
         (self.point(), self.mu())
     }

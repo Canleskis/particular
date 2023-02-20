@@ -21,12 +21,7 @@ where
     U: Copy + Sync + Mul<Output = U>,
 {
     #[inline]
-    fn compute<F, G>(
-        massive: Vec<(V, U)>,
-        massless: Vec<(V, U)>,
-        length_squared: F,
-        sqrt: G,
-    ) -> Vec<V>
+    fn compute<F, G>(massive: Vec<(V, U)>, massless: Vec<(V, U)>, mag_sq: F, sqrt: G) -> Vec<V>
     where
         F: Fn(V) -> U + Sync,
         G: Fn(U) -> U + Sync,
@@ -44,7 +39,7 @@ where
                 for j in 0..massive_len {
                     if i != j {
                         let dir = particles[j].0 - particles[i].0;
-                        let mag_2 = length_squared(dir);
+                        let mag_2 = mag_sq(dir);
 
                         acceleration += dir * particles[j].1 / (mag_2 * sqrt(mag_2))
                     }

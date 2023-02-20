@@ -18,12 +18,12 @@ pub mod sequential;
 /// ```
 /// # use particular::prelude::*;
 /// # use glam::Vec3A;
-/// struct NaiveAlgorithm;
+/// struct AccelerationCalculator;
 ///
-/// impl ComputeMethod<Vec3A, f32> for NaiveAlgorithm {
+/// impl ComputeMethod<Vec3A, f32> for AccelerationCalculator {
 ///     fn compute(&mut self, massive: Vec<(Vec3A, f32)>, massless: Vec<(Vec3A, f32)>) -> Vec<Vec3A> {
 ///     // ...
-///         # Vec::new()
+/// #       Vec::new()
 ///     }
 /// }
 /// ```
@@ -35,35 +35,21 @@ pub trait ComputeMethod<V, U> {
 }
 
 trait Computable<V, U> {
-    fn compute<F, G>(
-        massive: Vec<(V, U)>,
-        massless: Vec<(V, U)>,
-        length_squared: F,
-        sqrt: G,
-    ) -> Vec<V>
+    fn compute<F, G>(massive: Vec<(V, U)>, massless: Vec<(V, U)>, mag_sq: F, sqrt: G) -> Vec<V>
     where
         F: Fn(V) -> U + Sync,
         G: Fn(U) -> U + Sync;
 }
 
 macro_rules! computable {
-    ($scalar: ty, $internal: ty) => {
-        impl<B> ComputeMethod<$internal, $scalar> for B
+    ($s: ty, $i: ty) => {
+        impl<B> ComputeMethod<$i, $s> for B
         where
-            B: Computable<$internal, $scalar>,
+            B: Computable<$i, $s>,
         {
             #[inline]
-            fn compute(
-                &mut self,
-                massive: Vec<($internal, $scalar)>,
-                massless: Vec<($internal, $scalar)>,
-            ) -> Vec<$internal> {
-                B::compute(
-                    massive,
-                    massless,
-                    <$internal>::length_squared,
-                    <$scalar>::sqrt,
-                )
+            fn compute(&mut self, massive: Vec<($i, $s)>, massless: Vec<($i, $s)>) -> Vec<$i> {
+                B::compute(massive, massless, <$i>::length_squared, <$s>::sqrt)
             }
         }
     };

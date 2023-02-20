@@ -15,17 +15,19 @@ pub trait Vector<const DIM: usize, S: Scalar>: Into<[S; DIM]> + From<[S; DIM]> {
 }
 
 macro_rules! impl_vector {
-    ($scalar: ty, $dim: literal, $internal: ty) => {
-        impl<V> Vector<$dim, $scalar> for V
+    ($dim: literal, $s: ty, $i: ty) => {
+        impl<V> Vector<$dim, $s> for V
         where
-            V: Into<[$scalar; $dim]> + From<[$scalar; $dim]>,
+            V: Into<[$s; $dim]> + From<[$s; $dim]>,
         {
-            type Internal = $internal;
+            type Internal = $i;
 
+            #[inline]
             fn into_internal(self) -> Self::Internal {
                 Self::Internal::from(self.into())
             }
 
+            #[inline]
             fn from_internal(vector: Self::Internal) -> V {
                 Self::from(vector.into())
             }
@@ -33,12 +35,12 @@ macro_rules! impl_vector {
     };
 }
 
-impl_vector!(f32, 3, glam::Vec3A);
-impl_vector!(f32, 4, glam::Vec4);
+impl_vector!(3, f32, glam::Vec3A);
+impl_vector!(4, f32, glam::Vec4);
 
-impl_vector!(f64, 2, glam::DVec2);
-impl_vector!(f64, 3, glam::DVec3);
-impl_vector!(f64, 4, glam::DVec4);
+impl_vector!(2, f64, glam::DVec2);
+impl_vector!(3, f64, glam::DVec3);
+impl_vector!(4, f64, glam::DVec4);
 
 impl<V> Vector<2, f32> for V
 where
@@ -46,11 +48,13 @@ where
 {
     type Internal = glam::Vec3A;
 
+    #[inline]
     fn into_internal(self) -> Self::Internal {
         let [x, y] = self.into();
         Self::Internal::from((x, y, 0.0))
     }
 
+    #[inline]
     fn from_internal(vector: Self::Internal) -> Self {
         Self::from(vector.truncate().into())
     }

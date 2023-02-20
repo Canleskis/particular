@@ -172,6 +172,7 @@ where
     ///     }
     /// }
     /// ```
+    #[inline]
     pub fn result<const DIM: usize, C>(
         &mut self,
         cm: &mut C,
@@ -215,6 +216,7 @@ where
     ///     particle.position += particle.velocity * DT;
     /// }
     /// ```
+    #[inline]
     pub fn result_mut<const DIM: usize, C>(
         &mut self,
         cm: &mut C,

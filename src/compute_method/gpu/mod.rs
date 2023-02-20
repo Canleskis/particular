@@ -24,6 +24,7 @@ impl Default for BruteForce {
 }
 
 impl ComputeMethod<Vec3A, f32> for BruteForce {
+    #[inline]
     fn compute(&mut self, massive: Vec<(Vec3A, f32)>, massless: Vec<(Vec3A, f32)>) -> Vec<Vec3A> {
         let (massive_count, massless_count) = (massive.len() as u64, massless.len() as u64);
 
@@ -104,6 +105,7 @@ struct WgpuData {
 }
 
 impl WgpuData {
+    #[inline]
     pub fn init(massive_count: u64, massless_count: u64, device: &wgpu::Device) -> Self {
         let particle_count = massive_count + massless_count;
 
@@ -224,6 +226,7 @@ impl WgpuData {
         }
     }
 
+    #[inline]
     fn write_particle_data(
         &self,
         queue: &wgpu::Queue,
@@ -259,6 +262,7 @@ impl WgpuData {
         );
     }
 
+    #[inline]
     fn read_accelerations(&self, device: &wgpu::Device) -> Vec<Vec3A> {
         let buffer = self.buffer_staging.slice(..);
         buffer.map_async(wgpu::MapMode::Read, |_| {});
