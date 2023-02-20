@@ -14,7 +14,7 @@ pub trait Vector<const DIM: usize, S: Scalar>: Into<[S; DIM]> + From<[S; DIM]> {
     fn from_internal(vector: Self::Internal) -> Self;
 }
 
-macro_rules! convertible {
+macro_rules! impl_vector {
     ($scalar: ty, $dim: literal, $internal: ty) => {
         impl<V> Vector<$dim, $scalar> for V
         where
@@ -33,20 +33,20 @@ macro_rules! convertible {
     };
 }
 
-convertible!(u32, 2, glam::UVec2);
-convertible!(u32, 3, glam::UVec3);
-convertible!(u32, 4, glam::UVec4);
+impl_vector!(u32, 2, glam::UVec2);
+impl_vector!(u32, 3, glam::UVec3);
+impl_vector!(u32, 4, glam::UVec4);
 
-convertible!(i32, 2, glam::IVec2);
-convertible!(i32, 3, glam::IVec3);
-convertible!(i32, 4, glam::IVec4);
+impl_vector!(i32, 2, glam::IVec2);
+impl_vector!(i32, 3, glam::IVec3);
+impl_vector!(i32, 4, glam::IVec4);
 
-convertible!(f32, 3, glam::Vec3A);
-convertible!(f32, 4, glam::Vec4);
+impl_vector!(f32, 3, glam::Vec3A);
+impl_vector!(f32, 4, glam::Vec4);
 
-convertible!(f64, 2, glam::DVec2);
-convertible!(f64, 3, glam::DVec3);
-convertible!(f64, 4, glam::DVec4);
+impl_vector!(f64, 2, glam::DVec2);
+impl_vector!(f64, 3, glam::DVec3);
+impl_vector!(f64, 4, glam::DVec4);
 
 impl<V> Vector<2, f32> for V
 where
