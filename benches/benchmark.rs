@@ -1,12 +1,12 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use rand::{thread_rng, Rng};
 
-use glam::Vec2;
+use glam::Vec2 as Vect;
 use particular::prelude::*;
 
 #[derive(Particle)]
 pub struct Body {
-    position: Vec2,
+    position: Vect,
     mu: f32,
 }
 
@@ -24,7 +24,7 @@ fn random_bodies(i: usize) -> Bodies {
 
     for _ in 0..i {
         let body = Body {
-            position: Vec2::splat(gen(0.0..10000.0)),
+            position: Vect::splat(gen(0.0..10000.0)),
             mu: gen(0.0..100.0),
         };
         particle_set.add(body);
@@ -36,26 +36,16 @@ fn random_bodies(i: usize) -> Bodies {
 fn criterion_benchmark(c: &mut Criterion) {
     #[cfg(not(feature = "parallel"))]
     #[cfg(not(feature = "gpu"))]
-    let (mut group, mut cm) = {
-        (
-            c.benchmark_group("Particular single-threaded"),
-            sequential::BruteForce,
-        )
-    };
+    let (mut group, mut cm) = { (c.benchmark_group("CPU ST"), sequential::BruteForce) };
 
     #[cfg(feature = "parallel")]
     #[cfg(not(feature = "gpu"))]
-    let (mut group, mut cm) = {
-        (
-            c.benchmark_group("Particular multi-threaded"),
-            parallel::BruteForce,
-        )
-    };
+    let (mut group, mut cm) = { (c.benchmark_group("CPU MT"), parallel::BruteForce) };
 
     #[cfg(feature = "gpu")]
-    let (mut group, mut cm) = { (c.benchmark_group("Particular GPU"), gpu::Naive::new(128)) };
+    let (mut group, mut cm) = { (c.benchmark_group("GPU"), gpu::BruteForce::default()) };
 
-    for i in (5000..=5000).step_by(500) {
+    for i in (100..=100).step_by(500) {
         let bb = black_box(random_bodies(i));
 
         group.bench_function(BenchmarkId::new("Body count", i), |b| {

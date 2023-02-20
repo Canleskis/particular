@@ -4,19 +4,18 @@ use crate::compute_method::ComputeMethod;
 
 use glam::Vec3A;
 
-pub struct Naive {
-    pub particles_per_group: usize,
+/// A brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
+pub struct BruteForce {
     device: wgpu::Device,
     queue: wgpu::Queue,
     wgpu: Option<WgpuData>,
 }
 
-impl Naive {
-    pub fn new(particles_per_group: usize) -> Self {
+impl Default for BruteForce {
+    fn default() -> Self {
         let (device, queue) = pollster::block_on(setup_wgpu());
 
         Self {
-            particles_per_group,
             device,
             queue,
             wgpu: None,
@@ -24,7 +23,7 @@ impl Naive {
     }
 }
 
-impl ComputeMethod<Vec3A, f32> for Naive {
+impl ComputeMethod<Vec3A, f32> for BruteForce {
     fn compute(&mut self, massive: Vec<(Vec3A, f32)>, massless: Vec<(Vec3A, f32)>) -> Vec<Vec3A> {
         let (massive_count, massless_count) = (massive.len() as u64, massless.len() as u64);
 
@@ -38,21 +37,16 @@ impl ComputeMethod<Vec3A, f32> for Naive {
             }
         }
 
-        let wgpu = self.wgpu.get_or_insert_with(|| {
-            WgpuData::init(
-                massive_count,
-                massless_count,
-                self.particles_per_group,
-                &self.device,
-            )
-        });
+        let wgpu = self
+            .wgpu
+            .get_or_insert_with(|| WgpuData::init(massive_count, massless_count, &self.device));
 
         wgpu.write_particle_data(&self.queue, massive, massless);
 
         let encoder_descriptor = wgpu::CommandEncoderDescriptor { label: None };
         let mut encoder = self.device.create_command_encoder(&encoder_descriptor);
 
-        encoder.push_debug_group("compute accelerations");
+        encoder.push_debug_group("Compute accelerations");
         {
             let compute_pass_descriptor = wgpu::ComputePassDescriptor { label: None };
             let mut compute_pass = encoder.begin_compute_pass(&compute_pass_descriptor);
@@ -98,7 +92,7 @@ async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
         .unwrap()
 }
 
-pub struct WgpuData {
+struct WgpuData {
     bind_group: wgpu::BindGroup,
     buffer_particles: wgpu::Buffer,
     buffer_massive_particles: wgpu::Buffer,
@@ -110,12 +104,7 @@ pub struct WgpuData {
 }
 
 impl WgpuData {
-    pub fn init(
-        massive_count: u64,
-        massless_count: u64,
-        particles_per_group: usize,
-        device: &wgpu::Device,
-    ) -> Self {
+    pub fn init(massive_count: u64, massless_count: u64, device: &wgpu::Device) -> Self {
         let particle_count = massive_count + massless_count;
 
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -175,28 +164,28 @@ impl WgpuData {
         });
 
         let buffer_particles = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("Particle Buffer"),
+            label: Some("Particle buffer"),
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
             size: particle_count * 16,
             mapped_at_creation: false,
         });
 
         let buffer_massive_particles = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("Massive particle Buffer"),
+            label: Some("Massive particle buffer"),
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
             size: massive_count * 16,
             mapped_at_creation: false,
         });
 
         let buffer_accelerations = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("Accelerations Buffer"),
+            label: Some("Accelerations buffer"),
             usage: wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::STORAGE,
             size: particle_count * 16,
             mapped_at_creation: false,
         });
 
         let buffer_staging = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("Staging Buffer"),
+            label: Some("Staging buffer"),
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             size: particle_count * 16,
             mapped_at_creation: false,
@@ -221,8 +210,7 @@ impl WgpuData {
             label: None,
         });
 
-        let work_group_count =
-            ((particle_count as f32) / (particles_per_group as f32)).ceil() as u32;
+        let work_group_count = ((particle_count as f32) / 256.0).ceil() as u32;
 
         WgpuData {
             bind_group,
@@ -278,7 +266,8 @@ impl WgpuData {
         device.poll(wgpu::Maintain::Wait);
 
         let data = buffer.get_mapped_range();
-        // Alignment rules means size of each element in array is 16 bytes (even though technically 12 bytes); we discard the extra value.
+        // Because of alignment rules each element in array is 16 bytes (even though they technically are 12 bytes, 4 bytes for the 3 f32s).
+        // We discard the extra value.
         let result = bytemuck::cast_slice(&data)
             .chunks(4)
             .map(|slice| Vec3A::new(slice[0], slice[1], slice[2]))
@@ -297,6 +286,6 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        tests::acceleration_computation(gpu::Naive::new(128));
+        tests::acceleration_computation(gpu::BruteForce::default());
     }
 }
