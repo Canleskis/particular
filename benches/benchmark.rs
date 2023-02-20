@@ -1,12 +1,12 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use rand::{thread_rng, Rng};
 
-use glam::Vec2 as Vect;
+use glam::Vec2 as Vector;
 use particular::prelude::*;
 
 #[derive(Particle)]
 pub struct Body {
-    position: Vect,
+    position: Vector,
     mu: f32,
 }
 
@@ -24,7 +24,7 @@ fn random_bodies(i: usize) -> Bodies {
 
     for _ in 0..i {
         let body = Body {
-            position: Vect::splat(gen(0.0..10000.0)),
+            position: Vector::splat(gen(0.0..10000.0)),
             mu: gen(0.0..100.0),
         };
         particle_set.add(body);
@@ -45,7 +45,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     #[cfg(feature = "gpu")]
     let (mut group, mut cm) = { (c.benchmark_group("GPU"), gpu::BruteForce::default()) };
 
-    for i in (100..=100).step_by(500) {
+    for i in (500..=50000).step_by(500) {
         let bb = black_box(random_bodies(i));
 
         group.bench_function(BenchmarkId::new("Body count", i), |b| {
