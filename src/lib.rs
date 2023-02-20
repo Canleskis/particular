@@ -16,8 +16,6 @@
 //!
 //! # Using Particular
 //!
-//! The API to setup a simulation is straightforward:
-//!
 //! ## Implementing the [`Particle`](particle::Particle) trait
 //!
 //! #### Deriving:
@@ -37,7 +35,7 @@
 //! ```
 //! #### Manual implementation:
 //!
-//! Used when the type has more complex fields and cannot directly provide a [position](Particle::position) and a [gravitational parameter](Particle::mu).
+//! Used when the type has more complex fields and cannot directly provide a [position](particle::Particle::position) and a [gravitational parameter](particle::Particle::mu).
 //!
 //! ```
 //! # const G: f32 = 1.0;
@@ -68,7 +66,7 @@
 //!
 //! Using the type implementing [`Particle`](particle::Particle), create a [`ParticleSet`](particle_set::ParticleSet) that will contain the particles.
 //!
-//! [`Particles`](particle::Particle) are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
+//! Particles are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
 //! This allows optimizations for objects that are affected by gravitational bodies but don't affect them back, e.g. a spaceship.
 //!
 //! ```
