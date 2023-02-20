@@ -7,8 +7,11 @@ pub trait Vector<const DIM: usize, S: Scalar>: Into<[S; DIM]> + From<[S; DIM]> {
     /// Internal representation of the vector [`Particular`](crate) can use for expensive computations.
     type Internal;
 
-    fn from_internal(vector: Self::Internal) -> Self;
+    /// Convert the arbitrary vector into its internal representation.
     fn into_internal(self) -> Self::Internal;
+
+    /// Convert the internal representation back into the arbitrary vector.
+    fn from_internal(vector: Self::Internal) -> Self;
 }
 
 macro_rules! convertible {
@@ -19,12 +22,12 @@ macro_rules! convertible {
         {
             type Internal = $internal;
 
-            fn from_internal(vector: Self::Internal) -> V {
-                Self::from(vector.into())
-            }
-
             fn into_internal(self) -> Self::Internal {
                 Self::Internal::from(self.into())
+            }
+
+            fn from_internal(vector: Self::Internal) -> V {
+                Self::from(vector.into())
             }
         }
     };
@@ -51,12 +54,12 @@ where
 {
     type Internal = glam::Vec3A;
 
-    fn from_internal(vector: Self::Internal) -> Self {
-        Self::from(vector.truncate().into())
-    }
-
     fn into_internal(self) -> Self::Internal {
         let [x, y] = self.into();
         Self::Internal::from((x, y, 0.0))
+    }
+    
+    fn from_internal(vector: Self::Internal) -> Self {
+        Self::from(vector.truncate().into())
     }
 }

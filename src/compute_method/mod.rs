@@ -1,11 +1,19 @@
 #[cfg(feature = "gpu")]
+/// Compute methods that use the GPU.
 pub mod gpu;
+
 #[cfg(feature = "parallel")]
+/// Compute methods that use multiple CPU threads.
 pub mod parallel;
+
+/// Compute methods that use one CPU thread.
 pub mod sequential;
 
-/// Trait for algorithms used to compute the gravitational forces between [`Particles`](crate::particle::Particle)
+/// Trait for algorithms computing the gravitational forces between [`Particles`](crate::particle::Particle).
 pub trait ComputeMethod<V, U> {
+    /// Computes the acceleration the massive particles exert on all the particles.
+    /// 
+    /// The returning vector should contain the acceleration of the massive particles first, then the massless ones.
     fn compute(&mut self, massive: Vec<(V, U)>, massless: Vec<(V, U)>) -> Vec<V>;
 }
 

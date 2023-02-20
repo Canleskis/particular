@@ -5,14 +5,25 @@ use crate::{
 };
 
 /// The structure used to store the [`Particles`](Particle) and calculate their acceleration.
-/// [`Particles`](Particle) are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
+/// Particles are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
 /// This allows optimizations for objects that are affected by gravitational bodies but don't affect them back, e.g. a spaceship.
-/// 
-/// If a [`Particle`] needs to be removed, it is preferable to create a new [`ParticleSet`] as it is a cheap operation.
-#[derive(Default)]
+///
+/// If a particle needs to be removed, it is preferable to create a new [`ParticleSet`] as it is a cheap operation.
 pub struct ParticleSet<P: Particle> {
     massive: Vec<P>,
     massless: Vec<P>,
+}
+
+impl<P> Default for ParticleSet<P>
+where
+    P: Particle,
+{
+    fn default() -> Self {
+        Self {
+            massive: Vec::new(),
+            massless: Vec::new(),
+        }
+    }
 }
 
 impl<P> Clone for ParticleSet<P>
@@ -45,9 +56,9 @@ where
     P: Particle,
     P::Scalar: Scalar,
 {
-    /// Adds a [`Particle`] to the [`ParticleSet`].
+    /// Adds a particle to the [`ParticleSet`].
     ///
-    /// This method adds the [`Particle`] in the corresponding vector depending on its mass.
+    /// This method adds the particle in the corresponding vector depending on its mass.
     pub fn add(&mut self, particle: P) {
         if particle.mu() != <P::Scalar>::default() {
             self.massive.push(particle);
@@ -56,17 +67,17 @@ where
         }
     }
 
-    /// Adds a [`Particle`] that has mass to the [`ParticleSet`].
+    /// Adds a particle that has mass to the [`ParticleSet`].
     ///
-    /// Panics if the [`Particle`] doesn't have mass.
+    /// Panics if the particle does not have mass.
     pub fn add_massive(&mut self, particle: P) {
         assert!(!(particle.mu() == <P::Scalar>::default()));
         self.massive.push(particle);
     }
 
-    /// Adds a [`Particle`] that has no mass to the [`ParticleSet`].
+    /// Adds a particle that has no mass to the [`ParticleSet`].
     ///
-    /// Panics if the [`Particle`] has mass.
+    /// Panics if the particle has mass.
     pub fn add_massless(&mut self, particle: P) {
         assert!(particle.mu() == <P::Scalar>::default());
         self.massless.push(particle);
@@ -77,45 +88,45 @@ impl<P> ParticleSet<P>
 where
     P: Particle,
 {
-    /// Iterates over the `massive` [`Particles`](Particle).
+    /// Iterates over the `massive` particles.
     #[inline]
     pub fn massive(&self) -> impl Iterator<Item = &P> {
         self.massive.iter()
     }
 
-    /// Mutably iterates over the `massive` [`Particles`](Particle).
+    /// Mutably iterates over the `massive` particles.
     #[inline]
     pub fn massive_mut(&mut self) -> impl Iterator<Item = &mut P> {
         self.massive.iter_mut()
     }
 
-    /// Iterates over the `massless` [`Particles`](Particle).
+    /// Iterates over the `massless` particles.
     #[inline]
     pub fn massless(&self) -> impl Iterator<Item = &P> {
         self.massless.iter()
     }
 
-    /// Mutably iterates over the `massless` [`Particles`](Particle).
+    /// Mutably iterates over the `massless` particles.
     #[inline]
     pub fn massless_mut(&mut self) -> impl Iterator<Item = &mut P> {
         self.massless.iter_mut()
     }
 
-    /// Iterates over the `massive` [`Particles`](Particle), then the `massless` ones.
+    /// Iterates over the `massive` particles, then the `massless` ones.
     #[inline]
     pub fn iter(&self) -> impl Iterator<Item = &P> {
         self.massive.iter().chain(self.massless.iter())
     }
 
-    /// Mutably iterates over the `massive` [`Particles`](Particle), then the `massless` ones.
+    /// Mutably iterates over the `massive` particles, then the `massless` ones.
     #[inline]
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut P> {
         self.massive.iter_mut().chain(self.massless.iter_mut())
     }
 
-    /// Iterates over the accelerations of the `massive` [`Particles`](Particle) then the `massless` ones computed using the provided [`ComputeMethod`].
+    /// Iterates over the accelerations of the `massive` particles then the `massless` ones computed using the provided [`ComputeMethod`].
     ///
-    /// When this method is called, the acceleration of all the [`Particles`](Particle) in the [`ParticleSet`] is computed before iteration.
+    /// When this method is called, the acceleration of all the particles in the [`ParticleSet`] is computed before iteration.
     #[inline]
     pub fn accelerations<const DIM: usize, C>(&self, cm: &mut C) -> impl Iterator<Item = P::Vector>
     where
@@ -126,7 +137,55 @@ where
         self.compute(cm).into_iter().map(Vector::from_internal)
     }
 
-    /// Returns an iterator over a mutable reference to a [`Particle`] and its computed gravitational acceleration using the provided [`ComputeMethod`].
+    /// Returns an iterator over a reference to a particle and its computed gravitational acceleration using the provided [`ComputeMethod`].
+    /// 
+    /// Useful when you want to modify the state of an external object using the computed acceleration without modifying its particle representation at the same time.
+    ///
+    /// It is equivalent to:
+    /// ```ignore
+    /// particle_set
+    ///     .accelerations(cm)
+    ///     .zip(particle_set.iter());
+    /// ```
+    /// # Example
+    /// ```
+    /// # use particular::prelude::*;
+    /// # use glam::Vec3;
+    /// #
+    /// # const DT: f32 = 1.0 / 60.0;
+    /// #
+    /// # #[derive(Particle)]
+    /// # pub struct Body {
+    /// #     id: u32,
+    /// #     position: Vec3,
+    /// #     velocity: Vec3,
+    /// #     mu: f32,
+    /// # }
+    /// # let mut particle_set = ParticleSet::<Body>::new();
+    /// # let mut game_query = std::collections::HashMap::<u32, Vec3>::new();
+    /// let cm = &mut sequential::BruteForce;
+    ///
+    /// for (acceleration, particle) in particle_set.result(cm) {
+    ///     if let Some(rb_acceleration) = game_query.get_mut(&particle.id) {
+    ///         *rb_acceleration = acceleration;
+    ///     }
+    /// }
+    /// ```
+    pub fn result<const DIM: usize, C>(
+        &mut self,
+        cm: &mut C,
+    ) -> impl Iterator<Item = (P::Vector, &P)>
+    where
+        P::Scalar: Scalar,
+        P::Vector: Vector<DIM, P::Scalar>,
+        C: ComputeMethod<VectorInternal<DIM, P>, P::Scalar>,
+    {
+        self.accelerations(cm).zip(self.iter())
+    }
+
+    /// Returns an iterator over a mutable reference to a particle and its computed gravitational acceleration using the provided [`ComputeMethod`].
+    /// 
+    /// Useful when you want to modify a particle using the computed acceleration.
     ///
     /// It is equivalent to:
     /// ```ignore
@@ -149,13 +208,13 @@ where
     /// # }
     /// # let mut particle_set = ParticleSet::<Body>::new();
     /// let cm = &mut sequential::BruteForce;
-    /// 
-    /// for (acceleration, particle) in particle_set.result(cm) {
+    ///
+    /// for (acceleration, particle) in particle_set.result_mut(cm) {
     ///     particle.velocity += acceleration * DT;
     ///     particle.position += particle.velocity * DT;
     /// }
     /// ```
-    pub fn result<const DIM: usize, C>(
+    pub fn result_mut<const DIM: usize, C>(
         &mut self,
         cm: &mut C,
     ) -> impl Iterator<Item = (P::Vector, &mut P)>

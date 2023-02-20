@@ -2,8 +2,6 @@ use crate::vector::{Scalar, Vector};
 
 /// Trait to describe a particle which consists of a [position](Particle::position) and a [gravitational parameter mu](Particle::mu).
 ///
-/// ## Implementing the [`Particle`] trait.
-///
 /// #### Deriving:
 ///
 /// Used in most cases, when the type has fields named `position` and `mu`:
