@@ -37,7 +37,7 @@ Used in most cases, when the type has fields named `position` and `mu`:
 # use glam::Vec3;
 #
 #[derive(Particle)]
-pub struct Body {
+struct Body {
     position: Vec3,
     mu: f32,
 //  ...

@@ -10,10 +10,27 @@ pub mod parallel;
 pub mod sequential;
 
 /// Trait for algorithms computing the gravitational forces between [`Particles`](crate::particle::Particle).
+/// 
+/// To implement it, specify an internal vector representation and its scalar type.
+/// 
+/// # Example
+/// 
+/// ```
+/// # use particular::prelude::*;
+/// # use glam::Vec3A;
+/// struct NaiveAlgorithm;
+/// 
+/// impl ComputeMethod<Vec3A, f32> for NaiveAlgorithm {
+///     fn compute(&mut self, massive: Vec<(Vec3A, f32)>, massless: Vec<(Vec3A, f32)>) -> Vec<Vec3A> {
+///     // ...
+///         # Vec::new()
+///     }
+/// }
+/// ```
 pub trait ComputeMethod<V, U> {
     /// Computes the acceleration the massive particles exert on all the particles.
     /// 
-    /// The returning vector should contain the acceleration of the massive particles first, then the massless ones.
+    /// The returning vector should contain the acceleration of the massive particles first, then the massless ones, in the same order they were input.
     fn compute(&mut self, massive: Vec<(V, U)>, massless: Vec<(V, U)>) -> Vec<V>;
 }
 

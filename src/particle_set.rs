@@ -5,6 +5,7 @@ use crate::{
 };
 
 /// The structure used to store the [`Particles`](Particle) and calculate their acceleration.
+/// 
 /// Particles are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
 /// This allows optimizations for objects that are affected by gravitational bodies but don't affect them back, e.g. a spaceship.
 ///
@@ -155,7 +156,7 @@ where
     /// # const DT: f32 = 1.0 / 60.0;
     /// #
     /// # #[derive(Particle)]
-    /// # pub struct Body {
+    /// # struct Body {
     /// #     id: u32,
     /// #     position: Vec3,
     /// #     velocity: Vec3,
@@ -201,7 +202,7 @@ where
     /// # const DT: f32 = 1.0 / 60.0;
     /// #
     /// # #[derive(Particle)]
-    /// # pub struct Body {
+    /// # struct Body {
     /// #     position: Vec3,
     /// #     velocity: Vec3,
     /// #     mu: f32,

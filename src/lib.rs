@@ -29,7 +29,7 @@
 //! # use glam::Vec3;
 //! #
 //! #[derive(Particle)]
-//! pub struct Body {
+//! struct Body {
 //!     position: Vec3,
 //!     mu: f32,
 //! //  ...
@@ -76,7 +76,7 @@
 //! # use glam::Vec3;
 //! #
 //! # #[derive(Particle)]
-//! # pub struct Body {
+//! # struct Body {
 //! #     position: Vec3,
 //! #     mu: f32,
 //! # //  ...
@@ -100,7 +100,7 @@
 //! # const DT: f32 = 1.0 / 60.0;
 //! #
 //! # #[derive(Particle)]
-//! # pub struct Body {
+//! # struct Body {
 //! #     position: Vec3,
 //! #     velocity: Vec3,
 //! #     mu: f32,
@@ -118,12 +118,16 @@
 
 /// Trait for computing accelerations and types implementing it for the user to choose from.
 pub mod compute_method;
+
 /// Trait to implement on types representing particles.
 pub mod particle;
+
 /// Storage for the particles.
 pub mod particle_set;
+
 /// Internal representation of vectors used for expensive computations.
 pub mod vector;
+
 /// Derive macro for types representing particles.
 pub mod particular_derive {
     pub use particular_derive::Particle;

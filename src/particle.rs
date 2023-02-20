@@ -10,7 +10,7 @@ use crate::vector::{Scalar, Vector};
 /// # use glam::Vec3;
 /// #
 /// #[derive(Particle)]
-/// pub struct Body {
+/// struct Body {
 ///     position: Vec3,
 ///     mu: f32,
 /// //  ...
