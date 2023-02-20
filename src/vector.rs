@@ -50,7 +50,7 @@ where
         let [x, y] = self.into();
         Self::Internal::from((x, y, 0.0))
     }
-    
+
     fn from_internal(vector: Self::Internal) -> Self {
         Self::from(vector.truncate().into())
     }

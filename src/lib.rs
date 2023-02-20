@@ -90,8 +90,8 @@
 //!
 //! ## Computing and using the gravitational acceleration
 //!
-//! Finally, use the [`result`](particle_set::ParticleSet::result) method of [`ParticleSet`](particle_set::ParticleSet).
-//! It returns an iterator over a mutable reference to a [`Particle`](particle::Particle) and its computed gravitational acceleration using the provided [`ComputeMethod`](compute_method::ComputeMethod).
+//! Finally, use the [`result`](particle_set::ParticleSet::result) or [`result_mut`](particle_set::ParticleSet::result_mut) method of [`ParticleSet`](particle_set::ParticleSet).
+//! It returns an iterator over a (mutable) reference to a [`Particle`](particle::Particle) and its computed gravitational acceleration using the provided [`ComputeMethod`](compute_method::ComputeMethod).
 //!
 //! ```
 //! # use particular::prelude::*;
@@ -108,7 +108,7 @@
 //! # let mut particle_set = ParticleSet::<Body>::new();
 //! let cm = &mut sequential::BruteForce;
 //!
-//! for (acceleration, particle) in particle_set.result(cm) {
+//! for (acceleration, particle) in particle_set.result_mut(cm) {
 //!     particle.velocity += acceleration * DT;
 //!     particle.position += particle.velocity * DT;
 //! }

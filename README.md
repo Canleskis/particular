@@ -33,9 +33,6 @@ The API to setup a simulation is straightforward:
 Used in most cases, when the type has fields named `position` and `mu`:
 
 ```rust
-# use particular::prelude::*;
-# use glam::Vec3;
-#
 #[derive(Particle)]
 struct Body {
     position: Vec3,
@@ -83,14 +80,13 @@ particle_set.add(Body { position, mu });
 
 ## Computing and using the gravitational acceleration
 
-Finally, use the `result` method of `ParticleSet`.
-It returns an iterator over a mutable reference to a `Particle` and its computed gravitational acceleration using the provided `ComputeMethod`.
+Finally, use the `result` or `result_mut` method of `ParticleSet`.
+It returns an iterator over a (mutable) reference to a `Particle` and its computed gravitational acceleration using the provided `ComputeMethod`.
 
 ```rust
-let mut particle_set = ParticleSet::<Body>::new();
 let cm = &mut sequential::BruteForce;
 
-for (acceleration, particle) in particle_set.result(cm) {
+for (acceleration, particle) in particle_set.result_mut(cm) {
     particle.velocity += acceleration * DT;
     particle.position += particle.velocity * DT;
 }

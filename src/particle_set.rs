@@ -5,7 +5,7 @@ use crate::{
 };
 
 /// The structure used to store the [`Particles`](Particle) and calculate their acceleration.
-/// 
+///
 /// Particles are stored in two vectors, `massive` or `massless`, depending on if they have mass or not.
 /// This allows optimizations for objects that are affected by gravitational bodies but don't affect them back, e.g. a spaceship.
 ///
@@ -139,7 +139,7 @@ where
     }
 
     /// Returns an iterator over a reference to a particle and its computed gravitational acceleration using the provided [`ComputeMethod`].
-    /// 
+    ///
     /// Useful when you want to modify the state of an external object using the computed acceleration without modifying its particle representation at the same time.
     ///
     /// It is equivalent to:
@@ -185,7 +185,7 @@ where
     }
 
     /// Returns an iterator over a mutable reference to a particle and its computed gravitational acceleration using the provided [`ComputeMethod`].
-    /// 
+    ///
     /// Useful when you want to modify a particle using the computed acceleration.
     ///
     /// It is equivalent to:
