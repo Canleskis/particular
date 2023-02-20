@@ -33,14 +33,6 @@ macro_rules! impl_vector {
     };
 }
 
-impl_vector!(u32, 2, glam::UVec2);
-impl_vector!(u32, 3, glam::UVec3);
-impl_vector!(u32, 4, glam::UVec4);
-
-impl_vector!(i32, 2, glam::IVec2);
-impl_vector!(i32, 3, glam::IVec3);
-impl_vector!(i32, 4, glam::IVec4);
-
 impl_vector!(f32, 3, glam::Vec3A);
 impl_vector!(f32, 4, glam::Vec4);
 
