@@ -5,12 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2022-26-11
+
+### Breaking changes
+
+- Remove #[dim] attribute to derive `Particle` and `particle` attribute macro.
+- Associated type `Vector` of `Particle` does not need to be wrapped in `VectorDescriptor`.
+- `Particle` implementations require associated type `Scalar`.
+- `result` method of `ParticleSet` returns immutable references.
+- `result` and `accelerations` methods of `ParticleSet` take a `ComputeMethod` as a parameter.
+
+### Added
+
+- `result_mut` method of `ParticleSet` that returns mutable references and acceleration.
+- `ComputeMethod` trait defining how the acceleration of particles is computed.
+- Sequential, parallel and GPU `BruteForce` ComputeMethod implementations (structs in their respective modules).
+- `Scalar` trait to represent components of a vector and the type of the `gravitational parameter`.
+
+### Changed
+
+- `result` method of `ParticleSet` returns immutable references. Use `result_mut` instead for mutable references.
+- `Vector` trait is now generic with a scalar to represent vector types of any float.
+- A dimension is no longer required to be bound to a given vector by the user.
+- `ParticleSet` is agnostic to the computation of the acceleration.
+
+### Removed
+
+- #[dim] attribute and `particle` attribute macro.
+- `Descriptor`, `IntoVector` and `FromVector` traits.
+- `VectorDescriptor` wrapper.
+
 ## [0.3.1] - 2022-26-11
 
 ### Changed
 
 - Improve documentation.
-
 
 ## [0.3.0] - 2022-10-01
 
@@ -56,6 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release.
 
+[0.4.0]: https://github.com/Canleskis/particular/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/Canleskis/particular/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/Canleskis/particular/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Canleskis/particular/compare/v0.1.6...v0.2.0
