@@ -1,8 +1,8 @@
 # Particular
 
-<p align="center">
+<div align="center">
   <img src="./particular-showcase.gif">
-</p>
+</div>
 
 [![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/canleskis/particular#license)
 [![Crates.io](https://img.shields.io/crates/v/particular)](https://crates.io/crates/particular)
@@ -22,9 +22,9 @@ Particular can be used with a parallel implementation on the CPU thanks to [rayo
 
 Particular can also be used on the GPU thanks to [wgpu](https://github.com/gfx-rs/wgpu). Enable the "gpu" feature to access the available compute methods.
 
-# Using Particular
+## Using Particular
 
-## Implementing the `Particle` trait
+### Implementing the `Particle` trait
 
 #### Deriving
 
@@ -64,7 +64,7 @@ impl Particle for Body {
 }
 ```
 
-## Setting up the simulation
+### Setting up the simulation
 
 Using the type implementing `Particle`, create a `ParticleSet` that will contain the particles.
 
@@ -76,7 +76,7 @@ let mut particle_set = ParticleSet::new();
 particle_set.add(Body { position, mu });
 ```
 
-## Computing and using the gravitational acceleration
+### Computing and using the gravitational acceleration
 
 Finally, use the `result` or `result_mut` method of `ParticleSet`.
 It returns an iterator over a (mutable) reference to a `Particle` and its computed gravitational acceleration using the provided `ComputeMethod`.
@@ -89,6 +89,20 @@ for (acceleration, particle) in particle_set.result_mut(cm) {
     particle.position += particle.velocity * DT;
 }
 ```
+
+## Notes on performance
+
+Particular is built with performance in mind and uses multiple ways of computing the acceleration between particles in the form of `ComputeMethods`.
+
+Here is a comparison of the three current available compute methods on an i9 9900KF and an RTX 3080:
+
+<div align="center">
+    <img src="particular-comparison.svg" alt="Performance chart" />
+</div>
+
+Above 500 particles the parallel implementation is about 5x faster than the sequential one, whilst the GPU implementation ranges from 50x to 100x faster than the parallel implementation above 15,000 particles (250x to 500x faster than sequential).
+
+Depending on your needs, you may opt for one compute method or another. You can also implement the trait on your own type to combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
 ## Contribution
 

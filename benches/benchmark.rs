@@ -1,4 +1,6 @@
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{
+    criterion_group, criterion_main, AxisScale, BenchmarkId, Criterion, PlotConfiguration,
+};
 use rand::{thread_rng, Rng};
 
 use glam::Vec2 as Vector;
@@ -34,23 +36,34 @@ fn random_bodies(i: usize) -> Bodies {
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    #[cfg(not(feature = "parallel"))]
-    #[cfg(not(feature = "gpu"))]
-    let (mut group, mut cm) = { (c.benchmark_group("CPU ST"), sequential::BruteForce) };
+    let mut group = c.benchmark_group("Particular");
+    group.plot_config(PlotConfiguration::default().summary_scale(AxisScale::Logarithmic));
 
-    #[cfg(feature = "parallel")]
-    #[cfg(not(feature = "gpu"))]
-    let (mut group, mut cm) = { (c.benchmark_group("CPU MT"), parallel::BruteForce) };
+    for i in (2..=16).map(|i| 2_usize.pow(i)) {
+        let bodies = &random_bodies(i);
 
-    #[cfg(feature = "gpu")]
-    let (mut group, mut cm) = { (c.benchmark_group("GPU"), gpu::BruteForce::default()) };
+        #[cfg(feature = "gpu")]
+        {
+            let mut cm = gpu::BruteForce::default();
+            group.bench_with_input(BenchmarkId::new("GPU", i), &bodies, |b, input| {
+                b.iter(|| get_acceleration(input, &mut cm))
+            });
+        }
 
-    for i in (500..=50000).step_by(500) {
-        let bb = black_box(random_bodies(i));
+        #[cfg(feature = "parallel")]
+        {
+            let mut cm = parallel::BruteForce;
+            group.bench_with_input(BenchmarkId::new("CPU MT", i), &bodies, |b, input| {
+                b.iter(|| get_acceleration(input, &mut cm))
+            });
+        }
 
-        group.bench_function(BenchmarkId::new("Body count", i), |b| {
-            b.iter(|| get_acceleration(&bb, &mut cm))
-        });
+        {
+            let mut cm = sequential::BruteForce;
+            group.bench_with_input(BenchmarkId::new("CPU ST", i), &bodies, |b, input| {
+                b.iter(|| get_acceleration(input, &mut cm))
+            });
+        }
     }
 
     group.finish();
