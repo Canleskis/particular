@@ -1,8 +1,6 @@
 # Particular
 
-<div align="center">
-  <img src="./particular-showcase.gif">
-</div>
+<div align="center"><img src="./particular-showcase.gif"></div>
 
 [![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/canleskis/particular#license)
 [![Crates.io](https://img.shields.io/crates/v/particular)](https://crates.io/crates/particular)
@@ -96,9 +94,7 @@ Particular is built with performance in mind and uses multiple ways of computing
 
 Here is a comparison of the three current available compute methods on an i9 9900KF and an RTX 3080:
 
-<div align="center">
-    <img src="particular-comparison.png" alt="Performance chart" />
-</div>
+<div align="center"><img src="particular-comparison.png" alt="Performance chart" /></div>
 
 Above 500 particles the parallel implementation is about 5x faster than the sequential one, whilst the GPU implementation ranges from 50x to 100x faster than the parallel implementation above 15,000 particles (250x to 500x faster than sequential).
 
