@@ -1,4 +1,4 @@
-use crate::vector::{Scalar, Vector};
+use crate::vector::Vector;
 
 /// Trait to describe a particle which consists of a [position](Particle::position) and a [gravitational parameter mu](Particle::mu).
 ///
@@ -60,38 +60,36 @@ pub trait Particle {
     fn mu(&self) -> Self::Scalar;
 }
 
-type PVector<P> = <P as Particle>::Vector;
-type PScalar<P> = <P as Particle>::Scalar;
+type VectorOf<P> = <P as Particle>::Vector;
+type ScalarOf<P> = <P as Particle>::Scalar;
 
-/// The internal type associated with a given [Particle::Vector]
-pub type VectorInternal<const DIM: usize, P> = <PVector<P> as Vector<DIM, PScalar<P>>>::Internal;
+/// The internal type used for the position of a given [`Particle`].
+pub type Internal<const DIM: usize, P> = <VectorOf<P> as Vector<DIM, ScalarOf<P>>>::Internal;
 
 /// Conversion to a point-mass.
 ///
 /// A point-mass is a tuple of the [position](Particle::position) and the [gravitational parameter](Particle::mu) of a particle.
 pub(crate) trait ToPointMass<const DIM: usize>: Particle
 where
-    Self::Scalar: Scalar,
     Self::Vector: Vector<DIM, Self::Scalar>,
 {
-    fn point(&self) -> VectorInternal<DIM, Self>;
+    fn point(&self) -> Internal<DIM, Self>;
 
-    fn point_mass(&self) -> (VectorInternal<DIM, Self>, Self::Scalar);
+    fn point_mass(&self) -> (Internal<DIM, Self>, Self::Scalar);
 }
 
 impl<const DIM: usize, P> ToPointMass<DIM> for P
 where
     P: Particle,
-    P::Scalar: Scalar,
-    P::Vector: Vector<DIM, Self::Scalar>,
+    P::Vector: Vector<DIM, P::Scalar>,
 {
     #[inline]
-    fn point(&self) -> VectorInternal<DIM, P> {
+    fn point(&self) -> Internal<DIM, P> {
         self.position().into_internal()
     }
 
     #[inline]
-    fn point_mass(&self) -> (VectorInternal<DIM, P>, Self::Scalar) {
+    fn point_mass(&self) -> (Internal<DIM, P>, P::Scalar) {
         (self.point(), self.mu())
     }
 }

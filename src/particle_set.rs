@@ -1,6 +1,6 @@
 use crate::{
     compute_method::ComputeMethod,
-    particle::{Particle, ToPointMass, VectorInternal},
+    particle::{Internal, Particle, ToPointMass},
     vector::{Scalar, Vector},
 };
 
@@ -89,6 +89,31 @@ impl<P> ParticleSet<P>
 where
     P: Particle,
 {
+    #[inline]
+    fn massive_point_masses<const DIM: usize>(&self) -> Vec<(Internal<DIM, P>, P::Scalar)>
+    where
+        P::Vector: Vector<DIM, P::Scalar>,
+    {
+        self.massive().map(P::point_mass).collect()
+    }
+
+    #[inline]
+    fn massless_point_masses<const DIM: usize>(&self) -> Vec<(Internal<DIM, P>, P::Scalar)>
+    where
+        P::Vector: Vector<DIM, P::Scalar>,
+    {
+        self.massless().map(P::point_mass).collect()
+    }
+
+    #[inline]
+    fn compute<const DIM: usize, C>(&self, cm: &mut C) -> Vec<Internal<DIM, P>>
+    where
+        P::Vector: Vector<DIM, P::Scalar>,
+        C: ComputeMethod<Internal<DIM, P>, P::Scalar>,
+    {
+        cm.compute(self.massive_point_masses(), self.massless_point_masses())
+    }
+
     /// Iterates over the `massive` particles.
     #[inline]
     pub fn massive(&self) -> impl Iterator<Item = &P> {
@@ -131,9 +156,8 @@ where
     #[inline]
     pub fn accelerations<const DIM: usize, C>(&self, cm: &mut C) -> impl Iterator<Item = P::Vector>
     where
-        P::Scalar: Scalar,
         P::Vector: Vector<DIM, P::Scalar>,
-        C: ComputeMethod<VectorInternal<DIM, P>, P::Scalar>,
+        C: ComputeMethod<Internal<DIM, P>, P::Scalar>,
     {
         self.compute(cm).into_iter().map(Vector::from_internal)
     }
@@ -173,14 +197,10 @@ where
     /// }
     /// ```
     #[inline]
-    pub fn result<const DIM: usize, C>(
-        &mut self,
-        cm: &mut C,
-    ) -> impl Iterator<Item = (P::Vector, &P)>
+    pub fn result<const DIM: usize, C>(&self, cm: &mut C) -> impl Iterator<Item = (P::Vector, &P)>
     where
-        P::Scalar: Scalar,
         P::Vector: Vector<DIM, P::Scalar>,
-        C: ComputeMethod<VectorInternal<DIM, P>, P::Scalar>,
+        C: ComputeMethod<Internal<DIM, P>, P::Scalar>,
     {
         self.accelerations(cm).zip(self.iter())
     }
@@ -222,46 +242,10 @@ where
         cm: &mut C,
     ) -> impl Iterator<Item = (P::Vector, &mut P)>
     where
-        P::Scalar: Scalar,
         P::Vector: Vector<DIM, P::Scalar>,
-        C: ComputeMethod<VectorInternal<DIM, P>, P::Scalar>,
+        C: ComputeMethod<Internal<DIM, P>, P::Scalar>,
     {
         self.accelerations(cm).zip(self.iter_mut())
-    }
-}
-
-trait ComputeParticleSet<const DIM: usize, V, S>
-where
-    S: Scalar,
-    V: Vector<DIM, S>,
-{
-    fn massive_point_masses(&self) -> Vec<(V::Internal, S)>;
-
-    fn massless_point_masses(&self) -> Vec<(V::Internal, S)>;
-
-    #[inline]
-    fn compute<C>(&self, cm: &mut C) -> Vec<V::Internal>
-    where
-        C: ComputeMethod<V::Internal, S>,
-    {
-        cm.compute(self.massive_point_masses(), self.massless_point_masses())
-    }
-}
-
-impl<const DIM: usize, V, S, P> ComputeParticleSet<DIM, V, S> for ParticleSet<P>
-where
-    S: Scalar,
-    V: Vector<DIM, S>,
-    P: Particle<Scalar = S, Vector = V>,
-{
-    #[inline]
-    fn massive_point_masses(&self) -> Vec<(V::Internal, S)> {
-        self.massive().map(P::point_mass).collect()
-    }
-
-    #[inline]
-    fn massless_point_masses(&self) -> Vec<(V::Internal, S)> {
-        self.massless().map(P::point_mass).collect()
     }
 }
 
