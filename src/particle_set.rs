@@ -230,38 +230,37 @@ where
     }
 }
 
-trait ComputeParticleSet<const DIM: usize, P>
+trait ComputeParticleSet<const DIM: usize, V, S>
 where
-    P: Particle,
-    P::Scalar: Scalar,
-    P::Vector: Vector<DIM, P::Scalar>,
+    S: Scalar,
+    V: Vector<DIM, S>,
 {
-    fn massive_point_masses(&self) -> Vec<(VectorInternal<DIM, P>, P::Scalar)>;
+    fn massive_point_masses(&self) -> Vec<(V::Internal, S)>;
 
-    fn massless_point_masses(&self) -> Vec<(VectorInternal<DIM, P>, P::Scalar)>;
+    fn massless_point_masses(&self) -> Vec<(V::Internal, S)>;
 
     #[inline]
-    fn compute<C>(&self, cm: &mut C) -> Vec<VectorInternal<DIM, P>>
+    fn compute<C>(&self, cm: &mut C) -> Vec<V::Internal>
     where
-        C: ComputeMethod<VectorInternal<DIM, P>, P::Scalar>,
+        C: ComputeMethod<V::Internal, S>,
     {
         cm.compute(self.massive_point_masses(), self.massless_point_masses())
     }
 }
 
-impl<const DIM: usize, P> ComputeParticleSet<DIM, P> for ParticleSet<P>
+impl<const DIM: usize, V, S, P> ComputeParticleSet<DIM, V, S> for ParticleSet<P>
 where
-    P: Particle,
-    P::Scalar: Scalar,
-    P::Vector: Vector<DIM, P::Scalar>,
+    S: Scalar,
+    V: Vector<DIM, S>,
+    P: Particle<Scalar = S, Vector = V>,
 {
     #[inline]
-    fn massive_point_masses(&self) -> Vec<(VectorInternal<DIM, P>, P::Scalar)> {
+    fn massive_point_masses(&self) -> Vec<(V::Internal, S)> {
         self.massive().map(P::point_mass).collect()
     }
 
     #[inline]
-    fn massless_point_masses(&self) -> Vec<(VectorInternal<DIM, P>, P::Scalar)> {
+    fn massless_point_masses(&self) -> Vec<(V::Internal, S)> {
         self.massless().map(P::point_mass).collect()
     }
 }
@@ -271,23 +270,10 @@ mod tests {
     use crate::prelude::*;
     use glam::Vec3;
 
-    // #[particle(3)]
+    #[derive(Particle)]
     pub struct Body {
         position: Vec3,
         mu: f32,
-    }
-
-    impl Particle for Body {
-        type Scalar = f32;
-        type Vector = Vec3;
-
-        fn position(&self) -> Vec3 {
-            self.position
-        }
-
-        fn mu(&self) -> f32 {
-            self.mu
-        }
     }
 
     #[test]
