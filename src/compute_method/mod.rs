@@ -43,13 +43,13 @@ trait Computable<V, U> {
 
 macro_rules! computable {
     ($s: ty, $i: ty) => {
-        impl<B> ComputeMethod<$i, $s> for B
+        impl<C> ComputeMethod<$i, $s> for C
         where
-            B: Computable<$i, $s>,
+            C: Computable<$i, $s>,
         {
             #[inline]
             fn compute(&mut self, massive: Vec<($i, $s)>, massless: Vec<($i, $s)>) -> Vec<$i> {
-                B::compute(massive, massless, <$i>::length_squared, <$s>::sqrt)
+                C::compute(massive, massless, <$i>::length_squared, <$s>::sqrt)
             }
         }
     };

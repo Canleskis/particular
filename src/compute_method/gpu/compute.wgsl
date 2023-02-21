@@ -10,24 +10,24 @@ struct Particle {
 @compute
 @workgroup_size(256, 1, 1)
 fn main(@builtin(global_invocation_id) global_invocation_id: vec3<u32>) {
-    let index = global_invocation_id.x;
+    let i = global_invocation_id.x;
 
-    let p1 = particles[index];
-    var acc = vec3<f32>(0.0);
+    let p1 = particles[i];
+    var acceleration = vec3<f32>(0.0);
 
     let total = arrayLength(&massive_particles);
 
-    for (var i = 0u; i < total; i++) {
-        let p2 = massive_particles[i];
+    for (var j = 0u; j < total; j++) {
+        let p2 = massive_particles[j];
 
         let dir = p2.pos - p1.pos;
         let norm = dot(dir, dir);
         let a = dir * p2.mu / (norm * sqrt(norm));
 
-        if index != i {
-            acc += a;
+        if i != j {
+            acceleration += a;
         }
     }
 
-    accelerations[index] = acc;
+    accelerations[i] = acceleration;
 }

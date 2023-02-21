@@ -1,6 +1,6 @@
-/// Types that can be compared for equality and have a default value.
+/// Types that can be compared for equality and have a default value considered as their 'zero'.
 pub trait Scalar: Default + PartialEq {}
-impl<U: Default + PartialEq> Scalar for U {}
+impl<S: Default + PartialEq> Scalar for S {}
 
 /// Arbitrary vectors that can be converted from and into an array of length N.
 pub trait Vector<const DIM: usize, S: Scalar>: Into<[S; DIM]> + From<[S; DIM]> {

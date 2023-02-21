@@ -8,7 +8,7 @@ use glam::Vec3A;
 pub struct BruteForce {
     device: wgpu::Device,
     queue: wgpu::Queue,
-    wgpu: Option<WgpuData>,
+    wgpu_data: Option<WgpuData>,
 }
 
 impl Default for BruteForce {
@@ -18,7 +18,7 @@ impl Default for BruteForce {
         Self {
             device,
             queue,
-            wgpu: None,
+            wgpu_data: None,
         }
     }
 }
@@ -32,17 +32,17 @@ impl ComputeMethod<Vec3A, f32> for BruteForce {
             return Vec::new();
         }
 
-        if let Some(wgpu) = &self.wgpu {
-            if wgpu.particle_count != massive_count + massless_count {
-                self.wgpu = None;
+        if let Some(data) = &self.wgpu_data {
+            if data.particle_count != massive_count + massless_count {
+                self.wgpu_data = None;
             }
         }
 
-        let wgpu = self
-            .wgpu
+        let data = self
+            .wgpu_data
             .get_or_insert_with(|| WgpuData::init(massive_count, massless_count, &self.device));
 
-        wgpu.write_particle_data(&self.queue, massive, massless);
+        data.write_particle_data(&self.queue, massive, massless);
 
         let encoder_descriptor = wgpu::CommandEncoderDescriptor { label: None };
         let mut encoder = self.device.create_command_encoder(&encoder_descriptor);
@@ -52,45 +52,24 @@ impl ComputeMethod<Vec3A, f32> for BruteForce {
             let compute_pass_descriptor = wgpu::ComputePassDescriptor { label: None };
             let mut compute_pass = encoder.begin_compute_pass(&compute_pass_descriptor);
 
-            compute_pass.set_pipeline(&wgpu.compute_pipeline);
-            compute_pass.set_bind_group(0, &wgpu.bind_group, &[]);
-            compute_pass.dispatch_workgroups(wgpu.work_group_count, 1, 1);
+            compute_pass.set_pipeline(&data.compute_pipeline);
+            compute_pass.set_bind_group(0, &data.bind_group, &[]);
+            compute_pass.dispatch_workgroups(data.work_group_count, 1, 1);
         }
         encoder.pop_debug_group();
 
         encoder.copy_buffer_to_buffer(
-            &wgpu.buffer_accelerations,
+            &data.buffer_accelerations,
             0,
-            &wgpu.buffer_staging,
+            &data.buffer_staging,
             0,
-            wgpu.particle_count * 16,
+            data.particle_count * 4 * 4,
         );
 
         self.queue.submit(Some(encoder.finish()));
 
-        wgpu.read_accelerations(&self.device)
+        data.read_accelerations(&self.device)
     }
-}
-
-async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
-    let instance = wgpu::Instance::new(wgpu::Backends::all());
-
-    let adapter = instance
-        .request_adapter(&wgpu::RequestAdapterOptions::default())
-        .await
-        .unwrap();
-
-    adapter
-        .request_device(
-            &wgpu::DeviceDescriptor {
-                label: None,
-                features: wgpu::Features::empty(),
-                limits: wgpu::Limits::downlevel_defaults(),
-            },
-            None,
-        )
-        .await
-        .unwrap()
 }
 
 struct WgpuData {
@@ -123,7 +102,7 @@ impl WgpuData {
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: true },
                             has_dynamic_offset: false,
-                            min_binding_size: wgpu::BufferSize::new(particle_count * 16),
+                            min_binding_size: wgpu::BufferSize::new(particle_count * 4 * 4),
                         },
                         count: None,
                     },
@@ -143,7 +122,7 @@ impl WgpuData {
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: false },
                             has_dynamic_offset: false,
-                            min_binding_size: wgpu::BufferSize::new(particle_count * 16),
+                            min_binding_size: wgpu::BufferSize::new(particle_count * 4 * 4),
                         },
                         count: None,
                     },
@@ -168,28 +147,28 @@ impl WgpuData {
         let buffer_particles = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Particle buffer"),
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
-            size: particle_count * 16,
+            size: particle_count * 4 * 4,
             mapped_at_creation: false,
         });
 
         let buffer_massive_particles = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Massive particle buffer"),
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
-            size: massive_count * 16,
+            size: massive_count * 4 * 4,
             mapped_at_creation: false,
         });
 
         let buffer_accelerations = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Accelerations buffer"),
             usage: wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::STORAGE,
-            size: particle_count * 16,
+            size: particle_count * 4 * 4,
             mapped_at_creation: false,
         });
 
         let buffer_staging = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Staging buffer"),
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-            size: particle_count * 16,
+            size: particle_count * 4 * 4,
             mapped_at_creation: false,
         });
 
@@ -270,7 +249,7 @@ impl WgpuData {
         device.poll(wgpu::Maintain::Wait);
 
         let data = buffer.get_mapped_range();
-        // Because of alignment rules each element in array is 16 bytes (even though they technically are 12 bytes, 4 bytes for the 3 f32s).
+        // Because of alignment rules each vec3<f32> in array is 16 bytes (even though they technically are 12 bytes, 4 bytes for the 3 f32s).
         // We discard the extra value.
         let result = bytemuck::cast_slice(&data)
             .chunks(4)
@@ -282,6 +261,27 @@ impl WgpuData {
 
         result
     }
+}
+
+async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
+    let instance = wgpu::Instance::new(wgpu::Backends::all());
+
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions::default())
+        .await
+        .unwrap();
+
+    adapter
+        .request_device(
+            &wgpu::DeviceDescriptor {
+                label: None,
+                features: wgpu::Features::empty(),
+                limits: wgpu::Limits::downlevel_defaults(),
+            },
+            None,
+        )
+        .await
+        .unwrap()
 }
 
 #[cfg(test)]
