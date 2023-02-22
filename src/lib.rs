@@ -4,11 +4,11 @@
 //!
 //! ## Goals
 //!
-//! The main goal of this crate is to provide users with a simple API to setup N-body gravitational simulations that can easily be integrated into existing game and physics engines.
+//! The main goal of this crate is to provide users with a simple API to set up N-body gravitational simulations that can easily be integrated into existing game and physics engines.
 //! Thus it does not include numerical integration or other similar tools and instead only focuses on the acceleration calculations.
 //!
 //! Currently, provided [`ComputeMethods`](compute_method::ComputeMethod) are naive and iterate over the particles and sum the acceleration caused by the `massive` particles.
-//! I will likely provide algorithms such as e.g. [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) in the future.
+//! I will likely provide algorithms (such as e.g. [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation)) in the future.
 //!
 //! Particular can be used with a parallel implementation on the CPU thanks to [rayon](https://github.com/rayon-rs/rayon). Enable the "parallel" feature to access the available compute methods.
 //!
