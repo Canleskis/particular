@@ -1,7 +1,3 @@
-/// Types that can be compared for equality and have a default value considered their 'zero'.
-pub trait Scalar: Default + PartialEq {}
-impl<S: Default + PartialEq> Scalar for S {}
-
 /// Arbitrary vectors that can be converted from and into an array of length N.
 pub trait Vector<const DIM: usize, S>: Into<[S; DIM]> + From<[S; DIM]> {
     /// Internal representation of the vector [`Particular`](crate) can use for expensive computations.
@@ -14,8 +10,30 @@ pub trait Vector<const DIM: usize, S>: Into<[S; DIM]> + From<[S; DIM]> {
     fn from_internal(vector: Self::Internal) -> Self;
 }
 
+pub(crate) trait Normed {
+    type Output;
+    
+    fn length_squared(self) -> Self::Output;
+
+    fn sqrt(f: Self::Output) -> Self::Output;
+}
+
 macro_rules! impl_vector {
     ($dim: literal, $s: ty, $i: ty) => {
+        impl Normed for $i {
+            type Output = $s;
+
+            #[inline]
+            fn length_squared(self) -> $s {
+                self.length_squared()
+            }
+
+            #[inline]
+            fn sqrt(s: $s) -> $s {
+                <$s>::sqrt(s)
+            }
+        }
+
         impl<V> Vector<$dim, $s> for V
         where
             V: Into<[$s; $dim]> + From<[$s; $dim]>,

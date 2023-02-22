@@ -1,28 +1,24 @@
 use std::ops::{AddAssign, Div, Mul, Sub, SubAssign};
 
-use crate::compute_method::Computable;
+use crate::{compute_method::ComputeMethod, vector::Normed};
 
 /// A brute-force [`ComputeMethod`] using the CPU.
 pub struct BruteForce;
 
-impl<V, U> Computable<V, U> for BruteForce
+impl<V, S> ComputeMethod<V, S> for BruteForce
 where
-    V: Clone
-        + Copy
+    V: Copy
         + Default
-        + Sub<Output = V>
-        + Mul<U, Output = V>
-        + Div<U, Output = V>
         + AddAssign
-        + SubAssign,
-    U: Clone + Copy + Mul<Output = U>,
+        + SubAssign
+        + Sub<Output = V>
+        + Mul<S, Output = V>
+        + Div<S, Output = V>
+        + Normed<Output = S>,
+    S: Copy + Mul<Output = S>,
 {
     #[inline]
-    fn compute<F, G>(massive: Vec<(V, U)>, massless: Vec<(V, U)>, mag_sq: F, sqrt: G) -> Vec<V>
-    where
-        F: Fn(V) -> U,
-        G: Fn(U) -> U,
-    {
+    fn compute(&mut self, massive: Vec<(V, S)>, massless: Vec<(V, S)>) -> Vec<V> {
         let massive_len = massive.len();
 
         let particles = &[massive, massless].concat()[..];
@@ -38,9 +34,9 @@ where
                 let (pos2, mu2) = particles[j];
 
                 let dir = pos2 - pos1;
-                let mag_2 = mag_sq(dir);
+                let mag_2 = dir.length_squared();
 
-                let f = dir / (mag_2 * sqrt(mag_2));
+                let f = dir / (mag_2 * V::sqrt(mag_2));
 
                 acceleration += f * mu2;
                 accelerations[j] -= f * mu1;

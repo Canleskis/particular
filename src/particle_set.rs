@@ -1,7 +1,7 @@
 use crate::{
     compute_method::ComputeMethod,
     particle::{Internal, Particle, ToPointMass},
-    vector::{Scalar, Vector},
+    vector::Vector,
 };
 
 /// The structure used to store the [`Particles`](Particle) and calculate their acceleration.
@@ -55,7 +55,7 @@ where
 impl<P> ParticleSet<P>
 where
     P: Particle,
-    P::Scalar: Scalar,
+    P::Scalar: Default + PartialEq,
 {
     /// Adds a particle to the [`ParticleSet`].
     ///

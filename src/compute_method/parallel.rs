@@ -1,31 +1,28 @@
 use std::ops::{AddAssign, Div, Mul, Sub, SubAssign};
 
-use crate::compute_method::Computable;
-
-use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use crate::{compute_method::ComputeMethod, vector::Normed};
 
 /// A brute-force [`ComputeMethod`] using the CPU with [rayon](https://github.com/rayon-rs/rayon).
 pub struct BruteForce;
 
-impl<V, U> Computable<V, U> for BruteForce
+impl<V, S> ComputeMethod<V, S> for BruteForce
 where
     V: Copy
         + Send
         + Sync
         + Default
-        + Sub<Output = V>
-        + Mul<U, Output = V>
-        + Div<U, Output = V>
         + AddAssign
-        + SubAssign,
-    U: Copy + Sync + Mul<Output = U>,
+        + SubAssign
+        + Sub<Output = V>
+        + Mul<S, Output = V>
+        + Div<S, Output = V>
+        + Normed<Output = S>,
+    S: Copy + Sync + Mul<Output = S>,
 {
     #[inline]
-    fn compute<F, G>(massive: Vec<(V, U)>, massless: Vec<(V, U)>, mag_sq: F, sqrt: G) -> Vec<V>
-    where
-        F: Fn(V) -> U + Sync,
-        G: Fn(U) -> U + Sync,
-    {
+    fn compute(&mut self, massive: Vec<(V, S)>, massless: Vec<(V, S)>) -> Vec<V> {
+        use rayon::iter::{IntoParallelIterator, ParallelIterator};
+
         let massive_len = massive.len();
 
         let particles = &[massive, massless].concat()[..];
@@ -39,9 +36,9 @@ where
                 for j in 0..massive_len {
                     if i != j {
                         let dir = particles[j].0 - particles[i].0;
-                        let mag_2 = mag_sq(dir);
+                        let mag_2 = dir.length_squared();
 
-                        acceleration += dir * particles[j].1 / (mag_2 * sqrt(mag_2))
+                        acceleration += dir * particles[j].1 / (mag_2 * V::sqrt(mag_2))
                     }
                 }
 
