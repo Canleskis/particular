@@ -10,11 +10,15 @@ pub trait Vector<const DIM: usize, S>: Into<[S; DIM]> + From<[S; DIM]> {
     fn from_internal(vector: Self::Internal) -> Self;
 }
 
-pub(crate) trait Normed {
+/// Internal vectors with a norm squared and its root.
+pub trait Normed {
+    /// The type of the norm
     type Output;
-    
+
+    /// Norm squared, defined by the dot product on itself.
     fn length_squared(self) -> Self::Output;
 
+    /// Square root operation on the type of the norm.
     fn sqrt(f: Self::Output) -> Self::Output;
 }
 
