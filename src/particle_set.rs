@@ -72,7 +72,7 @@ where
     ///
     /// Panics if the particle does not have mass.
     pub fn add_massive(&mut self, particle: P) {
-        assert!(!(particle.mu() == <P::Scalar>::default()));
+        assert!(particle.mu() != <P::Scalar>::default());
         self.massive.push(particle);
     }
 

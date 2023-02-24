@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Generic brute-force compute methods implement `ComputeMethod` directly using `Normed` trait.
+- Generic brute-force compute methods implemented directly using `Normed` trait.
 
 ### Removed
 

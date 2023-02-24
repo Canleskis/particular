@@ -27,11 +27,11 @@ pub mod sequential;
 ///     }
 /// }
 /// ```
-pub trait ComputeMethod<V, U> {
+pub trait ComputeMethod<V, S> {
     /// Computes the acceleration the massive particles exert on all the particles.
     ///
     /// The returning vector should contain the acceleration of the massive particles first, then the massless ones, in the same order they were input.
-    fn compute(&mut self, massive: Vec<(V, U)>, massless: Vec<(V, U)>) -> Vec<V>;
+    fn compute(&mut self, massive: Vec<(V, S)>, massless: Vec<(V, S)>) -> Vec<V>;
 }
 
 #[cfg(test)]

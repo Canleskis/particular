@@ -112,7 +112,7 @@ impl WgpuData {
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: true },
                             has_dynamic_offset: false,
-                            min_binding_size: wgpu::BufferSize::new(massive_count * 16),
+                            min_binding_size: wgpu::BufferSize::new(massive_count * 4 * 4),
                         },
                         count: None,
                     },
