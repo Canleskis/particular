@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased - 2023-22-02
 
+### Breaking changes
+
+- `ParticleSet::add` and similar now expect an iterator of particles. Use `ParticleSet::add_one` instead.
+
+### Added
+
+- Methods to create filled `ParticleSets`.
+
 ### Changed
 
 - Generic brute-force compute methods implemented directly using `Normed` trait.

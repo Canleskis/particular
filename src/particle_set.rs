@@ -10,6 +10,7 @@ use crate::{
 /// This allows optimizations for objects that are affected by gravitational bodies but don't affect them back, e.g. a spaceship.
 ///
 /// If a particle needs to be removed, it is preferable to create a new [`ParticleSet`] as it is a cheap operation.
+#[derive(Debug)]
 pub struct ParticleSet<P: Particle> {
     massive: Vec<P>,
     massless: Vec<P>,
@@ -57,10 +58,65 @@ where
     P: Particle,
     P::Scalar: Default + PartialEq,
 {
+    /// Adds particles and returns the new [`ParticleSet`].
+    ///
+    /// Particles are added to the corresponding vector according to their mass.
+    pub fn with(mut self, particles: impl IntoIterator<Item = P>) -> Self {
+        self.add(particles);
+
+        self
+    }
+
+    /// Adds particles that have mass and returns the new [`ParticleSet`].
+    ///
+    /// Panics if any particle does not have mass.
+    pub fn with_massive(mut self, particles: impl IntoIterator<Item = P>) -> Self {
+        self.add_massive(particles);
+
+        self
+    }
+
+    /// Adds particles that have no mass and returns the new [`ParticleSet`].
+    ///
+    /// Panics if any particle has mass.
+    pub fn with_massless(mut self, particles: impl IntoIterator<Item = P>) -> Self {
+        self.add_massless(particles);
+
+        self
+    }
+
+    /// Adds particles to the [`ParticleSet`].
+    ///
+    /// Particles are added to the corresponding vector according to their mass.
+    pub fn add(&mut self, particles: impl IntoIterator<Item = P>) {
+        for particle in particles {
+            self.add_one(particle)
+        }
+    }
+
+    /// Adds particles that have mass to the [`ParticleSet`].
+    ///
+    /// Panics if any particle does not have mass.
+    pub fn add_massive(&mut self, particles: impl IntoIterator<Item = P>) {
+        for particle in particles {
+            self.add_one_massive(particle)
+        }
+    }
+
+    /// Adds particles that have no mass to the [`ParticleSet`].
+    ///
+    /// Panics if any particle has mass.
+    pub fn add_massless(&mut self, particles: impl IntoIterator<Item = P>) {
+        for particle in particles {
+            self.add_one_massless(particle)
+        }
+    }
+
     /// Adds a particle to the [`ParticleSet`].
     ///
-    /// This method adds the particle in the corresponding vector depending on its mass.
-    pub fn add(&mut self, particle: P) {
+    /// The particle is added to the corresponding vector according to its mass.
+    #[inline]
+    pub fn add_one(&mut self, particle: P) {
         if particle.mu() != <P::Scalar>::default() {
             self.massive.push(particle);
         } else {
@@ -71,7 +127,8 @@ where
     /// Adds a particle that has mass to the [`ParticleSet`].
     ///
     /// Panics if the particle does not have mass.
-    pub fn add_massive(&mut self, particle: P) {
+    #[inline]
+    pub fn add_one_massive(&mut self, particle: P) {
         assert!(particle.mu() != <P::Scalar>::default());
         self.massive.push(particle);
     }
@@ -79,7 +136,8 @@ where
     /// Adds a particle that has no mass to the [`ParticleSet`].
     ///
     /// Panics if the particle has mass.
-    pub fn add_massless(&mut self, particle: P) {
+    #[inline]
+    pub fn add_one_massless(&mut self, particle: P) {
         assert!(particle.mu() == <P::Scalar>::default());
         self.massless.push(particle);
     }
@@ -265,7 +323,7 @@ mod tests {
     fn add_massless_particle_as_massive() {
         let mut particle_set = ParticleSet::new();
 
-        particle_set.add_massive(Body {
+        particle_set.add_one_massive(Body {
             position: Vec3::ZERO,
             mu: 0.0,
         });
@@ -276,7 +334,7 @@ mod tests {
     fn add_massive_particle_as_massless() {
         let mut particle_set = ParticleSet::new();
 
-        particle_set.add_massless(Body {
+        particle_set.add_one_massless(Body {
             position: Vec3::ZERO,
             mu: 1.0,
         });
@@ -285,12 +343,12 @@ mod tests {
     fn with_two_particles(p1: (Vec3, f32), p2: (Vec3, f32)) -> ParticleSet<Body> {
         let mut particle_set = ParticleSet::new();
 
-        particle_set.add(Body {
+        particle_set.add_one(Body {
             position: p1.0,
             mu: p1.1,
         });
 
-        particle_set.add(Body {
+        particle_set.add_one(Body {
             position: p2.0,
             mu: p2.1,
         });
