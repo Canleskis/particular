@@ -138,6 +138,7 @@ Depending on your needs and platform, you may opt for one compute method or anot
 PRs are welcome!
 
 [`Particle`]: https://docs.rs/particular/latest/particular/particle/trait.Particle.html
+[`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
 [`ComputeMethods`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
 [accelerations]: https://docs.rs/particular/latest/particular/iterators/trait.Compute.html#method.accelerations
 [map_accelerations]: https://docs.rs/particular/latest/particular/iterators/trait.MapCompute.html#method.map_accelerations
