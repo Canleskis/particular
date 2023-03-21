@@ -9,19 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
-- `ParticleSet::add` and similar now expect an iterator of particles. Use `ParticleSet::add_one` instead.
+- Remove `ParticleSet`. Use `accelerations` and `map_accelerations` methods on iterators instead.
+- `ComputeMethod::compute` takes slice of all the particles.
 
 ### Added
 
-- Methods to create filled `ParticleSets`.
+- `BarnesHut` compute method available for 2D and 3D float vectors. Available in sequential and parallel versions (only force computation is parallelized).
+- Tuples of a position and a gravitational parameter implement `Particle`.
+- `accelerations` method for iterators of particles that returns the particle and its computed acceleration.
+- `map_accelerations` method for all iterators that returns the item and its computed acceleration using the mapped value (that implements `Particle`).
+- `Accelerations` iterator obtained through the `accelerations` and `map_accelerations` methods available on iterators.
 
 ### Changed
 
-- Generic brute-force compute methods implemented directly using `Normed` trait.
+- Generic brute-force compute methods implemented directly using `Normed` trait for internal vectors.
+- `Vector` trait generic over full array type instead of dimension and scalar.
+- 2D f32 vectors use `glam::Vec2` instead of `glam::Vec3A`.
+- `ComputeMethod::compute` takes slice of all the particles instead of two vectors, massive and massless.
 
 ### Removed
 
-- Private `Computable` trait.
+- `ParticleSet`.
 
 ## [0.4.0] - 2023-22-02
 
