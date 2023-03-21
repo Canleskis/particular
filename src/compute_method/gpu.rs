@@ -45,12 +45,12 @@ impl super::ComputeMethod<Vec3A, f32> for BruteForce {
 
 impl BruteForce {
     /// Create a new [`BruteForce`] instance with initialized buffers and pipeline.
-    pub fn new_init(massive_count: usize, massless_count: usize) -> Self {
+    pub fn new_init(particle_count: usize, massive_count: usize) -> Self {
         let (device, queue) = pollster::block_on(setup_wgpu());
 
         let wgpu_data = Some(WgpuData::init(
+            particle_count as u64,
             massive_count as u64,
-            massless_count as u64,
             &device,
         ));
 
