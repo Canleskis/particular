@@ -8,18 +8,18 @@
 //! Thus it does not concern itself with numerical integration or other similar tools and instead only focuses on the acceleration calculations.
 //!
 //! Multiple algorithms are available to compute the acceleration between particles as [`ComputeMethods`](compute_method::ComputeMethod).
-//! 
+//!
 //! ### Computation algorithms
-//! 
+//!
 //! | ComputeMethod       | [BruteForce] | [BarnesHut] |
 //! | :------------------ | :----------- | :---------- |
 //! | GPU                 | &check;      | &cross;     |
 //! | CPU single-threaded | &check;      | &check;     |
 //! | CPU multi-threaded  | &check;      | &check;     |
-//! 
+//!
 //! [BruteForce]: https://en.wikipedia.org/wiki/N-body_problem#Simulation
 //! [BarnesHut]: https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation
-//! 
+//!
 //! Generally speaking, the BruteForce algoritm is more accurate, but slower. The BarnesHut algorithm allows trading accuracy for speed by increasing the `theta` parameter.  
 //! You can read more about their relative performance [here](#notes-on-performance).
 //!

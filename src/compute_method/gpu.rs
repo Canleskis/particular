@@ -5,7 +5,7 @@ use super::wgpu::{setup_wgpu, WgpuData};
 /// A brute-force [`ComputeMethod`](super::ComputeMethod) using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
 ///
 /// This struct should not be recreated every iteration in order to maintain performance as it holds initialized data used by WGPU for computing on the GPU.
-/// 
+///
 /// Currently only available for 3D f32 vectors. You can still use it by converting your 2D f32 vectors to 3D f32 vectors until this is fixed.
 pub struct BruteForce {
     device: wgpu::Device,
