@@ -1,93 +1,21 @@
 use std::borrow::Cow;
 
-use crate::compute_method::ComputeMethod;
-
 use glam::Vec3A;
 
-/// A brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
-pub struct BruteForce {
-    device: wgpu::Device,
-    queue: wgpu::Queue,
-    wgpu_data: Option<WgpuData>,
-}
-
-impl Default for BruteForce {
-    fn default() -> Self {
-        let (device, queue) = pollster::block_on(setup_wgpu());
-
-        Self {
-            device,
-            queue,
-            wgpu_data: None,
-        }
-    }
-}
-
-impl ComputeMethod<Vec3A, f32> for BruteForce {
-    #[inline]
-    fn compute(&mut self, massive: Vec<(Vec3A, f32)>, massless: Vec<(Vec3A, f32)>) -> Vec<Vec3A> {
-        let (massive_count, massless_count) = (massive.len() as u64, massless.len() as u64);
-
-        if massive_count == 0 {
-            return Vec::new();
-        }
-
-        if let Some(data) = &self.wgpu_data {
-            if data.particle_count != massive_count + massless_count {
-                self.wgpu_data = None;
-            }
-        }
-
-        let data = self
-            .wgpu_data
-            .get_or_insert_with(|| WgpuData::init(massive_count, massless_count, &self.device));
-
-        data.write_particle_data(&self.queue, massive, massless);
-
-        let encoder_descriptor = wgpu::CommandEncoderDescriptor { label: None };
-        let mut encoder = self.device.create_command_encoder(&encoder_descriptor);
-
-        encoder.push_debug_group("Compute accelerations");
-        {
-            let compute_pass_descriptor = wgpu::ComputePassDescriptor { label: None };
-            let mut compute_pass = encoder.begin_compute_pass(&compute_pass_descriptor);
-
-            compute_pass.set_pipeline(&data.compute_pipeline);
-            compute_pass.set_bind_group(0, &data.bind_group, &[]);
-            compute_pass.dispatch_workgroups(data.work_group_count, 1, 1);
-        }
-        encoder.pop_debug_group();
-
-        encoder.copy_buffer_to_buffer(
-            &data.buffer_accelerations,
-            0,
-            &data.buffer_staging,
-            0,
-            data.particle_count * 4 * 4,
-        );
-
-        self.queue.submit(Some(encoder.finish()));
-
-        data.read_accelerations(&self.device)
-    }
-}
-
-struct WgpuData {
+pub(crate) struct WgpuData {
     bind_group: wgpu::BindGroup,
     buffer_particles: wgpu::Buffer,
     buffer_massive_particles: wgpu::Buffer,
     buffer_accelerations: wgpu::Buffer,
     buffer_staging: wgpu::Buffer,
     compute_pipeline: wgpu::ComputePipeline,
-    work_group_count: u32,
-    particle_count: u64,
+    pub work_group_count: u32,
+    pub particle_count: u64,
 }
 
 impl WgpuData {
     #[inline]
-    pub fn init(massive_count: u64, massless_count: u64, device: &wgpu::Device) -> Self {
-        let particle_count = massive_count + massless_count;
-
+    pub fn init(particle_count: u64, massive_count: u64, device: &wgpu::Device) -> Self {
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("compute.wgsl"))),
@@ -206,12 +134,41 @@ impl WgpuData {
     }
 
     #[inline]
-    fn write_particle_data(
+    pub fn compute_pass(&self, device: &wgpu::Device, queue: &wgpu::Queue) -> &Self {
+        let encoder_descriptor = wgpu::CommandEncoderDescriptor { label: None };
+        let mut encoder = device.create_command_encoder(&encoder_descriptor);
+
+        encoder.push_debug_group("Compute accelerations");
+        {
+            let compute_pass_descriptor = wgpu::ComputePassDescriptor { label: None };
+            let mut compute_pass = encoder.begin_compute_pass(&compute_pass_descriptor);
+
+            compute_pass.set_pipeline(&self.compute_pipeline);
+            compute_pass.set_bind_group(0, &self.bind_group, &[]);
+            compute_pass.dispatch_workgroups(self.work_group_count, 1, 1);
+        }
+        encoder.pop_debug_group();
+
+        encoder.copy_buffer_to_buffer(
+            &self.buffer_accelerations,
+            0,
+            &self.buffer_staging,
+            0,
+            self.particle_count * 4 * 4,
+        );
+
+        queue.submit(Some(encoder.finish()));
+
+        self
+    }
+
+    #[inline]
+    pub fn write_particle_data(
         &self,
+        particles: &[(Vec3A, f32)],
+        massive: &[(Vec3A, f32)],
         queue: &wgpu::Queue,
-        massive: Vec<(Vec3A, f32)>,
-        massless: Vec<(Vec3A, f32)>,
-    ) {
+    ) -> &Self {
         let massive_data: Vec<f32> = massive
             .iter()
             .flat_map(|point_mass| {
@@ -220,7 +177,7 @@ impl WgpuData {
             })
             .collect();
 
-        let massless_data: Vec<f32> = massless
+        let particles_data: Vec<f32> = particles
             .iter()
             .flat_map(|point_mass| {
                 let [x, y, z]: [f32; 3] = point_mass.0.into();
@@ -237,18 +194,20 @@ impl WgpuData {
         queue.write_buffer(
             &self.buffer_particles,
             0,
-            bytemuck::cast_slice(&[massive_data, massless_data].concat()),
+            bytemuck::cast_slice(&particles_data),
         );
+
+        self
     }
 
     #[inline]
-    fn read_accelerations(&self, device: &wgpu::Device) -> Vec<Vec3A> {
+    pub fn read_accelerations(&self, device: &wgpu::Device) -> Vec<Vec3A> {
         let buffer = self.buffer_staging.slice(..);
         buffer.map_async(wgpu::MapMode::Read, |_| {});
-
         device.poll(wgpu::Maintain::Wait);
 
         let data = buffer.get_mapped_range();
+
         // Because of alignment rules each vec3<f32> in array is 16 bytes (even though they technically are 12 bytes, 4 bytes for the 3 f32s).
         // We discard the extra value.
         let result = bytemuck::cast_slice(&data)
@@ -263,7 +222,7 @@ impl WgpuData {
     }
 }
 
-async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
+pub(crate) async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
     let instance = wgpu::Instance::new(wgpu::Backends::all());
 
     let adapter = instance
@@ -282,14 +241,4 @@ async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
         )
         .await
         .unwrap()
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::compute_method::{gpu, tests};
-
-    #[test]
-    fn brute_force() {
-        tests::acceleration_computation(gpu::BruteForce::default());
-    }
 }
