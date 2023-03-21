@@ -16,3 +16,4 @@ Cargo.lock
 .timetracker
 .[Vv][Ss][Cc]ode*
 .idea
+.markdownlint.yml
