@@ -1,3 +1,7 @@
+mod tree;
+#[cfg(feature = "gpu")]
+mod wgpu;
+
 #[cfg(feature = "gpu")]
 /// Compute methods that use the GPU.
 pub mod gpu;
@@ -21,17 +25,17 @@ pub mod sequential;
 /// struct AccelerationCalculator;
 ///
 /// impl ComputeMethod<Vec3A, f32> for AccelerationCalculator {
-///     fn compute(&mut self, massive: Vec<(Vec3A, f32)>, massless: Vec<(Vec3A, f32)>) -> Vec<Vec3A> {
+///     fn compute(&mut self, particles: &[(Vec3A, f32)]) -> Vec<Vec3A> {
 ///     // ...
 /// #       Vec::new()
 ///     }
 /// }
 /// ```
-pub trait ComputeMethod<V, S> {
-    /// Computes the acceleration the massive particles exert on all the particles.
+pub trait ComputeMethod<T, S> {
+    /// Computes the acceleration of the particles.
     ///
-    /// The returning vector should contain the acceleration of the massive particles first, then the massless ones, in the same order they were input.
-    fn compute(&mut self, massive: Vec<(V, S)>, massless: Vec<(V, S)>) -> Vec<V>;
+    /// The returning vector should contain the acceleration of the particles in the same order they were input.
+    fn compute(&mut self, particles: &[(T, S)]) -> Vec<T>;
 }
 
 #[cfg(test)]
@@ -46,7 +50,7 @@ pub(crate) mod tests {
         let massive = vec![(Vec3A::splat(0.0), 2.0), (Vec3A::splat(1.0), 3.0)];
         let massless = vec![(Vec3A::splat(5.0), 0.0)];
 
-        let computed = cm.compute(massive.clone(), massless.clone());
+        let computed = cm.compute(&[massive.clone(), massless.clone()].concat()[..]);
 
         for (&point_mass1, computed) in massive.iter().chain(massless.iter()).zip(computed) {
             let mut acceleration = Vec3A::ZERO;

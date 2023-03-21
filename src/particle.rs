@@ -4,7 +4,8 @@ use crate::vector::Vector;
 ///
 /// #### Deriving:
 ///
-/// Used in most cases, when the type has fields named `position` and `mu`:
+/// Used when the type has fields named `position` and `mu`:
+///
 /// ```
 /// # use particular::prelude::*;
 /// # use glam::Vec3;
@@ -18,7 +19,8 @@ use crate::vector::Vector;
 /// ```
 /// #### Manual implementation:
 ///
-/// Used when the type has more complex fields and cannot directly provide a [position](Particle::position) and a [gravitational parameter](Particle::mu).
+/// Used when the type cannot directly provide a position and a gravitational parameter.
+///
 /// ```
 /// # const G: f32 = 1.0;
 /// #
@@ -33,6 +35,7 @@ use crate::vector::Vector;
 ///
 /// impl Particle for Body {
 ///     type Scalar = f32;
+///
 ///     type Vector = Vec3;
 ///
 ///     fn position(&self) -> Vec3 {
@@ -44,8 +47,19 @@ use crate::vector::Vector;
 ///     }
 /// }
 /// ```
+///
+/// If you can't implement [`Particle`] on a type, you can use the fact that it is implemented for tuples of a vector and its scalar type instead of creating an intermediate type.
+///
+/// ```
+/// # use particular::prelude::*;
+/// # use glam::Vec3;
+/// let particle = (Vec3::ONE, 5.0);
+///
+/// assert_eq!(particle.position(), Vec3::ONE);
+/// assert_eq!(particle.mu(), 5.0);
+/// ```
 pub trait Particle {
-    /// Type of the elements composing the [position](Particle::position) vector and [mu](Particle::mu).
+    /// Type of the elements composing the elements of the [position](Particle::position) vector and [mu](Particle::mu).
     type Scalar;
 
     /// Type of the [position](Particle::position).
@@ -60,36 +74,79 @@ pub trait Particle {
     fn mu(&self) -> Self::Scalar;
 }
 
-type VectorOf<P> = <P as Particle>::Vector;
-type ScalarOf<P> = <P as Particle>::Scalar;
+impl<P> Particle for &P
+where
+    P: Particle,
+{
+    type Scalar = P::Scalar;
 
-/// The internal type used for the position of a given [`Particle`].
-pub type Internal<const DIM: usize, P> = <VectorOf<P> as Vector<DIM, ScalarOf<P>>>::Internal;
+    type Vector = P::Vector;
+
+    fn position(&self) -> Self::Vector {
+        (**self).position()
+    }
+
+    fn mu(&self) -> Self::Scalar {
+        (**self).mu()
+    }
+}
+
+impl<P> Particle for &mut P
+where
+    P: Particle,
+{
+    type Scalar = P::Scalar;
+
+    type Vector = P::Vector;
+
+    fn position(&self) -> Self::Vector {
+        (**self).position()
+    }
+
+    fn mu(&self) -> Self::Scalar {
+        (**self).mu()
+    }
+}
 
 /// Conversion to a point-mass.
 ///
 /// A point-mass is a tuple of the [position](Particle::position) and the [gravitational parameter](Particle::mu) of a particle.
-pub(crate) trait ToPointMass<const DIM: usize>: Particle
+pub(crate) trait IntoPointMass<A>: Particle
 where
-    Self::Vector: Vector<DIM, Self::Scalar>,
-{
-    fn point(&self) -> Internal<DIM, Self>;
-
-    fn point_mass(&self) -> (Internal<DIM, Self>, Self::Scalar);
-}
-
-impl<const DIM: usize, P> ToPointMass<DIM> for P
-where
-    P: Particle,
-    P::Vector: Vector<DIM, P::Scalar>,
+    Self::Vector: Vector<A>,
 {
     #[inline]
-    fn point(&self) -> Internal<DIM, P> {
+    fn point(&self) -> <Self::Vector as Vector<A>>::Internal {
         self.position().into_internal()
     }
 
     #[inline]
-    fn point_mass(&self) -> (Internal<DIM, P>, P::Scalar) {
+    fn point_mass(&self) -> (<Self::Vector as Vector<A>>::Internal, Self::Scalar) {
         (self.point(), self.mu())
+    }
+}
+
+impl<P, A> IntoPointMass<A> for P
+where
+    P: Particle,
+    P::Vector: Vector<A>,
+{
+}
+
+impl<V, S> Particle for (V, S)
+where
+    S: Copy,
+    V: Copy,
+{
+    type Scalar = S;
+
+    type Vector = V;
+
+    fn position(&self) -> Self::Vector {
+        self.0
+    }
+
+    fn mu(&self) -> Self::Scalar {
+        self.1
     }
 }
