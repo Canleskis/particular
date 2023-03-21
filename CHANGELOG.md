@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove `ParticleSet`. Use `accelerations` and `map_accelerations` methods on iterators instead.
 - `ComputeMethod::compute` takes slice of all the particles.
+- `gpu::BruteForce` only available for 3D f32 vectors.
 
 ### Added
 
