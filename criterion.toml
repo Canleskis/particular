@@ -34,6 +34,10 @@ severe_outlier = {r = 7, g = 26, b = 28}
 # These are used for the line chart to compare multiple different functions.
 comparison_colors = [
     {r = 255, g = 0, b = 0},
+
+    {r = 0, g = 128, b = 255},
     {r = 0, g = 255, b = 0},
-    {r = 0, g = 0, b = 255},
+
+    {r = 0, g = 76, b = 153},
+    {r = 0, g = 102, b = 0},
 ]

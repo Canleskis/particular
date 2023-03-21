@@ -125,11 +125,9 @@ for (body, acceleration) in bodies.iter_mut().accelerations(&mut cm) {
 
 Particular is built with performance in mind and uses multiple ways of computing the acceleration between particles in the form of [`ComputeMethods`].
 
-Here is a comparison of the three current available compute methods on an i9 9900KF and an RTX 3080:
+Here is a comparison of the five current available compute methods on an i9 9900KF and an RTX 3080:
 
 <div align="center"><img src="particular-comparison.png" alt="Performance chart" /></div>
-
-Above 1,000 particles the parallel implementation is about 5x faster than the sequential one, whilst the GPU implementation ranges from 50x to 100x faster than the parallel implementation above 15,000 particles (250x to 500x faster than sequential).
 
 Depending on your needs and platform, you may opt for one compute method or another. You can also implement the trait on your own type to combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
