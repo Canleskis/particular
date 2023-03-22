@@ -19,17 +19,8 @@ where
 {
     #[inline]
     fn compute(&mut self, particles: &[(T, S)]) -> Vec<T> {
-        let len = particles.len();
-
-        let (mut massive, mut massless) = (Vec::with_capacity(len), Vec::with_capacity(len));
-
-        for &(position, mu) in particles.iter() {
-            if mu != S::default() {
-                massive.push((position, mu));
-            } else {
-                massless.push((position, mu));
-            }
-        }
+        let (massive, massless): (Vec<_>, Vec<_>) =
+            particles.iter().partition(|(_, mu)| *mu != S::default());
 
         let massive_len = massive.len();
 
