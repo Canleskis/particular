@@ -1,6 +1,6 @@
 [package]
 name = "particular"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 authors = ["Canleskis"]
 description = "A simple, parallel N-body simulation library written in Rust."
@@ -8,7 +8,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/Canleskis/particular"
 documentation = "https://docs.rs/particular"
 keywords = ["n-body", "gravity"]
-categories = ["simulation"]
+categories = ["simulation", "game-development"]
 exclude = [
     "particular-showcase.gif",
     "particular-comparison.png",
@@ -20,7 +20,7 @@ parallel = ["dep:rayon"]
 gpu = ["dep:wgpu", "dep:bytemuck", "dep:pollster"]
 
 [dependencies]
-particular_derive = { path = "particular_derive", version = "0.4.0" }
+particular_derive = { path = "particular_derive" }
 glam = "0"
 
 rayon = { version = "1", optional = true }
