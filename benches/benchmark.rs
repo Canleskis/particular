@@ -43,14 +43,14 @@ fn criterion_benchmark(c: &mut Criterion) {
     group
         .plot_config(PlotConfiguration::default().summary_scale(AxisScale::Logarithmic))
         .warm_up_time(std::time::Duration::from_secs(1))
-        .sample_size(15);
+        .sample_size(50);
 
     for i in (2..=16).map(|i| 2_usize.pow(i)) {
         let bodies = random_bodies(i);
 
         #[cfg(feature = "gpu")]
         {
-            let mut cm = gpu::BruteForce::default();
+            let mut cm = gpu::BruteForce::new_init(i, i);
             group.bench_with_input(
                 BenchmarkId::new("gpu::BruteForce", i),
                 &bodies,
