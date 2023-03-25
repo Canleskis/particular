@@ -67,6 +67,7 @@ impl Particle for Body {
     type Scalar = f32;
 
     type Vector = Vec3;
+    
     fn position(&self) -> Vec3 {
         self.position
     }
