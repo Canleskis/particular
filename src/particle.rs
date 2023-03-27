@@ -74,40 +74,6 @@ pub trait Particle {
     fn mu(&self) -> Self::Scalar;
 }
 
-impl<P> Particle for &P
-where
-    P: Particle,
-{
-    type Scalar = P::Scalar;
-
-    type Vector = P::Vector;
-
-    fn position(&self) -> Self::Vector {
-        (**self).position()
-    }
-
-    fn mu(&self) -> Self::Scalar {
-        (**self).mu()
-    }
-}
-
-impl<P> Particle for &mut P
-where
-    P: Particle,
-{
-    type Scalar = P::Scalar;
-
-    type Vector = P::Vector;
-
-    fn position(&self) -> Self::Vector {
-        (**self).position()
-    }
-
-    fn mu(&self) -> Self::Scalar {
-        (**self).mu()
-    }
-}
-
 /// Conversion to a point-mass.
 ///
 /// A point-mass is a tuple of the [position](Particle::position) and the [gravitational parameter](Particle::mu) of a particle.
@@ -148,5 +114,39 @@ where
 
     fn mu(&self) -> Self::Scalar {
         self.1
+    }
+}
+
+impl<P> Particle for &P
+where
+    P: Particle,
+{
+    type Scalar = P::Scalar;
+
+    type Vector = P::Vector;
+
+    fn position(&self) -> Self::Vector {
+        (**self).position()
+    }
+
+    fn mu(&self) -> Self::Scalar {
+        (**self).mu()
+    }
+}
+
+impl<P> Particle for &mut P
+where
+    P: Particle,
+{
+    type Scalar = P::Scalar;
+
+    type Vector = P::Vector;
+
+    fn position(&self) -> Self::Vector {
+        (**self).position()
+    }
+
+    fn mu(&self) -> Self::Scalar {
+        (**self).mu()
     }
 }
