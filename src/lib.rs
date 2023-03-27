@@ -166,7 +166,7 @@ pub mod compute_method;
 pub mod particle;
 
 /// Iterators and methods to get the acceleration of particles.
-pub mod iterators;
+pub mod iterator;
 
 /// Internal representation of vectors used for expensive computations.
 mod vector;
@@ -179,7 +179,7 @@ pub mod particular_derive {
 /// Everything needed to use Particular.
 pub mod prelude {
     pub use crate::compute_method::*;
-    pub use crate::iterators::{Compute, MapCompute};
+    pub use crate::iterator::{Compute, MapCompute};
     pub use crate::particle::Particle;
     pub use crate::particular_derive::*;
 }
