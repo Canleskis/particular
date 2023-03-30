@@ -48,3 +48,17 @@ where
         }
     }
 }
+
+impl<T, S> TreeData for (T, S)
+where
+    T: Copy + std::iter::Sum,
+    S: Copy + std::iter::Sum + std::ops::Div<Output = S> + std::ops::Mul<T, Output = T>,
+{
+    type Output = (T, S);
+
+    fn compute_data(data: &[Self]) -> Self::Output {
+        let total_mass = data.iter().map(|p| p.1).sum();
+        let com = data.iter().map(|p| (p.1 / total_mass) * p.0).sum();
+        (com, total_mass)
+    }
+}

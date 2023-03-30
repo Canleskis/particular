@@ -88,18 +88,20 @@ where
     BoundingBox<T>: BoundingBoxExtend<Vector = T, Orthant = O>,
 {
     fn compute(&mut self, particles: &[(T, S)]) -> Vec<T> {
+        let mut tree = Tree::default();
+
         let massive: Vec<_> = particles
             .iter()
-            .copied()
             .filter(|(_, mu)| *mu != S::default())
+            .copied()
             .collect();
 
         let bbox = BoundingBox::containing(massive.iter().map(|p| p.0));
-        let tree = Tree::build(massive, bbox);
+        let root = tree.build_node(massive, bbox);
 
         particles
             .iter()
-            .map(|&(position, _)| tree.acceleration_at(position, Some(0), self.theta))
+            .map(|&(position, _)| tree.acceleration_at(position, root, self.theta))
             .collect()
     }
 }
