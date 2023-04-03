@@ -62,12 +62,11 @@ where
         C: ComputeMethod<T, P::Scalar>,
     {
         let items: Vec<_> = self.collect();
+        let particles: Vec<_> = items.iter().map(|i| i.point_mass()).collect();
 
         Accelerations {
-            accelerations: cm
-                .compute(&items.iter().map(|i| i.point_mass()).collect::<Vec<_>>())
-                .into_iter(),
             iter: items.into_iter(),
+            accelerations: cm.compute(&particles).into_iter(),
         }
     }
 }
@@ -111,12 +110,11 @@ where
         C: ComputeMethod<T, P::Scalar>,
     {
         let items: Vec<_> = self.collect();
+        let particles: Vec<_> = items.iter().map(|i| f(i).point_mass()).collect();
 
         Accelerations {
-            accelerations: cm
-                .compute(&items.iter().map(|i| f(i).point_mass()).collect::<Vec<_>>())
-                .into_iter(),
             iter: items.into_iter(),
+            accelerations: cm.compute(&particles).into_iter(),
         }
     }
 }
