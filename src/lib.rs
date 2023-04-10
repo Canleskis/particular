@@ -92,8 +92,8 @@
 //!
 //! ### Computing and using the gravitational acceleration
 //!
-//! In order to get the acceleration of a type, you can use the [accelerations](iterators::Compute::accelerations)
-//! or [map_accelerations](iterators::MapCompute::map_accelerations) methods on iterators.  
+//! In order to get the acceleration of a type, you can use the [accelerations](iterator::Compute::accelerations)
+//! or [map_accelerations](iterator::MapCompute::map_accelerations) methods on iterators.  
 //! These effectively return the original iterator zipped with the acceleration of its items.
 //!
 //! As such, you can create an iterator from a collection and get the acceleration using either methods depending on if the items implement Particle.

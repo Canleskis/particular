@@ -139,5 +139,5 @@ PRs are welcome!
 [`Particle`]: https://docs.rs/particular/latest/particular/particle/trait.Particle.html
 [`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
 [`ComputeMethods`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
-[accelerations]: https://docs.rs/particular/latest/particular/iterators/trait.Compute.html#method.accelerations
-[map_accelerations]: https://docs.rs/particular/latest/particular/iterators/trait.MapCompute.html#method.map_accelerations
+[accelerations]: https://docs.rs/particular/latest/particular/iterator/trait.Compute.html#method.accelerations
+[map_accelerations]: https://docs.rs/particular/latest/particular/iterator/trait.MapCompute.html#method.map_accelerations
