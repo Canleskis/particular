@@ -101,19 +101,21 @@ where
 
 impl<V, S> Particle for (V, S)
 where
-    S: Copy,
-    V: Copy,
+    S: Clone,
+    V: Clone,
 {
     type Scalar = S;
 
     type Vector = V;
 
+    #[inline]
     fn position(&self) -> Self::Vector {
-        self.0
+        self.0.clone()
     }
 
+    #[inline]
     fn mu(&self) -> Self::Scalar {
-        self.1
+        self.1.clone()
     }
 }
 
@@ -125,10 +127,12 @@ where
 
     type Vector = P::Vector;
 
+    #[inline]
     fn position(&self) -> Self::Vector {
         (**self).position()
     }
 
+    #[inline]
     fn mu(&self) -> Self::Scalar {
         (**self).mu()
     }
@@ -142,10 +146,12 @@ where
 
     type Vector = P::Vector;
 
+    #[inline]
     fn position(&self) -> Self::Vector {
         (**self).position()
     }
 
+    #[inline]
     fn mu(&self) -> Self::Scalar {
         (**self).mu()
     }
