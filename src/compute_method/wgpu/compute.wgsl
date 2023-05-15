@@ -24,7 +24,7 @@ fn main(@builtin(global_invocation_id) global_invocation_id: vec3<u32>) {
         let norm = dot(dir, dir);
         let a = dir * p2.mu / (norm * sqrt(norm));
 
-        if i != j {
+        if norm != 0.0 {
             acceleration += a;
         }
     }
