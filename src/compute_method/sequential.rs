@@ -1,21 +1,12 @@
-use std::ops::{AddAssign, Div, Mul, Sub, SubAssign};
-
-use crate::vector::Normed;
+use crate::vector::{InternalVector, Scalar};
 
 /// A brute-force [`ComputeMethod`](super::ComputeMethod) using the CPU.
 pub struct BruteForce;
 
 impl<T, S> super::ComputeMethod<T, S> for BruteForce
 where
-    T: Copy
-        + Default
-        + AddAssign
-        + SubAssign
-        + Sub<Output = T>
-        + Mul<S, Output = T>
-        + Div<S, Output = T>
-        + Normed<Output = S>,
-    S: Copy + Default + PartialEq + Mul<Output = S>,
+    S: Scalar,
+    T: InternalVector<Scalar = S>,
 {
     #[inline]
     fn compute(&mut self, particles: &[(T, S)]) -> Vec<T> {
@@ -39,7 +30,7 @@ where
                 let dir = pos2 - pos1;
                 let mag_2 = dir.length_squared();
 
-                let f = dir / (mag_2 * T::sqrt(mag_2));
+                let f = dir / (mag_2 * mag_2.sqrt());
 
                 acceleration += f * mu2;
                 accelerations[j] -= f * mu1;
@@ -68,9 +59,9 @@ where
 }
 
 use super::tree::{
-    acceleration::TreeAcceleration,
-    bbox::{BoundingBox, BoundingBoxExtend},
-    Tree, TreeBuilder, TreeData,
+    barnes_hut::BarnesHutTree,
+    bbox::{BoundingBox, BoundingBoxDivide, Orthant},
+    Tree,
 };
 
 /// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`](super::ComputeMethod) using the CPU.
@@ -79,13 +70,11 @@ pub struct BarnesHut<S> {
     pub theta: S,
 }
 
-impl<T, S, O> super::ComputeMethod<T, S> for BarnesHut<S>
+impl<T, S, const DIM: usize, const N: usize> super::ComputeMethod<T, S> for BarnesHut<S>
 where
-    T: Copy + Default,
-    S: Copy + Default + PartialEq,
-    (T, S): Copy + TreeData,
-    Tree<O, (T, S)>: TreeBuilder<BoundingBox<T>, (T, S)> + TreeAcceleration<T, S>,
-    BoundingBox<T>: BoundingBoxExtend<Vector = T, Orthant = O>,
+    S: Scalar,
+    T: InternalVector<Scalar = S, Array = [S; DIM]>,
+    BoundingBox<T::Array>: BoundingBoxDivide<(T, S), Output = (Orthant<N>, S)>,
 {
     fn compute(&mut self, particles: &[(T, S)]) -> Vec<T> {
         let mut tree = Tree::default();
@@ -96,12 +85,12 @@ where
             .copied()
             .collect();
 
-        let bbox = BoundingBox::containing(massive.iter().map(|p| p.0));
+        let bbox = BoundingBox::containing(massive.iter().map(|p| p.0.into()));
         let root = tree.build_node(massive, bbox);
 
         particles
             .iter()
-            .map(|&(position, _)| tree.acceleration_at(position, root, self.theta))
+            .map(|&(position, _)| tree.acceleration_at(root, position, self.theta))
             .collect()
     }
 }

@@ -1,22 +1,12 @@
-use std::ops::{Add, Div, Mul, Sub};
-
-use crate::vector::Normed;
+use crate::vector::{InternalVector, Scalar};
 
 /// A brute-force [`ComputeMethod`](super::ComputeMethod) using the CPU with [rayon](https://github.com/rayon-rs/rayon).
 pub struct BruteForce;
 
 impl<T, S> super::ComputeMethod<T, S> for BruteForce
 where
-    T: Copy
-        + Default
-        + Send
-        + Sync
-        + Add<Output = T>
-        + Sub<Output = T>
-        + Mul<S, Output = T>
-        + Div<S, Output = T>
-        + Normed<Output = S>,
-    S: Copy + Default + Sync + PartialEq + Mul<Output = S>,
+    S: Scalar,
+    T: InternalVector<Scalar = S>,
 {
     #[inline]
     fn compute(&mut self, particles: &[(T, S)]) -> Vec<T> {
@@ -37,7 +27,7 @@ where
                         let mag_2 = dir.length_squared();
 
                         let grav_acc = if mag_2 != S::default() {
-                            dir * mass2 / (mag_2 * T::sqrt(mag_2))
+                            dir * mass2 / (mag_2 * mag_2.sqrt())
                         } else {
                             dir
                         };
@@ -50,9 +40,9 @@ where
 }
 
 use super::tree::{
-    acceleration::TreeAcceleration,
-    bbox::{BoundingBox, BoundingBoxExtend},
-    Tree, TreeBuilder, TreeData,
+    barnes_hut::BarnesHutTree,
+    bbox::{BoundingBox, BoundingBoxDivide, Orthant},
+    Tree,
 };
 
 /// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`](super::ComputeMethod) using the CPU with [rayon](https://github.com/rayon-rs/rayon) for the force computation.
@@ -61,14 +51,11 @@ pub struct BarnesHut<S> {
     pub theta: S,
 }
 
-impl<T, S, O> super::ComputeMethod<T, S> for BarnesHut<S>
+impl<T, S, const DIM: usize, const N: usize> super::ComputeMethod<T, S> for BarnesHut<S>
 where
-    O: Sync,
-    T: Copy + Default + Send + Sync,
-    S: Copy + Default + Sync + PartialEq,
-    (T, S): Copy + Sync + TreeData<Output = (T, S)>,
-    Tree<O, (T, S)>: TreeBuilder<BoundingBox<T>, (T, S)> + TreeAcceleration<T, S>,
-    BoundingBox<T>: BoundingBoxExtend<Vector = T, Orthant = O>,
+    S: Scalar,
+    T: InternalVector<Scalar = S, Array = [S; DIM]>,
+    BoundingBox<T::Array>: BoundingBoxDivide<(T, S), Output = (Orthant<N>, S)>,
 {
     fn compute(&mut self, particles: &[(T, S)]) -> Vec<T> {
         use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
@@ -81,12 +68,12 @@ where
             .copied()
             .collect();
 
-        let bbox = BoundingBox::containing(massive.iter().map(|p| p.0));
+        let bbox = BoundingBox::containing(massive.iter().map(|p| p.0.into()));
         let root = tree.build_node(massive, bbox);
 
         particles
             .par_iter()
-            .map(|&(position, _)| tree.acceleration_at(position, root, self.theta))
+            .map(|&(position, _)| tree.acceleration_at(root, position, self.theta))
             .collect()
     }
 }

@@ -1,40 +1,112 @@
+use std::{
+    iter::Sum,
+    ops::{Add, AddAssign, Div, Mul, Neg, Sub, SubAssign},
+};
+
 /// Arbitrary vectors that can be converted from and into an array.
 pub trait Vector<A>: Into<A> + From<A> {
-    /// Internal representation of the vector [`Particular`](crate) can use for expensive computations.
+    /// Internal representation of a vector.
     type Internal;
 
     /// Convert the arbitrary vector into its internal representation.
     fn into_internal(self) -> Self::Internal;
 
-    /// Convert the internal representation back into the arbitrary vector.
+    /// Convert the internal representation into the arbitrary vector.
     fn from_internal(vector: Self::Internal) -> Self;
 }
 
-/// Internal vectors with a norm squared and its root.
-pub trait Normed {
-    /// The type of the norm
-    type Output;
+/// Scalar types that compose [`InternalVector`] objects.
+pub trait Scalar:
+    Sum
+    + Sync
+    + Send
+    + Copy
+    + Default
+    + PartialEq
+    + PartialOrd
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
+    + Div<Output = Self>
+    + Neg<Output = Self>
+{
+    /// Infinity (∞).
+    const INFINITY: Self;
 
-    /// Norm squared, defined by the dot product on itself.
-    fn length_squared(self) -> Self::Output;
+    /// Square root operation.
+    fn sqrt(self) -> Self;
 
-    /// Square root operation on the type of the norm.
-    fn sqrt(f: Self::Output) -> Self::Output;
+    /// Minimum between two scalars.
+    fn min(self, rhs: Self) -> Self;
+
+    /// Maximum between two scalars.
+    fn max(self, rhs: Self) -> Self;
+
+    /// Midpoint between two scalars.
+    fn midpoint(self, rhs: Self) -> Self;
 }
 
-macro_rules! impl_vector {
-    ($dim: literal, $s: ty, $i: ty) => {
-        impl Normed for $i {
-            type Output = $s;
+/// Internal vectors used for expensive computations.
+pub trait InternalVector:
+    Sum
+    + Sync
+    + Send
+    + Copy
+    + Default
+    + AddAssign
+    + SubAssign
+    + PartialEq
+    + From<Self::Array>
+    + Into<Self::Array>
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Self::Scalar, Output = Self>
+    + Div<Self::Scalar, Output = Self>
+{
+    /// The scalar type of the vector.
+    type Scalar: Scalar;
+
+    /// Array type this vector can be converted from and to.
+    type Array;
+
+    /// Norm squared, defined by the dot product on itself.
+    fn length_squared(self) -> Self::Scalar;
+}
+
+macro_rules! vector_impl {
+    ($s: ty, $(($t: ty, $dim: literal)),*) => {
+        impl Scalar for $s {
+            const INFINITY: Self = <$s>::INFINITY;
+
+            #[inline]
+            fn sqrt(self) -> $s {
+                self.sqrt()
+            }
+
+            #[inline]
+            fn min(self, rhs: Self) -> $s {
+                self.min(rhs)
+            }
+
+            #[inline]
+            fn max(self, rhs: Self) -> $s {
+                self.max(rhs)
+            }
+
+            #[inline]
+            fn midpoint(self, rhs: Self) -> $s {
+                (self + rhs) / 2.0
+            }
+        }
+    $(
+        impl InternalVector for $t {
+            type Scalar = $s;
+
+            type Array = [$s; $dim];
 
             #[inline]
             fn length_squared(self) -> $s {
                 self.length_squared()
-            }
-
-            #[inline]
-            fn sqrt(s: $s) -> $s {
-                <$s>::sqrt(s)
             }
         }
 
@@ -42,7 +114,7 @@ macro_rules! impl_vector {
         where
             V: Into<[$s; $dim]> + From<[$s; $dim]>,
         {
-            type Internal = $i;
+            type Internal = $t;
 
             #[inline]
             fn into_internal(self) -> Self::Internal {
@@ -54,13 +126,9 @@ macro_rules! impl_vector {
                 Self::from(vector.into())
             }
         }
-    };
+    )*
+    }
 }
 
-impl_vector!(2, f32, glam::Vec2);
-impl_vector!(3, f32, glam::Vec3A);
-impl_vector!(4, f32, glam::Vec4);
-
-impl_vector!(2, f64, glam::DVec2);
-impl_vector!(3, f64, glam::DVec3);
-impl_vector!(4, f64, glam::DVec4);
+vector_impl!(f32, (glam::Vec2, 2), (glam::Vec3A, 3), (glam::Vec4, 4));
+vector_impl!(f64, (glam::DVec2, 2), (glam::DVec3, 3), (glam::DVec4, 4));
