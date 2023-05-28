@@ -92,8 +92,8 @@
 //!
 //! ### Computing and using the gravitational acceleration
 //!
-//! In order to get the acceleration of a type, you can use the [accelerations](iterator::Compute::accelerations)
-//! or [map_accelerations](iterator::MapCompute::map_accelerations) methods on iterators.  
+//! In order to get the acceleration of a type, you can use the [accelerations](iterator::Accelerations::accelerations)
+//! or [map_accelerations](iterator::MapAccelerations::map_accelerations) methods on iterators.  
 //! These effectively return the original iterator zipped with the acceleration of its items.
 //!
 //! As such, you can create an iterator from a collection and get the acceleration using either methods depending on if the items implement Particle.
@@ -159,7 +159,7 @@
 
 #![warn(missing_docs)]
 
-/// Trait for computing accelerations and types implementing it for the user to choose from.
+/// Traits for computing accelerations.
 pub mod compute_method;
 
 /// Trait to implement on types representing particles.
@@ -168,8 +168,8 @@ pub mod particle;
 /// Iterators and methods to get the acceleration of particles.
 pub mod iterator;
 
-/// Internal representation of vectors used for expensive computations.
-mod vector;
+/// Algorithms to compute the acceleration of particles.
+pub mod algorithms;
 
 /// Derive macro for types representing particles.
 pub mod particular_derive {
@@ -178,8 +178,9 @@ pub mod particular_derive {
 
 /// Everything needed to use Particular.
 pub mod prelude {
-    pub use crate::compute_method::*;
-    pub use crate::iterator::{Compute, MapCompute};
-    pub use crate::particle::Particle;
+    pub use crate::algorithms::compute_methods::*;
+    pub use crate::compute_method;
+    pub use crate::iterator::{Accelerations, MapAccelerations};
+    pub use crate::particle::{IntoPointMass, Particle};
     pub use crate::particular_derive::*;
 }

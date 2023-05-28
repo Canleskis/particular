@@ -5,17 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-27-05
+## Unreleased - 2023-28-05
+
+### Breaking changes
+
+- `ComputeMethod` generic over a storage and vector type.
+- `ComputeMethod::compute` expects its storage type.
+- `ComputeMethod` has `Output` associated type returned by `ComputeMethod::compute`.
 
 ### Added
 
+- `Compute` extending `Iterator` trait zipping an iterator with the computed value of each item using a given `ComputeMethod`.
+- `FromMassive` and `ParticleSet` structs implementing `Storage` used for available `ComputeMethods`.
+- `sequential::BruteForceAlt` `ComputeMethod`, slower `sequential::BruteForce` not iterating over the combinations of pair of particles (but more flexible by using `FromMassive`).
 - `Scalar` and `InternalVector` traits to help genericity of built-in `ComputeMethods`.
-- `Tree`, `Node`, `Orthant`, `BoundingBox` structs used by `BarnesHut` compute methods.
-- `TreeData`, `BoundingBoxDivide`, `BarnesHutTree` traits for `BarnesHut` compute methods.
+- `Tree`, `Node`, `Orthant`, `BoundingBox` structs and `TreeData`, `BoundingBoxDivide`, `BarnesHutTree` traits backing `BarnesHut` compute methods.
 
 ### Changed
 
-- Built-in `ComputeMethods` generic using `Scalar` and `InternalVector` traits.
+- Built-in `ComputeMethod` implementations use `Scalar` and `InternalVector` traits.
 - `tree` module and submodules now public.
 
 ## [0.5.2] - 2023-16-05

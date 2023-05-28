@@ -1,5 +1,3 @@
-use crate::vector::Vector;
-
 /// Trait to describe a particle which consists of a [position](Particle::position) and a [gravitational parameter mu](Particle::mu).
 ///
 /// #### Deriving:
@@ -74,36 +72,22 @@ pub trait Particle {
     fn mu(&self) -> Self::Scalar;
 }
 
-/// Conversion to a point-mass.
-///
-/// A point-mass is a tuple of the [position](Particle::position) and the [gravitational parameter](Particle::mu) of a particle.
-pub(crate) trait IntoPointMass<A>: Particle
-where
-    Self::Vector: Vector<A>,
-{
-    #[inline]
-    fn point(&self) -> <Self::Vector as Vector<A>>::Internal {
-        self.position().into_internal()
-    }
+/// Point-mass representation of a [`Particle`].
+pub type PointMass<P> =
+    crate::algorithms::PointMass<<P as Particle>::Vector, <P as Particle>::Scalar>;
 
+/// Trait to convert a [`Particle`] to a [`PointMass`](crate::algorithms::PointMass).
+pub trait IntoPointMass: Particle {
+    /// Converts the particle to a [`PointMass`](crate::algorithms::PointMass).
     #[inline]
-    fn point_mass(&self) -> (<Self::Vector as Vector<A>>::Internal, Self::Scalar) {
-        (self.point(), self.mu())
+    fn point_mass(&self) -> PointMass<Self> {
+        PointMass::<Self>::new(self.position(), self.mu())
     }
 }
 
-impl<P, A> IntoPointMass<A> for P
-where
-    P: Particle,
-    P::Vector: Vector<A>,
-{
-}
+impl<P: Particle> IntoPointMass for P {}
 
-impl<V, S> Particle for (V, S)
-where
-    S: Clone,
-    V: Clone,
-{
+impl<V: Clone, S: Clone> Particle for (V, S) {
     type Scalar = S;
 
     type Vector = V;
@@ -119,10 +103,7 @@ where
     }
 }
 
-impl<P> Particle for &P
-where
-    P: Particle,
-{
+impl<P: Particle> Particle for &P {
     type Scalar = P::Scalar;
 
     type Vector = P::Vector;
@@ -138,10 +119,7 @@ where
     }
 }
 
-impl<P> Particle for &mut P
-where
-    P: Particle,
-{
+impl<P: Particle> Particle for &mut P {
     type Scalar = P::Scalar;
 
     type Vector = P::Vector;

@@ -1,9 +1,7 @@
-use super::{
-    bbox::{Orthant, Positionable},
-    Node, NodeID, Tree, TreeData,
+use crate::algorithms::{
+    tree::{Node, NodeID, Orthant, Positionable, Tree, TreeData},
+    InternalVector, PointMass, Scalar,
 };
-
-use crate::vector::{InternalVector, Scalar};
 
 /// Trait to compute the acceleration of particles using the [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) algorithm.
 pub trait BarnesHutTree<T, S> {
@@ -11,7 +9,7 @@ pub trait BarnesHutTree<T, S> {
     fn acceleration_at(&self, node: Option<NodeID>, position: T, theta: S) -> T;
 }
 
-impl<const N: usize, T, S> BarnesHutTree<T, S> for Tree<(Orthant<N>, S), (T, S)>
+impl<const N: usize, T, S> BarnesHutTree<T, S> for Tree<(Orthant<N>, S), PointMass<T, S>>
 where
     S: Scalar,
     T: InternalVector<Scalar = S>,
@@ -24,7 +22,7 @@ where
 
         let p2 = self.data[id];
 
-        let dir = p2.0 - position;
+        let dir = p2.position - position;
         let mag_2 = dir.length_squared();
         let mag = mag_2.sqrt();
 
@@ -39,35 +37,37 @@ where
                     return dir;
                 }
 
-                dir * p2.1 / (mag_2 * mag)
+                dir * p2.mass / (mag_2 * mag)
             }
         }
     }
 }
 
-impl<T, S> TreeData for (T, S)
+impl<T, S> TreeData for PointMass<T, S>
 where
     S: Scalar,
     T: InternalVector<Scalar = S>,
 {
+    #[inline]
     fn compute_data(data: &[Self]) -> Self {
-        let total_mass = data.iter().map(|p| p.1).sum();
+        let total_mass = data.iter().map(|p| p.mass).sum();
         let com = data
             .iter()
-            .map(|p| p.0 * (p.1 / total_mass))
+            .map(|p| p.position * (p.mass / total_mass))
             .sum();
-        (com, total_mass)
+        PointMass::new(com, total_mass)
     }
 }
 
-impl<T, S> Positionable for (T, S)
+impl<T, S> Positionable for PointMass<T, S>
 where
     S: Scalar,
     T: InternalVector<Scalar = S>,
 {
     type Vector = T;
 
+    #[inline]
     fn position(self) -> T {
-        self.0
+        self.position
     }
 }

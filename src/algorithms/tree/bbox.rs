@@ -1,5 +1,7 @@
-use super::{NodeID, Tree, TreeData};
-use crate::vector::{InternalVector, Scalar};
+use crate::algorithms::{
+    tree::{NodeID, Tree, TreeData},
+    InternalVector, Scalar,
+};
 
 /// An axis-aligned bounding box using arrays.
 #[derive(Clone, Copy)]
@@ -65,6 +67,7 @@ impl<const DIM: usize, S> Default for BoundingBox<[S; DIM]>
 where
     S: Scalar,
 {
+    #[inline]
     fn default() -> Self {
         Self {
             min: [S::INFINITY; DIM],

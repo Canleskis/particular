@@ -1,24 +1,29 @@
-use std::borrow::Cow;
-
-use glam::Vec3A;
-
 pub(crate) struct WgpuData {
     bind_group: wgpu::BindGroup,
     buffer_particles: wgpu::Buffer,
-    buffer_massive_particles: wgpu::Buffer,
+    buffer_massive: wgpu::Buffer,
     buffer_accelerations: wgpu::Buffer,
     buffer_staging: wgpu::Buffer,
     compute_pipeline: wgpu::ComputePipeline,
-    pub work_group_count: u32,
+    size_buffer_particles: u64,
     pub particle_count: u64,
+    pub work_group_count: u32,
 }
 
 impl WgpuData {
     #[inline]
-    pub fn init(particle_count: u64, massive_count: u64, device: &wgpu::Device) -> Self {
+    pub fn init(
+        particle_size: u64,
+        particle_count: u64,
+        massive_count: u64,
+        device: &wgpu::Device,
+    ) -> Self {
+        let size_buffer_particles = particle_count * particle_size;
+        let size_buffer_massive = massive_count * particle_size;
+
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::ShaderSource::Wgsl(Cow::Borrowed(include_str!("compute.wgsl"))),
+            source: wgpu::ShaderSource::Wgsl(include_str!("compute.wgsl").into()),
         });
 
         let compute_bind_group_layout =
@@ -30,7 +35,7 @@ impl WgpuData {
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: true },
                             has_dynamic_offset: false,
-                            min_binding_size: wgpu::BufferSize::new(particle_count * 4 * 4),
+                            min_binding_size: wgpu::BufferSize::new(size_buffer_particles),
                         },
                         count: None,
                     },
@@ -40,7 +45,7 @@ impl WgpuData {
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: true },
                             has_dynamic_offset: false,
-                            min_binding_size: wgpu::BufferSize::new(massive_count * 4 * 4),
+                            min_binding_size: wgpu::BufferSize::new(size_buffer_massive),
                         },
                         count: None,
                     },
@@ -50,7 +55,7 @@ impl WgpuData {
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: false },
                             has_dynamic_offset: false,
-                            min_binding_size: wgpu::BufferSize::new(particle_count * 4 * 4),
+                            min_binding_size: wgpu::BufferSize::new(size_buffer_particles),
                         },
                         count: None,
                     },
@@ -75,28 +80,28 @@ impl WgpuData {
         let buffer_particles = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Particle buffer"),
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
-            size: particle_count * 4 * 4,
+            size: size_buffer_particles,
             mapped_at_creation: false,
         });
 
-        let buffer_massive_particles = device.create_buffer(&wgpu::BufferDescriptor {
+        let buffer_massive = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Massive particle buffer"),
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::STORAGE,
-            size: massive_count * 4 * 4,
+            size: size_buffer_massive,
             mapped_at_creation: false,
         });
 
         let buffer_accelerations = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Accelerations buffer"),
             usage: wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::STORAGE,
-            size: particle_count * 4 * 4,
+            size: size_buffer_particles,
             mapped_at_creation: false,
         });
 
         let buffer_staging = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Staging buffer"),
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-            size: particle_count * 4 * 4,
+            size: size_buffer_particles,
             mapped_at_creation: false,
         });
 
@@ -109,7 +114,7 @@ impl WgpuData {
                 },
                 wgpu::BindGroupEntry {
                     binding: 1,
-                    resource: buffer_massive_particles.as_entire_binding(),
+                    resource: buffer_massive.as_entire_binding(),
                 },
                 wgpu::BindGroupEntry {
                     binding: 2,
@@ -124,17 +129,18 @@ impl WgpuData {
         WgpuData {
             bind_group,
             buffer_particles,
-            buffer_massive_particles,
+            buffer_massive,
             buffer_accelerations,
             buffer_staging,
             compute_pipeline,
-            work_group_count,
+            size_buffer_particles,
             particle_count,
+            work_group_count,
         }
     }
 
     #[inline]
-    pub fn compute_pass(&self, device: &wgpu::Device, queue: &wgpu::Queue) -> &Self {
+    pub fn compute_pass(&self, device: &wgpu::Device, queue: &wgpu::Queue) {
         let encoder_descriptor = wgpu::CommandEncoderDescriptor { label: None };
         let mut encoder = device.create_command_encoder(&encoder_descriptor);
 
@@ -149,71 +155,37 @@ impl WgpuData {
         }
         encoder.pop_debug_group();
 
+        // TODO: Potentially wrong buffer size.
         encoder.copy_buffer_to_buffer(
             &self.buffer_accelerations,
             0,
             &self.buffer_staging,
             0,
-            self.particle_count * 4 * 4,
+            self.size_buffer_particles,
         );
 
         queue.submit(Some(encoder.finish()));
-
-        self
     }
 
     #[inline]
-    pub fn write_particle_data(
+    pub fn write_particle_data<T: bytemuck::Pod>(
         &self,
-        particles: &[(Vec3A, f32)],
-        massive: &[(Vec3A, f32)],
+        particles: &[T],
+        massive: &[T],
         queue: &wgpu::Queue,
-    ) -> &Self {
-        let massive_data: Vec<f32> = massive
-            .iter()
-            .flat_map(|point_mass| {
-                let [x, y, z]: [f32; 3] = point_mass.0.into();
-                [x, y, z, point_mass.1]
-            })
-            .collect();
-
-        let particles_data: Vec<f32> = particles
-            .iter()
-            .flat_map(|point_mass| {
-                let [x, y, z]: [f32; 3] = point_mass.0.into();
-                [x, y, z, point_mass.1]
-            })
-            .collect();
-
-        queue.write_buffer(
-            &self.buffer_massive_particles,
-            0,
-            bytemuck::cast_slice(&massive_data),
-        );
-
-        queue.write_buffer(
-            &self.buffer_particles,
-            0,
-            bytemuck::cast_slice(&particles_data),
-        );
-
-        self
+    ) {
+        queue.write_buffer(&self.buffer_massive, 0, bytemuck::cast_slice(massive));
+        queue.write_buffer(&self.buffer_particles, 0, bytemuck::cast_slice(particles));
     }
 
     #[inline]
-    pub fn read_accelerations(&self, device: &wgpu::Device) -> Vec<Vec3A> {
+    pub fn read_accelerations<T: bytemuck::Pod>(&self, device: &wgpu::Device) -> Vec<T> {
         let buffer = self.buffer_staging.slice(..);
         buffer.map_async(wgpu::MapMode::Read, |_| {});
         device.poll(wgpu::Maintain::Wait);
 
         let data = buffer.get_mapped_range();
-
-        // Because of alignment rules each vec3<f32> in array is 16 bytes (even though they technically are 12 bytes, 4 bytes for the 3 f32s).
-        // We discard the extra value.
-        let result = bytemuck::cast_slice(&data)
-            .chunks(4)
-            .map(|slice| Vec3A::new(slice[0], slice[1], slice[2]))
-            .collect();
+        let result = bytemuck::cast_slice(&data).to_vec();
 
         drop(data);
         self.buffer_staging.unmap();

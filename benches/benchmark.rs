@@ -6,22 +6,10 @@ use rand::{thread_rng, Rng};
 use glam::Vec3 as Vector;
 use particular::prelude::*;
 
-struct Dummy;
-
-impl ComputeMethod<Vector, f32> for Dummy {
-    fn compute(&mut self, particles: &[(Vector, f32)]) -> Vec<Vector> {
-        vec![Vector::ZERO; particles.len()]
-    }
-}
-
 #[derive(Particle, Clone)]
 pub struct Body {
     position: Vector,
     mu: f32,
-}
-
-fn get_acceleration(bodies: &[Body], cm: &mut impl ComputeMethod<glam::Vec3A, f32>) {
-    let _ = bodies.iter().accelerations(cm).collect::<Vec<_>>();
 }
 
 fn random_bodies(i: usize) -> Vec<Body> {
@@ -54,40 +42,40 @@ fn criterion_benchmark(c: &mut Criterion) {
             group.bench_with_input(
                 BenchmarkId::new("gpu::BruteForce", i),
                 &bodies,
-                |b, input| b.iter(|| get_acceleration(input, &mut cm)),
+                |b, input| b.iter(|| input.iter().accelerations(&mut cm).collect::<Vec<_>>()),
             );
         }
 
         #[cfg(feature = "parallel")]
         {
-            let mut cm = parallel::BruteForce;
+            let cm = parallel::BruteForce;
             group.bench_with_input(
                 BenchmarkId::new("parallel::BruteForce", i),
                 &bodies,
-                |b, input| b.iter(|| get_acceleration(input, &mut cm)),
+                |b, input| b.iter(|| input.iter().accelerations(cm).collect::<Vec<_>>()),
             );
 
-            let mut cm = parallel::BarnesHut { theta: 1.0 };
+            let cm = parallel::BarnesHut { theta: 1.0 };
             group.bench_with_input(
                 BenchmarkId::new("parallel::BarnesHut", i),
                 &bodies,
-                |b, input| b.iter(|| get_acceleration(input, &mut cm)),
+                |b, input| b.iter(|| input.iter().accelerations(cm).collect::<Vec<_>>()),
             );
         }
 
         {
-            let mut cm = sequential::BruteForce;
+            let cm = sequential::BruteForce;
             group.bench_with_input(
                 BenchmarkId::new("sequential::BruteForce", i),
                 &bodies,
-                |b, input| b.iter(|| get_acceleration(input, &mut cm)),
+                |b, input| b.iter(|| input.iter().accelerations(cm).collect::<Vec<_>>()),
             );
 
-            let mut cm = sequential::BarnesHut { theta: 1.0 };
+            let cm = sequential::BarnesHut { theta: 1.0 };
             group.bench_with_input(
                 BenchmarkId::new("sequential::BarnesHut", i),
                 &bodies,
-                |b, input| b.iter(|| get_acceleration(input, &mut cm)),
+                |b, input| b.iter(|| input.iter().accelerations(cm).collect::<Vec<_>>()),
             );
         }
     }

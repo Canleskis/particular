@@ -53,9 +53,9 @@ pub trait InternalVector:
     + Send
     + Copy
     + Default
+    + PartialEq
     + AddAssign
     + SubAssign
-    + PartialEq
     + From<Self::Array>
     + Into<Self::Array>
     + Add<Output = Self>

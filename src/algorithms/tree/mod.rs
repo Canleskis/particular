@@ -4,7 +4,8 @@ pub mod bbox;
 /// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) algorithm implementation for compatible trees.
 pub mod barnes_hut;
 
-type NodeID = u32;
+pub use barnes_hut::*;
+pub use bbox::*;
 
 /// Node of a [`Tree`].
 pub enum Node<N> {
@@ -25,6 +26,9 @@ pub struct Tree<N, D> {
     pub data: Vec<D>,
 }
 
+/// Index of a [`Node`] in a [`Tree`].
+pub type NodeID = u32;
+
 impl<N, D> Tree<N, D> {
     /// Creates a new empty `Tree`.
     pub fn new() -> Self {
@@ -40,7 +44,7 @@ impl<N, D> Tree<N, D> {
     pub fn build_node<B>(&mut self, data: Vec<D>, bbox: B) -> Option<NodeID>
     where
         D: TreeData,
-        B: bbox::BoundingBoxDivide<D, Output = N>,
+        B: BoundingBoxDivide<D, Output = N>,
     {
         if data.is_empty() {
             return None;
