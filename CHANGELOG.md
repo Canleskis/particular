@@ -9,15 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking changes
 
-- `ComputeMethod` generic over a storage and vector type.
+- `ComputeMethod` generic over a storage and output type.
 - `ComputeMethod::compute` expects its storage type.
 - `ComputeMethod` has `Output` associated type returned by `ComputeMethod::compute`.
 
 ### Added
 
-- `Compute` extending `Iterator` trait zipping an iterator with the computed value of each item using a given `ComputeMethod`.
-- `FromMassive` and `ParticleSet` structs implementing `Storage` used for available `ComputeMethods`.
-- `sequential::BruteForceAlt` `ComputeMethod`, slower `sequential::BruteForce` not iterating over the combinations of pair of particles (but more flexible by using `FromMassive`).
+- `Compute` trait extending `Iterator` with `compute` method zipping an iterator with the computed value of each item using a given `ComputeMethod`.
+- `Output` associated type for `ComputeMethod` trait.
+- `PointMass` struct representing a particle backing available `ComputeMethods`.
+- `FromMassive` and `ParticleSet` structs implementing `Storage` backing available `ComputeMethods`.
+- `sequential::BruteForceAlt` `ComputeMethod`, slower `sequential::BruteForce` alternative not iterating over the combinations of pair of particles (but more flexible by using `FromMassive`).
 - `Scalar` and `InternalVector` traits to help genericity of built-in `ComputeMethods`.
 - `Tree`, `Node`, `Orthant`, `BoundingBox` structs and `TreeData`, `BoundingBoxDivide`, `BarnesHutTree` traits backing `BarnesHut` compute methods.
 
