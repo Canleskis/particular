@@ -1,3 +1,5 @@
+use std::iter::{zip, Zip};
+
 /// Trait to perform a computation of values of type `V` between objects contained in a storage of type `S`.
 ///
 /// # Example
@@ -76,8 +78,7 @@ where
     }
 }
 
-pub(crate) type ComputeResult<U, O> =
-    std::iter::Zip<std::vec::IntoIter<U>, <O as IntoIterator>::IntoIter>;
+pub(crate) type ComputeResult<U, O> = Zip<std::vec::IntoIter<U>, <O as IntoIterator>::IntoIter>;
 
 /// Trait to perform a computation from an iterator using a provided [`ComputeMethod`].
 pub trait Compute: Iterator {
@@ -95,7 +96,7 @@ pub trait Compute: Iterator {
         let items: Vec<_> = self.collect();
         let storage = S::new(items.iter().map(f));
 
-        items.into_iter().zip(cm.compute(storage).into_iter())
+        zip(items, cm.compute(storage))
     }
 }
 

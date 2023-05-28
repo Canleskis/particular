@@ -40,13 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.1] - 2023-22-03
 
-### Fixed
-
-- Panic when `BarnesHut` tree is empty.
-
 ### Changed
 
 - `iterators` module renamed to `iterator`.
+
+### Fixed
+
+- Panic when `BarnesHut` tree is empty.
 
 ## [0.5.0] - 2023-22-03
 
