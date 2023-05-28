@@ -6,25 +6,25 @@
 /// # use particular::prelude::*;
 /// # use glam::{Vec3A, Vec3};
 /// use particular::algorithms::FromMassive;
-/// 
+///
 /// struct AccelerationCalculator;
 ///
 /// impl compute_method::ComputeMethod<FromMassive<Vec3A, f32>, Vec3> for AccelerationCalculator {
-///     type Output = Box<dyn Iterator<Item = Vec3>>;
+///     type Output = Vec<Vec3>;
 ///     
 ///     fn compute(self, storage: FromMassive<Vec3A, f32>) -> Self::Output {
 ///         // ...
-///         # Box::new(Vec::new().into_iter())
+///         # Vec::new()
 ///     }
 /// }
 /// ```
 pub trait ComputeMethod<S, V> {
-    /// Iterator that yields the computed values `V`.
+    /// IntoIterator that yields the computed values `V`.
     type Output: IntoIterator<Item = V>;
 
     /// Performs the computation between objects contained in the storage.
     ///
-    /// The computed values of type `V` are returned as an iterator defined by [`ComputeMethod::Output`].
+    /// The computed values of type `V` should be contained in a type implementing [`IntoIterator`] as defined by [`ComputeMethod::Output`].
     fn compute(self, storage: S) -> Self::Output;
 }
 
@@ -36,7 +36,7 @@ pub trait ComputeMethod<S, V> {
 /// # use particular::prelude::*;
 /// # use glam::Vec3;
 /// use particular::algorithms::PointMass;
-/// 
+///
 /// // An emtpy storage...
 /// struct MyStorage;
 ///
@@ -76,8 +76,8 @@ where
     }
 }
 
-use std::{iter, vec};
-pub(crate) type ComputeResult<U, O> = iter::Zip<vec::IntoIter<U>, <O as IntoIterator>::IntoIter>;
+pub(crate) type ComputeResult<U, O> =
+    std::iter::Zip<std::vec::IntoIter<U>, <O as IntoIterator>::IntoIter>;
 
 /// Trait to perform a computation from an iterator using a provided [`ComputeMethod`].
 pub trait Compute: Iterator {
