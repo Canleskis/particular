@@ -14,9 +14,9 @@ const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass<[f32; 3], f32>>() as u6
 ///
 /// Currently only available for 3D f32 vectors. You can still use it in 2D by converting your 2D f32 vectors to 3D f32 vectors until this is fixed.
 pub struct BruteForce {
+    wgpu_data: Option<WgpuData>,
     device: ::wgpu::Device,
     queue: ::wgpu::Queue,
-    wgpu_data: Option<WgpuData>,
 }
 
 impl<V> ComputeMethod<FromMassive<[f32; 3], f32>, V> for &mut BruteForce
@@ -63,9 +63,9 @@ impl BruteForce {
         let (device, queue) = pollster::block_on(setup_wgpu());
 
         Self {
+            wgpu_data: None,
             device,
             queue,
-            wgpu_data: None,
         }
     }
 
@@ -81,9 +81,9 @@ impl BruteForce {
         ));
 
         Self {
+            wgpu_data,
             device,
             queue,
-            wgpu_data,
         }
     }
 }
@@ -94,10 +94,10 @@ impl Default for BruteForce {
     }
 }
 
-impl<V, S, const DIM: usize> Storage<PointMass<V, S>> for FromMassive<[S; DIM], S>
+impl<S, const DIM: usize, V> Storage<PointMass<V, S>> for FromMassive<[S; DIM], S>
 where
-    V: Into<[S; DIM]> + 'static,
     S: Scalar + 'static,
+    V: Into<[S; DIM]> + 'static,
 {
     #[inline]
     fn new(input: impl Iterator<Item = PointMass<V, S>>) -> Self {
@@ -115,6 +115,6 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        tests::acceleration_computation(&mut BruteForce::default());
+        tests::acceleration_computation(&mut BruteForce::new());
     }
 }

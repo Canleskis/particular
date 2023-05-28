@@ -88,7 +88,7 @@ pub trait BoundingBoxDivide<D>: Sized {
     fn divide(&self, tree: &mut Tree<Self::Output, D>, data: Vec<D>) -> Option<Self::Output>;
 }
 
-/// A trait for types that can be positioned in space.
+/// A trait for types that can be located in space.
 pub trait Positionable {
     /// The type of vector used to represent the position.
     type Vector;
