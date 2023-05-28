@@ -55,6 +55,7 @@ where
             .iter()
             .map(|p| p.position * (p.mass / total_mass))
             .sum();
+
         PointMass::new(com, total_mass)
     }
 }
@@ -67,7 +68,7 @@ where
     type Vector = T;
 
     #[inline]
-    fn position(self) -> T {
+    fn position(&self) -> T {
         self.position
     }
 }

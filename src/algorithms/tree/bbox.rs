@@ -1,6 +1,6 @@
 use crate::algorithms::{
     tree::{NodeID, Tree, TreeData},
-    InternalVector, Scalar,
+    Scalar,
 };
 
 /// An axis-aligned bounding box using arrays.
@@ -91,17 +91,17 @@ pub trait BoundingBoxDivide<D>: Sized {
 /// A trait for types that can be positioned in space.
 pub trait Positionable {
     /// The type of vector used to represent the position.
-    type Vector: InternalVector;
+    type Vector;
 
     /// Returns the position of the object.
-    fn position(self) -> Self::Vector;
+    fn position(&self) -> Self::Vector;
 }
 
-impl<T, D, S> BoundingBoxDivide<D> for BoundingBox<[S; 2]>
+impl<D, S> BoundingBoxDivide<D> for BoundingBox<[S; 2]>
 where
     S: Scalar,
-    T: InternalVector<Scalar = S, Array = [S; 2]>,
-    D: Positionable<Vector = T> + TreeData + Copy,
+    D: Positionable + TreeData,
+    D::Vector: PartialEq + Into<[S; 2]>,
 {
     type Output = (Orthant<4>, S);
 
@@ -152,11 +152,11 @@ where
     }
 }
 
-impl<T, D, S> BoundingBoxDivide<D> for BoundingBox<[S; 3]>
+impl<D, S> BoundingBoxDivide<D> for BoundingBox<[S; 3]>
 where
     S: Scalar,
-    T: InternalVector<Scalar = S, Array = [S; 3]>,
-    D: Positionable<Vector = T> + TreeData + Copy,
+    D: Positionable + TreeData,
+    D::Vector: PartialEq + Into<[S; 3]>,
 {
     type Output = (Orthant<8>, S);
 
