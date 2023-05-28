@@ -5,6 +5,8 @@
 /// ```
 /// # use particular::prelude::*;
 /// # use glam::{Vec3A, Vec3};
+/// use particular::algorithms::FromMassive;
+/// 
 /// struct AccelerationCalculator;
 ///
 /// impl compute_method::ComputeMethod<FromMassive<Vec3A, f32>, Vec3> for AccelerationCalculator {
@@ -32,12 +34,13 @@ pub trait ComputeMethod<S, V> {
 ///
 /// ```
 /// # use particular::prelude::*;
-/// # use compute_method::*;
 /// # use glam::Vec3;
+/// use particular::algorithms::PointMass;
+/// 
 /// // An emtpy storage...
 /// struct MyStorage;
 ///
-/// impl Storage<PointMass<Vec3, f32>> for MyStorage {
+/// impl compute_method::Storage<PointMass<Vec3, f32>> for MyStorage {
 ///     fn new(input: impl Iterator<Item = PointMass<Vec3, f32>>) -> Self {
 ///         // ...
 ///         # MyStorage
