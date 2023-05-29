@@ -10,7 +10,7 @@ where
 {
     /// Computes the acceleration of the iterated [`Particles`](Particle) using the provided [`ComputeMethod`].
     ///
-    /// This method effectively returns the original iterator zipped with the acceleration of its particles. <br>
+    /// This method effectively returns the original iterator zipped with the acceleration of its particles.
     ///
     /// # Example
     /// ```
@@ -28,7 +28,6 @@ where
     #[inline]
     fn accelerations<S, C>(self, cm: C) -> ComputeResult<Self::Item, C::Output>
     where
-        Self: Sized,
         S: Storage<PointMass<Self::Item>>,
         C: ComputeMethod<S, <Self::Item as Particle>::Vector>,
     {
@@ -42,7 +41,7 @@ pub trait MapAccelerations: Compute {
     /// The closure should return a type implementing [`Particle`]. <br>
     /// Note that [`Particle`] is implemented for tuples of a vector and its scalar type.
     ///
-    /// This method effectively returns the original iterator zipped with the acceleration of its mapped particles. <br>
+    /// This method effectively returns the original iterator zipped with the acceleration of its mapped particles.
     ///
     /// # Example
     /// ```
@@ -62,7 +61,6 @@ pub trait MapAccelerations: Compute {
     #[inline]
     fn map_accelerations<P, F, S, C>(self, mut f: F, cm: C) -> ComputeResult<Self::Item, C::Output>
     where
-        Self: Sized,
         P: Particle,
         F: FnMut(&Self::Item) -> P,
         S: Storage<PointMass<P>>,

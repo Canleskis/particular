@@ -63,6 +63,18 @@ impl<V, S> PointMass<V, S> {
         }
     }
 
+    /// Returns the position of the object.
+    #[inline]
+    pub fn position(self) -> V {
+        self.position
+    }
+
+    /// Returns the mass of the object.
+    #[inline]
+    pub fn mass(self) -> S {
+        self.mass
+    }
+
     /// Returns true if the mass is zero.
     #[inline]
     pub fn is_massless(&self) -> bool

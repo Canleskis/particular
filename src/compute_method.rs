@@ -81,14 +81,13 @@ where
 pub(crate) type ComputeResult<U, O> = Zip<std::vec::IntoIter<U>, <O as IntoIterator>::IntoIter>;
 
 /// Trait to perform a computation from an iterator using a provided [`ComputeMethod`].
-pub trait Compute: Iterator {
+pub trait Compute: Iterator + Sized {
     /// Performs the computation on the iterated items using the provided [`ComputeMethod`] after calling the closure on them.
     ///
     /// This method effectively returns the original iterator zipped with the computed value of each item.
     #[inline]
     fn compute<B, F, S, C, V>(self, f: F, cm: C) -> ComputeResult<Self::Item, C::Output>
     where
-        Self: Sized,
         F: FnMut(&Self::Item) -> B,
         S: Storage<B>,
         C: ComputeMethod<S, V>,
