@@ -115,6 +115,6 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        tests::acceleration_computation(&mut BruteForce::new(), 0.01);
+        tests::acceleration_computation(&mut BruteForce::new(), 1e-2);
     }
 }

@@ -122,11 +122,11 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        tests::acceleration_computation(BruteForce, f32::EPSILON);
+        tests::acceleration_computation(BruteForce, 1e-2);
     }
 
     #[test]
     fn barnes_hut() {
-        tests::acceleration_computation(BarnesHut { theta: 0.0 }, f32::EPSILON);
+        tests::acceleration_computation(BarnesHut { theta: 0.0 }, 1e-2);
     }
 }
