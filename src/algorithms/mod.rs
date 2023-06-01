@@ -10,6 +10,9 @@ pub mod tree;
 /// to abstract common internal vectors operations and their conversion from and into arbitrary vectors.
 pub mod vector;
 
+/// Storage implementations used by built-in [`ComputeMethods`](crate::compute_method::ComputeMethod).
+pub mod storage;
+
 /// Compute methods that use the GPU.
 #[cfg(feature = "gpu")]
 pub mod gpu;
@@ -32,9 +35,8 @@ pub mod compute_methods {
     pub use super::sequential;
 }
 
+pub use storage::*;
 pub use vector::*;
-
-use crate::compute_method::Storage;
 
 /// Point-mass representation of an object in space.
 #[derive(Debug, Default, Clone, Copy)]
@@ -97,9 +99,9 @@ impl<V, S> PointMass<V, S> {
 impl<V, S> PointMass<V, S> {
     /// Converts from a [`PointMass<V, S>`] to a [`PointMass<V::Internal, S>`] provided `V` implements [`Vector`].
     #[inline]
-    pub fn into_internal<A>(self) -> PointMass<V::Internal, S>
+    pub fn into_internal<A>(self) -> PointMass<V::InternalVector, S>
     where
-        V: Vector<A>,
+        V: IntoInternalVector<A>,
     {
         PointMass {
             position: self.position.into_internal(),
@@ -112,7 +114,7 @@ impl<V, S> PointMass<V, S> {
     pub fn from_internal<T>(self) -> PointMass<T, S>
     where
         V: InternalVector<Scalar = S>,
-        T: Vector<V::Array, Internal = V>,
+        T: IntoInternalVector<V::Array, InternalVector = V>,
     {
         PointMass {
             position: T::from_internal(self.position),
@@ -121,96 +123,30 @@ impl<V, S> PointMass<V, S> {
     }
 }
 
-/// Storage for particles with massive and affected particles in two separate vectors.
-pub struct FromMassive<T, S> {
-    /// Particles used to compute the acceleration of the `affected` particles.
-    pub massive: Vec<PointMass<T, S>>,
-    /// Particles for which the acceleration is computed.
-    ///
-    /// This vector and the `massive` vector can share particles.
-    pub affected: Vec<PointMass<T, S>>,
-}
-
-impl<T, S> FromMassive<T, S> {
-    /// Creates a new [`FromMassive`] instance with the given vectors of particles.
-    #[inline]
-    pub fn new(massive: Vec<PointMass<T, S>>, affected: Vec<PointMass<T, S>>) -> Self {
-        Self { massive, affected }
-    }
-
-    /// Creates a new [`FromMassive`] instance from an iterator of particles.
-    ///
-    /// This method collects the particles from the iterator into the `affected` vector and copies the ones with mass to populate the `massive` vector.
-    #[inline]
-    pub fn from(particles: impl Iterator<Item = PointMass<T, S>>) -> Self
-    where
-        T: Copy,
-        S: Default + PartialEq + Copy,
-    {
-        let affected: Vec<_> = particles.collect();
-        let massive: Vec<_> = affected
-            .iter()
-            .filter(|p| p.is_massive())
-            .copied()
-            .collect();
-
-        Self { massive, affected }
-    }
-}
-
-impl<T, S, V> Storage<PointMass<V, S>> for FromMassive<T, S>
-where
-    S: Scalar + 'static,
-    T: InternalVector<Scalar = S> + 'static,
-    V: Vector<T::Array, Internal = T> + 'static,
-{
-    #[inline]
-    fn new(input: impl Iterator<Item = PointMass<V, S>>) -> Self {
-        Self::from(input.map(PointMass::into_internal))
-    }
-}
-
-/// Simple storage for particles using a vector.
-pub struct ParticleSet<T, S> {
-    /// Particles for which the acceleration is computed.
-    pub particles: Vec<PointMass<T, S>>,
-}
-
-impl<T, S, V> Storage<PointMass<V, S>> for ParticleSet<T, S>
-where
-    S: Scalar + 'static,
-    T: InternalVector<Scalar = S> + 'static,
-    V: Vector<T::Array, Internal = T> + 'static,
-{
-    #[inline]
-    fn new(input: impl Iterator<Item = PointMass<V, S>>) -> Self {
-        ParticleSet {
-            particles: input.map(PointMass::into_internal).collect(),
-        }
-    }
-}
-
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use crate::compute_method::ComputeMethod;
+    use crate::compute_method::{ComputeMethod, Storage};
     use glam::Vec3A;
 
-    pub fn acceleration_computation<S, C>(cm: C)
+    pub fn acceleration_computation<S, C>(cm: C, epsilon: f32)
     where
         C: ComputeMethod<S, Vec3A>,
         S: Storage<PointMass<Vec3A, f32>>,
     {
         let massive = vec![
-            PointMass::new(Vec3A::splat(0.0), 2.0),
-            PointMass::new(Vec3A::splat(1.0), 3.0),
+            PointMass::new(Vec3A::splat(0.0), 20.0),
+            PointMass::new(Vec3A::splat(1.0), 30.0),
+            PointMass::new(Vec3A::splat(-3.0), 40.0),
         ];
 
         let particles = vec![
             PointMass::new(Vec3A::splat(3.0), 0.0),
             massive[0],
             massive[1],
+            massive[2],
             PointMass::new(Vec3A::splat(5.0), 0.0),
+            PointMass::new(Vec3A::splat(-5.0), 0.0),
         ];
 
         let storage = S::new(particles.clone().into_iter());
@@ -224,11 +160,13 @@ pub(crate) mod tests {
                 let mag_2 = dir.length_squared();
 
                 if mag_2 != 0.0 {
-                    acceleration += dir * point_mass2.mass / (mag_2 * mag_2.sqrt());
+                    acceleration += dir * point_mass2.mass * mag_2.recip().sqrt() / mag_2;
                 }
             }
 
-            assert!((acceleration).abs_diff_eq(computed, f32::EPSILON))
+            dbg!(acceleration);
+            dbg!(computed);
+            assert!((acceleration).abs_diff_eq(computed, epsilon))
         }
     }
 }

@@ -65,12 +65,14 @@ fn criterion_benchmark(c: &mut Criterion) {
         #[cfg(feature = "parallel")]
         {
             bench_compute_method(&bodies, &mut group, parallel::BruteForce);
+            bench_compute_method(&bodies, &mut group, parallel::BruteForceSIMD);
             bench_compute_method(&bodies, &mut group, parallel::BarnesHut { theta: 1.0 });
         }
 
         {
             bench_compute_method(&bodies, &mut group, sequential::BruteForce);
             bench_compute_method(&bodies, &mut group, sequential::BruteForceAlt);
+            bench_compute_method(&bodies, &mut group, sequential::BruteForceSIMD);
             bench_compute_method(&bodies, &mut group, sequential::BarnesHut { theta: 1.0 });
         }
     }

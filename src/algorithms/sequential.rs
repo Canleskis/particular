@@ -1,20 +1,21 @@
 use crate::{
     algorithms::{
         tree::{BarnesHutTree, BoundingBox, BoundingBoxDivide, Orthant, Tree},
-        FromMassive, InternalVector, ParticleSet, PointMass, Scalar, Vector,
+        FromMassive, FromMassiveSIMD, InternalVector, IntoInternalVector, IntoSIMDElement,
+        ParticleSet, PointMass, SIMDScalar, SIMDVector, Scalar,
     },
     compute_method::ComputeMethod,
 };
 
 /// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU.
-#[derive(Clone, Copy)]
+#[derive(Default, Clone, Copy)]
 pub struct BruteForce;
 
 impl<T, S, V> ComputeMethod<ParticleSet<T, S>, V> for BruteForce
 where
     S: Scalar + 'static,
     T: InternalVector<Scalar = S> + 'static,
-    V: Vector<T::Array, Internal = T> + 'static,
+    V: IntoInternalVector<T::Array, InternalVector = T> + 'static,
 {
     type Output = Box<dyn Iterator<Item = V>>;
 
@@ -76,14 +77,14 @@ where
 /// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU.
 ///
 /// This differs from [`BruteForce`] by not iterating over the combinations of pair of particles, making it slower.
-#[derive(Clone, Copy)]
+#[derive(Default, Clone, Copy)]
 pub struct BruteForceAlt;
 
 impl<T, S, V> ComputeMethod<FromMassive<T, S>, V> for BruteForceAlt
 where
     S: Scalar + 'static,
     T: InternalVector<Scalar = S> + 'static,
-    V: Vector<T::Array, Internal = T> + 'static,
+    V: IntoInternalVector<T::Array, InternalVector = T> + 'static,
 {
     type Output = Box<dyn Iterator<Item = V>>;
 
@@ -115,8 +116,41 @@ where
     }
 }
 
+/// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
+#[derive(Default, Clone, Copy)]
+pub struct BruteForceSIMD;
+
+impl<const LANES: usize, T, S, V> ComputeMethod<FromMassiveSIMD<LANES, T, S>, V> for BruteForceSIMD
+where
+    S: SIMDScalar<LANES> + 'static,
+    T: SIMDVector<LANES, SIMDScalar = S> + 'static,
+    V: IntoSIMDElement<T::Element, SIMDVector = T> + 'static,
+{
+    type Output = Box<dyn Iterator<Item = V>>;
+
+    #[inline]
+    fn compute(self, storage: FromMassiveSIMD<LANES, T, S>) -> Self::Output {
+        Box::new(
+            storage
+                .affected
+                .into_iter()
+                .map(move |p1| {
+                    storage.massive.iter().fold(T::default(), |acc, p2| {
+                        let dir = p2.position - p1.position;
+                        let mag_2 = dir.length_squared();
+
+                        let grav_acc = dir * p2.mass * (mag_2.recip_sqrt() * mag_2.recip());
+
+                        acc + grav_acc.nan_to_zero()
+                    })
+                })
+                .map(V::from_after_reduce),
+        )
+    }
+}
+
 /// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`](ComputeMethod) using the CPU.
-#[derive(Clone, Copy)]
+#[derive(Default, Clone, Copy)]
 pub struct BarnesHut<S> {
     /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as [`BruteForce`].
     pub theta: S,
@@ -127,7 +161,7 @@ where
     S: Scalar + 'static,
     T: InternalVector<Scalar = S, Array = [S; DIM]> + 'static,
     BoundingBox<T::Array>: BoundingBoxDivide<PointMass<T, S>, Output = (Orthant<N>, S)>,
-    V: Vector<T::Array, Internal = T> + 'static,
+    V: IntoInternalVector<T::Array, InternalVector = T> + 'static,
 {
     type Output = Box<dyn Iterator<Item = V>>;
 
@@ -154,16 +188,21 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        tests::acceleration_computation(BruteForce);
+        tests::acceleration_computation(BruteForce, f32::EPSILON);
     }
 
     #[test]
     fn brute_force_alt() {
-        tests::acceleration_computation(BruteForceAlt);
+        tests::acceleration_computation(BruteForceAlt, f32::EPSILON);
+    }
+
+    #[test]
+    fn brute_force_simd() {
+        tests::acceleration_computation(BruteForceSIMD, 1e-2);
     }
 
     #[test]
     fn barnes_hut() {
-        tests::acceleration_computation(BarnesHut { theta: 0.0 });
+        tests::acceleration_computation(BarnesHut { theta: 0.0 }, f32::EPSILON);
     }
 }

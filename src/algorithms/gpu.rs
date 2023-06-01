@@ -52,7 +52,7 @@ where
                 .read_accelerations(&self.device)
                 .into_iter()
                 // 1 byte padding between each vec3<f32>.
-                .map(|slice: [f32; 4]| V::from([slice[0], slice[1], slice[2]])),
+                .map(|acc: [f32; 4]| V::from([acc[0], acc[1], acc[2]])),
         )
     }
 }
@@ -115,6 +115,6 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        tests::acceleration_computation(&mut BruteForce::new());
+        tests::acceleration_computation(&mut BruteForce::new(), 0.01);
     }
 }
