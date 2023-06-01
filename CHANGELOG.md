@@ -5,28 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-28-05
-
-### Breaking changes
-
-- `ComputeMethod` generic over a storage and output type.
-- `ComputeMethod::compute` expects its storage type.
-- `ComputeMethod` has `Output` associated type returned by `ComputeMethod::compute`.
+## Unreleased - 2023-01-06
 
 ### Added
 
-- `Compute` trait extending `Iterator` with `compute` method zipping an iterator with the computed value of each item using a given `ComputeMethod`.
-- `Output` associated type for `ComputeMethod` trait.
 - `PointMass` struct representing a particle backing available `ComputeMethods`.
-- `FromMassive` and `ParticleSet` structs implementing `Storage` backing available `ComputeMethods`.
-- `sequential::BruteForceAlt` `ComputeMethod`, slower `sequential::BruteForce` alternative not iterating over the combinations of pair of particles (but more flexible by using `FromMassive`).
-- `Scalar` and `InternalVector` traits to help genericity of built-in `ComputeMethods`.
-- `Tree`, `Node`, `Orthant`, `BoundingBox` structs and `TreeData`, `BoundingBoxDivide`, `BarnesHutTree` traits backing `BarnesHut` compute methods.
+- `Compute` trait extending `Iterator` with a `compute` method used by `Accelerations` and `MapAccelerations`.
+- `sequential::BruteForceAlt` compute method, slower `sequential::BruteForce` alternative not iterating over the combinations of pair of particles (but more flexible by using `FromMassive`).
+- `parallel::BruteForceSIMD` and `sequential::BruteForceSIMD` compute methods making use of explicit SIMD instructions for major performance benefits using [ultraviolet](https://github.com/fu5ha/ultraviolet).
+- `Scalar` and `InternalVector` traits to help genericity of built-in non-SIMD compute methods.
+- `IntoSIMDElement`, `SIMD`, `SIMDScalar`, `SIMDVector` and `ReduceAdd` traits to help genericity of built-in SIMD compute methods.
+- `FromMassive` and `ParticleSet` structs implementing `Storage` backing non-SIMD compute methods.
+- `FromMassiveSIMD` struct implementing `Storage` backing SIMD compute methods.
+- `Tree`, `Node`, `Orthant`, `BoundingBox` structs and `TreeData`, `BoundingBoxDivide`, `Positionable`, `BarnesHutTree` traits backing BarnesHut compute methods.
 
 ### Changed
 
+- Available compute methods moved to `algorithms` module.
 - Built-in `ComputeMethod` implementations use `Scalar` and `InternalVector` traits.
-- `tree` module and submodules now public.
+- `ComputeMethod` generic over a storage and output type.
+- `ComputeMethod::compute` expects a storage type.
+- `ComputeMethod` has `Output` associated type returned by `ComputeMethod::compute`.
+- `Compute`, `MapCompute` traits renamed to `Accelerations` and `MapAccelerations` and no longer generic.
+- `Vector` trait renamed to `IntoInternalVector` and its associated type to `InternalVector`.
+- `compute_method` no longer glob imported in prelude.
+- `tree` module and submodules made public.
+- `vector` made submodule of `algorithms` module and public.
 
 ## [0.5.2] - 2023-16-05
 
@@ -50,12 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2023-22-03
 
-### Breaking changes
-
-- Remove `ParticleSet`. Use `accelerations` and `map_accelerations` methods on iterators instead.
-- `ComputeMethod::compute` takes slice of all the particles.
-- `gpu::BruteForce` only available for 3D f32 vectors.
-
 ### Added
 
 - `BarnesHut` compute method available for 2D and 3D float vectors. Available in sequential and parallel versions (only force computation is parallelized).
@@ -66,24 +64,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `ComputeMethod::compute` takes slice of all the particles instead of two vectors, massive and massless.
 - Generic brute-force compute methods implemented directly using `Normed` trait for internal vectors.
 - `Vector` trait generic over full array type instead of dimension and scalar.
 - 2D f32 vectors use `glam::Vec2` instead of `glam::Vec3A`.
-- `ComputeMethod::compute` takes slice of all the particles instead of two vectors, massive and massless.
+- `gpu::BruteForce` only available for 3D f32 vectors.
 
 ### Removed
 
-- `ParticleSet`.
+- `ParticleSet`. Use `accelerations` and `map_accelerations` methods on iterators instead.
 
 ## [0.4.0] - 2023-22-02
-
-### Breaking changes
-
-- Remove #[dim] attribute to derive `Particle` and `particle` attribute macro.
-- Associated type `Vector` of `Particle` does not need to be wrapped in `VectorDescriptor`.
-- `Particle` implementations require associated type `Scalar`.
-- `result` method of `ParticleSet` returns immutable references.
-- `result` and `accelerations` methods of `ParticleSet` take a `ComputeMethod` as a parameter.
 
 ### Added
 
@@ -97,7 +88,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `result` method of `ParticleSet` returns immutable references. Use `result_mut` instead for mutable references.
 - `Vector` trait is now generic with a scalar to represent vector types of any float.
 - A dimension is no longer required to be bound to a given vector by the user.
-- `ParticleSet` is agnostic to the computation of the acceleration.
+- `result` and `accelerations` methods of `ParticleSet` take a `ComputeMethod` as a parameter.
+- Associated type `Vector` of `Particle` does not need to be wrapped in `VectorDescriptor`.
+- `Particle` implementations require associated type `Scalar`.
 
 ### Removed
 
@@ -113,12 +106,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - 2022-10-01
 
-### Breaking changes
-
-- Return tuple of `result` in `ParticleSet` is reversed.
-- Associated type `Vector` of `Particle` now requires vector type to be wrapped with a `VectorDescriptor`, binding a dimension to it.
-- Deriving `Particle` requires #[dim] attribute to associate a dimension to the vector type used for the position.
-
 ### Added
 
 - New useful methods for iterating over the `ParticleSet`.
@@ -129,6 +116,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Return tuple of `result` in `ParticleSet` is reversed.
+- Associated type `Vector` of `Particle` now requires vector type to be wrapped with a `VectorDescriptor`, binding a dimension to it.
+- Deriving `Particle` requires #[dim] attribute to associate a dimension to the vector type used for the position.
 - `Vector` trait is now generic with a constant and only cares about From & Into arrays implementations.
 
 ### Removed
@@ -139,15 +129,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2022-09-17
 
-### Breaking changes
-
-- `Particle` now generic regarding its position type to allow for any vector to be used (any dimension, SIMD, ...). Uses new `Vector` and `NormedVector` traits.
-
 ### Added
 
 - `Vector` and `NormedVector` traits to describe generic vectors.
 - Features `glam` (default feature), `nalgebra` and `cgmath` implements `Vector` and `NormedVector` for their vector types.
 - `normed_vector!` macro to easily implement (recommended) `Vector` and `NormedVector` for a user-defined vector.
+
+### Changed
+
+- `Particle` now generic regarding its position type to allow for any vector to be used (any dimension, SIMD, ...). Uses new `Vector` and `NormedVector` traits.
 
 ## 0.1.0 - 2022-08-18
 
