@@ -181,6 +181,6 @@ pub mod prelude {
     pub use crate::algorithms::compute_methods::*;
     pub use crate::compute_method;
     pub use crate::iterator::{Accelerations, MapAccelerations};
-    pub use crate::particle::{IntoPointMass, Particle};
+    pub use crate::particle::{IntoPointMass, Particle, PointMass};
     pub use crate::particular_derive::*;
 }
