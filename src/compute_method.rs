@@ -51,7 +51,7 @@ pub trait ComputeMethod<S, V> {
 /// ```
 pub trait Storage<P> {
     /// Creates a new storage.
-    fn new(input: impl Iterator<Item = P>) -> Self;
+    fn store(input: impl Iterator<Item = P>) -> Self;
 }
 
 impl<C, S, V> ComputeMethod<S, V> for &C
@@ -93,7 +93,7 @@ pub trait Compute: Iterator + Sized {
         C: ComputeMethod<S, V>,
     {
         let items: Vec<_> = self.collect();
-        let storage = S::new(items.iter().map(f));
+        let storage = S::store(items.iter().map(f));
 
         zip(items, cm.compute(storage))
     }

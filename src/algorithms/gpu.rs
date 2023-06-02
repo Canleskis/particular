@@ -100,7 +100,7 @@ where
     V: Into<[S; DIM]> + 'static,
 {
     #[inline]
-    fn new(input: impl Iterator<Item = PointMass<V, S>>) -> Self {
+    fn store(input: impl Iterator<Item = PointMass<V, S>>) -> Self {
         Self::from(input.map(PointMass::into))
     }
 }

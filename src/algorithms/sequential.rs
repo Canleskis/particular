@@ -135,6 +135,7 @@ where
                 .affected
                 .into_iter()
                 .map(move |p1| {
+                    let p1 = PointMass::new(T::splat(p1.position), S::splat(p1.mass));
                     storage.massive.iter().fold(T::default(), |acc, p2| {
                         let dir = p2.position - p1.position;
                         let mag_2 = dir.length_squared();

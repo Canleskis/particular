@@ -9,14 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `PointMass` struct representing a particle backing available `ComputeMethods`.
 - `Compute` trait extending `Iterator` with a `compute` method used by `Accelerations` and `MapAccelerations`.
+- `algorithms` module.
 - `sequential::BruteForceAlt` compute method, slower `sequential::BruteForce` alternative not iterating over the combinations of pair of particles (but more flexible by using `FromMassive`).
-- `parallel::BruteForceSIMD` and `sequential::BruteForceSIMD` compute methods making use of explicit SIMD instructions for major performance benefits using [ultraviolet](https://github.com/fu5ha/ultraviolet).
+- `parallel::BruteForceSIMD` and `sequential::BruteForceSIMD` compute methods making use of explicit SIMD instructions for major performance benefits on compatible platforms using [ultraviolet](https://github.com/fu5ha/ultraviolet).
 - `Scalar` and `InternalVector` traits to help genericity of built-in non-SIMD compute methods.
 - `IntoSIMDElement`, `SIMD`, `SIMDScalar`, `SIMDVector` and `ReduceAdd` traits to help genericity of built-in SIMD compute methods.
 - `FromMassive` and `ParticleSet` structs implementing `Storage` backing non-SIMD compute methods.
 - `FromMassiveSIMD` struct implementing `Storage` backing SIMD compute methods.
+- `PointMass` struct representing a particle for built-in storages.
 - `Tree`, `Node`, `Orthant`, `BoundingBox` structs and `TreeData`, `BoundingBoxDivide`, `Positionable`, `BarnesHutTree` traits backing BarnesHut compute methods.
 
 ### Changed
@@ -30,7 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Vector` trait renamed to `IntoInternalVector` and its associated type to `InternalVector`.
 - `compute_method` no longer glob imported in prelude.
 - `tree` module and submodules made public.
-- `vector` made submodule of `algorithms` module and public.
+- `vector` made public and submodule of `algorithms`.
+
+### Removed
+
+- `Accelerations` iterator. Relevant methods now use the ``Zip` iterator directly.
 
 ## [0.5.2] - 2023-16-05
 

@@ -144,29 +144,29 @@ pub trait IntoSIMDElement<E> {
     /// SIMD representation of a vector.
     type SIMDVector;
 
-    /// Converts the arbitrary vector into its SIMDElement.
+    /// Converts the arbitrary vector into its [`SIMD::Element`].
     fn into_simd_element(self) -> E;
 
     /// Reduces the SIMD vector (by summing its lanes) into the arbitrary vector.
     fn from_after_reduce(vector: Self::SIMDVector) -> Self;
 }
 
-/// SIMD objects descriptor with constructors.
+/// Trait for SIMD objects and their creation.
 pub trait SIMD<const LANES: usize> {
     /// Element from which the SIMD value can be created.
-    type Element: Copy + PartialEq + Default;
+    type Element: Send + Sync + Copy + PartialEq + Default;
 
     /// Creates a SIMD value with all lanes set to the specified value.
-    fn splat(scalar: Self::Element) -> Self;
+    fn splat(value: Self::Element) -> Self;
 
     /// Constructs a SIMD value from the given values.
-    fn from_lanes(vecs: [Self::Element; LANES]) -> Self;
+    fn from_lanes(values: [Self::Element; LANES]) -> Self;
 }
 
 /// Scalar types that compose [`SIMDVector`] objects.
 pub trait SIMDScalar<const LANES: usize>:
-    Sync
-    + Send
+    Send
+    + Sync
     + Copy
     + Default
     + AddAssign
@@ -247,13 +247,13 @@ macro_rules! simd_vector {
             type Element = $te;
 
             #[inline]
-            fn splat(scalar: Self::Element) -> Self {
-                Self::splat(scalar)
+            fn splat(value: Self::Element) -> Self {
+                Self::splat(value)
             }
 
             #[inline]
-            fn from_lanes(vecs: [Self::Element; $l]) -> Self {
-                Self::from(vecs)
+            fn from_lanes(values: [Self::Element; $l]) -> Self {
+                Self::from(values)
             }
         }
 
