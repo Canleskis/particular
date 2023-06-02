@@ -7,7 +7,7 @@ use crate::{
     compute_method::ComputeMethod,
 };
 
-/// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU.
+/// A brute-force [`ComputeMethod`] using the CPU.
 #[derive(Default, Clone, Copy)]
 pub struct BruteForce;
 
@@ -74,9 +74,9 @@ where
     }
 }
 
-/// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU.
+/// A brute-force [`ComputeMethod`] using the CPU.
 ///
-/// This differs from [`BruteForce`] by not iterating over the combinations of pair of particles, making it slower.
+/// This differs from [`BruteForce`] by not iterating over all pairs of particles instead of the combination of pairs, making it slower.
 #[derive(Default, Clone, Copy)]
 pub struct BruteForceAlt;
 
@@ -101,7 +101,6 @@ where
                         .fold(T::default(), |acceleration, &p2| {
                             let dir = p2.position - p1.position;
                             let mag_2 = dir.length_squared();
-
                             let grav_acc = if mag_2 != S::default() {
                                 dir * p2.mass / (mag_2 * mag_2.sqrt())
                             } else {
@@ -116,7 +115,7 @@ where
     }
 }
 
-/// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
+/// A brute-force [`ComputeMethod`] using the CPU and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
 #[derive(Default, Clone, Copy)]
 pub struct BruteForceSIMD;
 
@@ -139,7 +138,6 @@ where
                     storage.massive.iter().fold(T::default(), |acc, p2| {
                         let dir = p2.position - p1.position;
                         let mag_2 = dir.length_squared();
-
                         let grav_acc = dir * p2.mass * (mag_2.recip_sqrt() * mag_2.recip());
 
                         acc + grav_acc.nan_to_zero()
@@ -150,7 +148,7 @@ where
     }
 }
 
-/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`](ComputeMethod) using the CPU.
+/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`] using the CPU.
 #[derive(Default, Clone, Copy)]
 pub struct BarnesHut<S> {
     /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as [`BruteForce`].
@@ -161,15 +159,14 @@ impl<T, S, const DIM: usize, const N: usize, V> ComputeMethod<FromMassive<T, S>,
 where
     S: Scalar + 'static,
     T: InternalVector<Scalar = S, Array = [S; DIM]> + 'static,
+    V: IntoInternalVector<T::Array, InternalVector = T>,
     BoundingBox<T::Array>: BoundingBoxDivide<PointMass<T, S>, Output = (Orthant<N>, S)>,
-    V: IntoInternalVector<T::Array, InternalVector = T> + 'static,
 {
     type Output = Box<dyn Iterator<Item = V>>;
 
     #[inline]
     fn compute(self, storage: FromMassive<T, S>) -> Self::Output {
         let mut tree = Tree::new();
-
         let bbox = BoundingBox::containing(storage.massive.iter().map(|p| p.position.into()));
         let root = tree.build_node(storage.massive, bbox);
 

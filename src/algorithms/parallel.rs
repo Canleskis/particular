@@ -6,23 +6,22 @@ use crate::{
     },
     compute_method::ComputeMethod,
 };
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-/// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU with [rayon](https://github.com/rayon-rs/rayon).
+/// A brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon).
 #[derive(Default, Clone, Copy)]
 pub struct BruteForce;
 
 impl<T, S, V> ComputeMethod<FromMassive<T, S>, V> for BruteForce
 where
-    S: Scalar + 'static,
-    T: InternalVector<Scalar = S> + 'static,
-    V: IntoInternalVector<T::Array, InternalVector = T> + Send + 'static,
+    S: Scalar,
+    T: InternalVector<Scalar = S>,
+    V: IntoInternalVector<T::Array, InternalVector = T> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
     fn compute(self, storage: FromMassive<T, S>) -> Self::Output {
-        use rayon::iter::{IntoParallelIterator, ParallelIterator};
-
         storage
             .affected
             .into_par_iter()
@@ -33,7 +32,6 @@ where
                     .fold(T::default(), |acceleration, &p2| {
                         let dir = p2.position - p1.position;
                         let mag_2 = dir.length_squared();
-
                         let grav_acc = if mag_2 != S::default() {
                             dir * p2.mass / (mag_2 * mag_2.sqrt())
                         } else {
@@ -48,7 +46,7 @@ where
     }
 }
 
-/// A brute-force [`ComputeMethod`](ComputeMethod) using the CPU with [rayon](https://github.com/rayon-rs/rayon) and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
+/// A brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
 #[derive(Default, Clone, Copy)]
 pub struct BruteForceSIMD;
 
@@ -62,8 +60,6 @@ where
 
     #[inline]
     fn compute(self, storage: FromMassiveSIMD<LANES, T, S>) -> Self::Output {
-        use rayon::iter::{IntoParallelIterator, ParallelIterator};
-
         storage
             .affected
             .into_par_iter()
@@ -72,7 +68,6 @@ where
                 storage.massive.iter().fold(T::default(), |acc, p2| {
                     let dir = p2.position - p1.position;
                     let mag_2 = dir.length_squared();
-
                     let grav_acc = dir * p2.mass * (mag_2.recip_sqrt() * mag_2.recip());
 
                     acc + grav_acc.nan_to_zero()
@@ -83,7 +78,7 @@ where
     }
 }
 
-/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`](ComputeMethod) using the CPU with [rayon](https://github.com/rayon-rs/rayon) for the force computation.
+/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) for the force computation.
 #[derive(Default, Clone, Copy)]
 pub struct BarnesHut<S> {
     /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as [`BruteForce`].
@@ -92,19 +87,16 @@ pub struct BarnesHut<S> {
 
 impl<T, S, const DIM: usize, const N: usize, V> ComputeMethod<FromMassive<T, S>, V> for BarnesHut<S>
 where
-    S: Scalar + 'static,
-    T: InternalVector<Scalar = S, Array = [S; DIM]> + 'static,
+    S: Scalar,
+    T: InternalVector<Scalar = S, Array = [S; DIM]>,
+    V: IntoInternalVector<T::Array, InternalVector = T> + Send,
     BoundingBox<T::Array>: BoundingBoxDivide<PointMass<T, S>, Output = (Orthant<N>, S)>,
-    V: IntoInternalVector<T::Array, InternalVector = T> + Send + 'static,
 {
     type Output = Vec<V>;
 
     #[inline]
     fn compute(self, storage: FromMassive<T, S>) -> Self::Output {
-        use rayon::iter::{IntoParallelIterator, ParallelIterator};
-
         let mut tree = Tree::new();
-
         let bbox = BoundingBox::containing(storage.massive.iter().map(|p| p.position.into()));
         let root = tree.build_node(storage.massive, bbox);
 
@@ -124,6 +116,11 @@ mod tests {
     #[test]
     fn brute_force() {
         tests::acceleration_computation(BruteForce, 1e-2);
+    }
+
+    #[test]
+    fn brute_force_simd() {
+        tests::acceleration_computation(BruteForceSIMD, 1e-2);
     }
 
     #[test]

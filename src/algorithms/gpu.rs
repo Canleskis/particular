@@ -8,11 +8,11 @@ use crate::{
 
 const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass<[f32; 3], f32>>() as u64;
 
-/// A brute-force [`ComputeMethod`](ComputeMethod) using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
+/// A brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
 ///
-/// This struct should not be recreated every iteration in order to maintain performance as it holds initialized data used by WGPU for computing on the GPU.
+/// This struct should not be recreated every iteration for performance reasons as it holds initialized data used by WGPU for computing on the GPU.
 ///
-/// Currently only available for 3D f32 vectors. You can still use it in 2D by converting your 2D f32 vectors to 3D f32 vectors until this is fixed.
+/// Currently only available for 3D f32 vectors. You can still use it in 2D by converting your 2D f32 vectors to 3D f32 vectors.
 pub struct BruteForce {
     wgpu_data: Option<WgpuData>,
     device: ::wgpu::Device,
