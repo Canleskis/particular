@@ -43,7 +43,7 @@ pub trait ComputeMethod<S, V> {
 /// struct MyStorage;
 ///
 /// impl compute_method::Storage<PointMass<Vec3, f32>> for MyStorage {
-///     fn new(input: impl Iterator<Item = PointMass<Vec3, f32>>) -> Self {
+///     fn store(input: impl Iterator<Item = PointMass<Vec3, f32>>) -> Self {
 ///         // ...
 ///         # MyStorage
 ///     }

@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- `Accelerations` iterator. Relevant methods now use the ``Zip` iterator directly.
+- `Accelerations` iterator. Relevant methods now use the `Zip` iterator directly.
 
 ## [0.5.2] - 2023-16-05
 
