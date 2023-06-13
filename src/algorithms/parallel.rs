@@ -1,31 +1,32 @@
 use crate::{
     algorithms::{
-        tree::{BarnesHutTree, BoundingBox, BoundingBoxDivide, Orthant, Tree},
-        FromMassive, FromMassiveSIMD, InternalVector, IntoInternalVector, IntoSIMDElement,
-        PointMass, SIMDScalar, SIMDVector, Scalar,
+        internal, simd,
+        tree::{BarnesHutTree, BoundingBox, SubDivide, Tree},
+        MassiveAffected, MassiveAffectedSIMD, PointMass,
     },
     compute_method::ComputeMethod,
 };
-use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-/// A brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon).
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+
+/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon).
 #[derive(Default, Clone, Copy)]
 pub struct BruteForce;
 
-impl<T, S, V> ComputeMethod<FromMassive<T, S>, V> for BruteForce
+impl<T, S, V> ComputeMethod<MassiveAffected<T, S>, V> for BruteForce
 where
-    S: Scalar,
-    T: InternalVector<Scalar = S>,
-    V: IntoInternalVector<T::Array, InternalVector = T> + Send,
+    S: internal::Scalar,
+    T: internal::Vector<Scalar = S>,
+    V: internal::IntoVectorArray<T::Array, Vector = T> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: FromMassive<T, S>) -> Self::Output {
+    fn compute(self, storage: MassiveAffected<T, S>) -> Self::Output {
         storage
             .affected
-            .into_par_iter()
-            .map(move |p1| {
+            .par_iter()
+            .map(|p1| {
                 storage
                     .massive
                     .iter()
@@ -46,23 +47,24 @@ where
     }
 }
 
-/// A brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
+/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
 #[derive(Default, Clone, Copy)]
 pub struct BruteForceSIMD;
 
-impl<const LANES: usize, T, S, V> ComputeMethod<FromMassiveSIMD<LANES, T, S>, V> for BruteForceSIMD
+impl<const LANES: usize, T, S, V> ComputeMethod<MassiveAffectedSIMD<LANES, T, S>, V>
+    for BruteForceSIMD
 where
-    S: SIMDScalar<LANES>,
-    T: SIMDVector<LANES, SIMDScalar = S>,
-    V: IntoSIMDElement<T::Element, SIMDVector = T> + Send,
+    S: simd::Scalar<LANES>,
+    T: simd::Vector<LANES, Scalar = S>,
+    V: simd::IntoVectorElement<T::Element, Vector = T> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: FromMassiveSIMD<LANES, T, S>) -> Self::Output {
+    fn compute(self, storage: MassiveAffectedSIMD<LANES, T, S>) -> Self::Output {
         storage
             .affected
-            .into_par_iter()
+            .par_iter()
             .map(|p1| {
                 let p1 = PointMass::new(T::splat(p1.position), S::splat(p1.mass));
                 storage.massive.iter().fold(T::default(), |acc, p2| {
@@ -74,7 +76,7 @@ where
                 })
             })
             .map(V::from_after_reduce)
-            .collect::<Vec<_>>()
+            .collect()
     }
 }
 
@@ -85,25 +87,26 @@ pub struct BarnesHut<S> {
     pub theta: S,
 }
 
-impl<T, S, const DIM: usize, const N: usize, V> ComputeMethod<FromMassive<T, S>, V> for BarnesHut<S>
+impl<T, S, const DIM: usize, const N: usize, V> ComputeMethod<MassiveAffected<T, S>, V>
+    for BarnesHut<S>
 where
-    S: Scalar,
-    T: InternalVector<Scalar = S, Array = [S; DIM]>,
-    V: IntoInternalVector<T::Array, InternalVector = T> + Send,
-    BoundingBox<T::Array>: BoundingBoxDivide<PointMass<T, S>, Output = (Orthant<N>, S)>,
+    S: internal::Scalar,
+    T: internal::Vector<Scalar = S, Array = [S; DIM]>,
+    V: internal::IntoVectorArray<T::Array, Vector = T> + Send,
+    BoundingBox<T::Array>: SubDivide<Divison = [BoundingBox<T::Array>; N]>,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: FromMassive<T, S>) -> Self::Output {
+    fn compute(self, storage: MassiveAffected<T, S>) -> Self::Output {
         let mut tree = Tree::new();
-        let bbox = BoundingBox::containing(storage.massive.iter().map(|p| p.position.into()));
-        let root = tree.build_node(storage.massive, bbox);
+        let bbox = BoundingBox::square_with(storage.massive.iter().map(|p| p.position.into()));
+        let root = tree.build_node(&storage.massive, bbox);
 
         storage
             .affected
-            .into_par_iter()
-            .map(move |p| V::from_internal(tree.acceleration_at(root, p.position, self.theta)))
+            .par_iter()
+            .map(|p| V::from_internal(tree.acceleration_at(root, p.position, self.theta)))
             .collect()
     }
 }

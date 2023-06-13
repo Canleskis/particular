@@ -5,33 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-01-06
+## Unreleased - 2023-13-06
 
 ### Added
 
+- `Storage` trait for inputs of `ComputeMethod::compute`.
 - `Compute` trait extending `Iterator` with a `compute` method used by `Accelerations` and `MapAccelerations`.
 - `algorithms` module.
-- `sequential::BruteForceAlt` compute method, slower `sequential::BruteForce` alternative not iterating over the combinations of pair of particles (but more flexible by using `FromMassive`).
+- `sequential::BruteForceCombinationsAlt` compute method.
 - `parallel::BruteForceSIMD` and `sequential::BruteForceSIMD` compute methods making use of explicit SIMD instructions for major performance benefits on compatible platforms using [ultraviolet](https://github.com/fu5ha/ultraviolet).
-- `Scalar` and `InternalVector` traits to help genericity of built-in non-SIMD compute methods.
-- `IntoSIMDElement`, `SIMD`, `SIMDScalar`, `SIMDVector` and `ReduceAdd` traits to help genericity of built-in SIMD compute methods.
-- `FromMassive` and `ParticleSet` structs implementing `Storage` backing non-SIMD compute methods.
-- `FromMassiveSIMD` struct implementing `Storage` backing SIMD compute methods.
+- `internal::Scalar` and `internal::Vector` traits to help genericity of built-in non-SIMD compute methods.
+- `simd::IntoVectorElement`, `simd::SIMD`, `simd::Scalar`, `simd::Vector` and `simd::ReduceAdd` traits to help genericity of built-in SIMD compute methods.
+- `MassiveAffected` and `ParticleSet` structs implementing `Storage` backing non-SIMD compute methods.
+- `MassiveAffectedSIMD` struct implementing `Storage` backing SIMD compute methods.
 - `PointMass` struct representing a particle for built-in storages.
-- `Tree`, `Node`, `Orthant`, `BoundingBox` structs and `TreeData`, `BoundingBoxDivide`, `Positionable`, `BarnesHutTree` traits backing BarnesHut compute methods.
+- `Tree`, `Node`, `SizedOrthant`, `BoundingBox` structs and `TreeData`, `Subdivide`, `Positionable`, `BarnesHutTree` traits backing BarnesHut compute methods.
 
 ### Changed
 
-- Available compute methods moved to `algorithms` module.
-- Built-in `ComputeMethod` implementations use `Scalar` and `InternalVector` traits.
 - `ComputeMethod` generic over a storage and output type.
 - `ComputeMethod::compute` expects a storage type.
 - `ComputeMethod` has `Output` associated type returned by `ComputeMethod::compute`.
 - `Compute`, `MapCompute` traits renamed to `Accelerations` and `MapAccelerations` and no longer generic.
-- `Vector` trait renamed to `IntoInternalVector` and its associated type to `InternalVector`.
+- `Vector` trait renamed to `IntoVectorArray` and its associated type to `Vector` and moved to `internal` submodule.
+- `InternalVector` trait renamed to `Vector` and moved with `Scalar` trait to `internal` submodule.
 - `compute_method` no longer glob imported in prelude.
 - `tree` module and submodules made public.
-- `vector` made public and submodule of `algorithms`.
+- `vector` module made public and part of `algorithms`.
+- renamed `sequential::BruteForce` to `sequential::BruteForceCombinations`. `sequential::BruteForce` is now a naive implementation iterating over all pairs.
+- Built-in compute methods moved to `algorithms` module.
+- Built-in `ComputeMethod` implementations use `internal::Scalar` and `internal::Vector` traits.
 
 ### Removed
 

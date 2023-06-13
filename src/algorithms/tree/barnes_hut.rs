@@ -1,6 +1,7 @@
 use crate::algorithms::{
-    tree::{Node, NodeID, Orthant, Positionable, Tree, TreeData},
-    InternalVector, PointMass, Scalar,
+    internal,
+    tree::{BoundingBox, Node, NodeID, Positionable, SizedOrthant, Tree, TreeData},
+    PointMass,
 };
 
 /// Trait to compute the acceleration of particles using the [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) algorithm.
@@ -9,10 +10,13 @@ pub trait BarnesHutTree<T, S> {
     fn acceleration_at(&self, node: Option<NodeID>, position: T, theta: S) -> T;
 }
 
-impl<const N: usize, T, S> BarnesHutTree<T, S> for Tree<(Orthant<N>, S), PointMass<T, S>>
+type CompatibleTree<T, S, const DIM: usize, const N: usize> =
+    Tree<SizedOrthant<N, BoundingBox<[S; DIM]>>, PointMass<T, S>>;
+
+impl<T, S, const DIM: usize, const N: usize> BarnesHutTree<T, S> for CompatibleTree<T, S, DIM, N>
 where
-    S: Scalar,
-    T: InternalVector<Scalar = S>,
+    S: internal::Scalar,
+    T: internal::Vector<Scalar = S>,
 {
     fn acceleration_at(&self, node: Option<NodeID>, position: T, theta: S) -> T {
         let Some(id) = node else {
@@ -27,8 +31,8 @@ where
         let mag = mag_2.sqrt();
 
         match self.nodes[id] {
-            Node::Internal((Orthant(o), width)) if theta < width / mag => {
-                o.iter().fold(T::default(), |acceleration, &node| {
+            Node::Internal(SizedOrthant(orthant, bbox)) if theta < bbox.width() / mag => {
+                orthant.iter().fold(T::default(), |acceleration, &node| {
                     acceleration + self.acceleration_at(node, position, theta)
                 })
             }
@@ -45,8 +49,8 @@ where
 
 impl<T, S> TreeData for PointMass<T, S>
 where
-    S: Scalar,
-    T: InternalVector<Scalar = S>,
+    S: internal::Scalar,
+    T: internal::Vector<Scalar = S>,
 {
     #[inline]
     fn compute_data(data: &[Self]) -> Self {
@@ -62,8 +66,8 @@ where
 
 impl<T, S> Positionable for PointMass<T, S>
 where
-    S: Scalar,
-    T: InternalVector<Scalar = S>,
+    S: internal::Scalar,
+    T: internal::Vector<Scalar = S>,
 {
     type Vector = T;
 

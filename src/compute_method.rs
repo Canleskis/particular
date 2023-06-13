@@ -7,14 +7,14 @@ use std::iter::{zip, Zip};
 /// ```
 /// # use particular::prelude::*;
 /// # use glam::{Vec3A, Vec3};
-/// use particular::algorithms::FromMassive;
+/// use particular::algorithms::MassiveAffected;
 ///
 /// struct AccelerationCalculator;
 ///
-/// impl compute_method::ComputeMethod<FromMassive<Vec3A, f32>, Vec3> for AccelerationCalculator {
+/// impl compute_method::ComputeMethod<MassiveAffected<Vec3A, f32>, Vec3> for AccelerationCalculator {
 ///     type Output = Vec<Vec3>;
 ///     
-///     fn compute(self, storage: FromMassive<Vec3A, f32>) -> Self::Output {
+///     fn compute(self, storage: MassiveAffected<Vec3A, f32>) -> Self::Output {
 ///         // ...
 ///         # Vec::new()
 ///     }
@@ -43,7 +43,7 @@ pub trait ComputeMethod<S, V> {
 /// struct MyStorage;
 ///
 /// impl compute_method::Storage<PointMass<Vec3, f32>> for MyStorage {
-///     fn store(input: impl Iterator<Item = PointMass<Vec3, f32>>) -> Self {
+///     fn store<I: Iterator<Item = PointMass<Vec3, f32>>>(input: I) -> Self {
 ///         // ...
 ///         # MyStorage
 ///     }
@@ -51,7 +51,7 @@ pub trait ComputeMethod<S, V> {
 /// ```
 pub trait Storage<P> {
     /// Creates a new storage.
-    fn store(input: impl Iterator<Item = P>) -> Self;
+    fn store<I: Iterator<Item = P>>(input: I) -> Self;
 }
 
 impl<C, S, V> ComputeMethod<S, V> for &C

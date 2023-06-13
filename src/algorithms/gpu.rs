@@ -1,14 +1,15 @@
 use crate::{
     algorithms::{
+        internal,
         wgpu_data::{setup_wgpu, WgpuData},
-        FromMassive, PointMass, Scalar,
+        MassiveAffected, PointMass,
     },
     compute_method::{ComputeMethod, Storage},
 };
 
 const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass<[f32; 3], f32>>() as u64;
 
-/// A brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
+/// Brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
 ///
 /// This struct should not be recreated every iteration for performance reasons as it holds initialized data used by WGPU for computing on the GPU.
 ///
@@ -19,19 +20,23 @@ pub struct BruteForce {
     queue: ::wgpu::Queue,
 }
 
-impl<V> ComputeMethod<FromMassive<[f32; 3], f32>, V> for &mut BruteForce
+impl<V> ComputeMethod<MassiveAffected<[f32; 3], f32>, V> for &mut BruteForce
 where
-    V: From<[f32; 3]> + 'static,
+    V: From<[f32; 3]>,
 {
-    type Output = Box<dyn Iterator<Item = V>>;
+    type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: FromMassive<[f32; 3], f32>) -> Self::Output {
+    fn compute(self, storage: MassiveAffected<[f32; 3], f32>) -> Self::Output {
         let particles_len = storage.affected.len() as u64;
         let massive_len = storage.massive.len() as u64;
 
         if massive_len == 0 {
-            return Box::new(storage.affected.into_iter().map(|_| V::from([0.0; 3])));
+            return storage
+                .affected
+                .into_iter()
+                .map(|_| V::from([0.0; 3]))
+                .collect();
         }
 
         if let Some(wgpu_data) = &self.wgpu_data {
@@ -47,13 +52,12 @@ where
         wgpu_data.write_particle_data(&storage.affected, &storage.massive, &self.queue);
         wgpu_data.compute_pass(&self.device, &self.queue);
 
-        Box::new(
-            wgpu_data
-                .read_accelerations(&self.device)
-                .into_iter()
-                // 1 byte padding between each vec3<f32>.
-                .map(|acc: [f32; 4]| V::from([acc[0], acc[1], acc[2]])),
-        )
+        wgpu_data
+            .read_accelerations(&self.device)
+            .iter()
+            // 1 byte padding between each vec3<f32>.
+            .map(|acc: &[f32; 4]| V::from([acc[0], acc[1], acc[2]]))
+            .collect()
     }
 }
 
@@ -94,13 +98,13 @@ impl Default for BruteForce {
     }
 }
 
-impl<S, const DIM: usize, V> Storage<PointMass<V, S>> for FromMassive<[S; DIM], S>
+impl<S, const DIM: usize, V> Storage<PointMass<V, S>> for MassiveAffected<[S; DIM], S>
 where
-    S: Scalar + 'static,
-    V: Into<[S; DIM]> + 'static,
+    S: internal::Scalar,
+    V: Into<[S; DIM]>,
 {
     #[inline]
-    fn store(input: impl Iterator<Item = PointMass<V, S>>) -> Self {
+    fn store<I: Iterator<Item = PointMass<V, S>>>(input: I) -> Self {
         Self::from(input.map(PointMass::into))
     }
 }
