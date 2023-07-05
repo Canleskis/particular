@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Storage` trait for inputs of `ComputeMethod::compute`.
 - `Compute` trait extending `Iterator` with a `compute` method used by `Accelerations` and `MapAccelerations`.
 - `algorithms` module.
-- `sequential::BruteForceCombinationsAlt` compute method.
+- `sequential::BruteForcePairsAlt` compute method.
 - `parallel::BruteForceSIMD` and `sequential::BruteForceSIMD` compute methods making use of explicit SIMD instructions for major performance benefits on compatible platforms using [ultraviolet](https://github.com/fu5ha/ultraviolet).
 - `internal::Scalar` and `internal::Vector` traits to help genericity of built-in non-SIMD compute methods.
 - `simd::IntoVectorElement`, `simd::SIMD`, `simd::Scalar`, `simd::Vector` and `simd::ReduceAdd` traits to help genericity of built-in SIMD compute methods.
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `compute_method` no longer glob imported in prelude.
 - `tree` module and submodules made public.
 - `vector` module made public and part of `algorithms`.
-- renamed `sequential::BruteForce` to `sequential::BruteForceCombinations`. `sequential::BruteForce` is now a naive implementation iterating over all pairs.
+- renamed `sequential::BruteForce` to `sequential::BruteForcePairs`. `sequential::BruteForce` is changed to a naive implementation iterating over all pairs.
 - Built-in compute methods moved to `algorithms` module.
 - Built-in `ComputeMethod` implementations use `internal::Scalar` and `internal::Vector` traits.
 

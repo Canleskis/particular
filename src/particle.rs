@@ -1,3 +1,5 @@
+use crate::algorithms::PointMass;
+
 /// Trait to describe a particle which consists of a [position](Particle::position) and a [gravitational parameter mu](Particle::mu).
 ///
 /// #### Deriving:
@@ -72,16 +74,15 @@ pub trait Particle {
     fn mu(&self) -> Self::Scalar;
 }
 
-/// Point-mass representation of a [`Particle`].
-pub type PointMass<P> =
-    crate::algorithms::PointMass<<P as Particle>::Vector, <P as Particle>::Scalar>;
+/// [`PointMass`] representation of a [`Particle`].
+pub type ParticlePointMass<P> = PointMass<<P as Particle>::Vector, <P as Particle>::Scalar>;
 
-/// Trait to convert a [`Particle`] to a [`PointMass`](crate::algorithms::PointMass).
+/// Trait to convert a [`Particle`] to a [`PointMass`].
 pub trait IntoPointMass: Particle {
-    /// Converts the particle to a [`PointMass`](crate::algorithms::PointMass).
+    /// Converts the particle to a [`PointMass`].
     #[inline]
-    fn point_mass(&self) -> PointMass<Self> {
-        PointMass::<Self>::new(self.position(), self.mu())
+    fn point_mass(&self) -> ParticlePointMass<Self> {
+        ParticlePointMass::<Self>::new(self.position(), self.mu())
     }
 }
 

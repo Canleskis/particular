@@ -7,6 +7,7 @@ pub type InternalScalar<V, A> = <InternalVector<V, A> as internal::Vector>::Scal
 /// Internal representation of vectors used for expensive computations.
 pub mod internal {
     use std::{
+        fmt::Debug,
         iter::Sum,
         ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
     };
@@ -29,6 +30,7 @@ pub mod internal {
         + Sync
         + Send
         + Copy
+        + Debug
         + Default
         + PartialEq
         + PartialOrd
@@ -64,6 +66,7 @@ pub mod internal {
         + Sync
         + Send
         + Copy
+        + Debug
         + Default
         + PartialEq
         + AddAssign
@@ -159,7 +162,10 @@ pub type SIMDScalar<V, E, const L: usize> = <SIMDVector<V, E> as simd::Vector<L>
 
 /// SIMD representation of vectors used for expensive computations.
 pub mod simd {
-    use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+    use std::{
+        fmt::Debug,
+        ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+    };
 
     /// Arbitrary vectors that can be converted into the [`SIMD::Element`] of a given [`Vector`].
     pub trait IntoVectorElement<E> {
@@ -167,7 +173,7 @@ pub mod simd {
         type Vector;
 
         /// Converts the arbitrary vector into its [`SIMD::Element`].
-        fn into_simd_element(self) -> E;
+        fn into_element(self) -> E;
 
         /// Reduces the SIMD vector (by summing its lanes) into the arbitrary vector.
         fn from_after_reduce(vector: Self::Vector) -> Self;
@@ -176,7 +182,7 @@ pub mod simd {
     /// Trait for SIMD objects and their creation.
     pub trait SIMD<const LANES: usize> {
         /// Element from which the SIMD value can be created.
-        type Element: Send + Sync + Copy + PartialEq + Default;
+        type Element: Element;
 
         /// Creates a SIMD value with all lanes set to the specified value.
         fn splat(value: Self::Element) -> Self;
@@ -185,11 +191,15 @@ pub mod simd {
         fn from_lanes(values: [Self::Element; LANES]) -> Self;
     }
 
+    /// Elements of [`SIMD`] objects.
+    pub trait Element: Send + Sync + Copy + Default + PartialEq {}
+
     /// Scalar types that compose [`Vector`] objects.
     pub trait Scalar<const LANES: usize>:
         Send
         + Sync
         + Copy
+        + Debug
         + Default
         + AddAssign
         + SubAssign
@@ -218,6 +228,7 @@ pub mod simd {
         Send
         + Sync
         + Copy
+        + Debug
         + Default
         + ReduceAdd
         + AddAssign
@@ -267,6 +278,8 @@ pub mod simd {
                     Self::from(vecs)
                 }
             }
+
+            impl Element for $se {}
         $(
             impl SIMD<$l> for $t {
                 type Element = $te;
@@ -281,6 +294,8 @@ pub mod simd {
                     Self::from(values)
                 }
             }
+
+            impl Element for $te {}
 
             impl Vector<$l> for $t {
                 type Scalar = $s;
@@ -308,7 +323,7 @@ pub mod simd {
                 type Vector = $t;
 
                 #[inline]
-                fn into_simd_element(self) -> <$t as SIMD<$l>>::Element {
+                fn into_element(self) -> <$t as SIMD<$l>>::Element {
                     <$t as SIMD<$l>>::Element::from(self.into())
                 }
 

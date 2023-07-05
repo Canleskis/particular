@@ -105,7 +105,7 @@ where
 {
     #[inline]
     fn store<I: Iterator<Item = PointMass<V, S>>>(input: I) -> Self {
-        Self::from(input.map(PointMass::into))
+        Self::from_affected(input.map(PointMass::into).collect())
     }
 }
 

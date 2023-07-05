@@ -18,18 +18,6 @@ impl<V, S> PointMass<V, S> {
         Self { position, mass }
     }
 
-    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<T, S>`] provided `V` implements [`Into<T>`].
-    #[inline]
-    pub fn into<T>(self) -> PointMass<T, S>
-    where
-        V: Into<T>,
-    {
-        PointMass {
-            position: self.position.into(),
-            mass: self.mass,
-        }
-    }
-
     /// Returns true if the mass is zero.
     #[inline]
     pub fn is_massless(&self) -> bool
@@ -50,6 +38,18 @@ impl<V, S> PointMass<V, S> {
 }
 
 impl<V, S> PointMass<V, S> {
+    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<T, S>`] provided `V` implements [`Into<T>`].
+    #[inline]
+    pub fn into<T>(self) -> PointMass<T, S>
+    where
+        V: Into<T>,
+    {
+        PointMass {
+            position: self.position.into(),
+            mass: self.mass,
+        }
+    }
+
     /// Converts from a [`PointMass<V, S>`] to a [`PointMass<V::Internal, S>`] provided `V` implements [`internal::IntoVectorArray`].
     #[inline]
     pub fn into_internal<A>(self) -> PointMass<V::Vector, S>
@@ -59,27 +59,19 @@ impl<V, S> PointMass<V, S> {
         PointMass::new(self.position.into_internal(), self.mass)
     }
 
-    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<E, S>`] provided `V` implements [`IntoSIMDElement<E>`].
+    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<E, S>`] provided `V` implements [`simd::IntoVectorElement<E>`].
     #[inline]
-    pub fn into_simd_element<E>(self) -> PointMass<E, S>
+    pub fn into_element<E>(self) -> PointMass<E, S>
     where
         V: simd::IntoVectorElement<E>,
     {
-        PointMass::new(self.position.into_simd_element(), self.mass)
+        PointMass::new(self.position.into_element(), self.mass)
     }
 }
 
 /// Simple storage for particles using a vector.
 #[derive(Debug, Default, Clone)]
 pub struct ParticleSet<T, S>(pub Vec<PointMass<T, S>>);
-
-impl<T, S> ParticleSet<T, S> {
-    /// Creates a new [`ParticleSet`] instance with the given vector of particles.
-    #[inline]
-    pub fn new(particles: Vec<PointMass<T, S>>) -> Self {
-        Self(particles)
-    }
-}
 
 /// Storage for particles with massive and affected particles in two separate vectors.
 #[derive(Debug, Default, Clone)]
@@ -93,16 +85,27 @@ pub struct MassiveAffected<T, S> {
 }
 
 impl<T, S> MassiveAffected<T, S> {
-    /// Creates a new [`FromMassive`] instance with the given vectors of particles.
-    #[inline]
-    pub fn new(massive: Vec<PointMass<T, S>>, affected: Vec<PointMass<T, S>>) -> Self {
+    /// Creates a new [`MassiveAffected`] from the given vector of particles.
+    ///
+    /// This method populates the `affected` vector with the given particles and copies the ones with mass to the `massive` vector.
+    pub fn from_affected(affected: Vec<PointMass<T, S>>) -> Self
+    where
+        S: Copy + Default + PartialEq,
+        T: Copy,
+    {
+        let massive = affected
+            .iter()
+            .filter(|p| p.is_massive())
+            .copied()
+            .collect();
+
         Self { massive, affected }
     }
 }
 
 /// Storage for particles with massive and affected particles in two separate vectors.
 ///
-/// To be used with [`SIMDVector`] and [`SIMDScalar`] types.
+/// To be used with [`simd::Vector`] and [`simd::Scalar`] types.
 #[derive(Debug, Default, Clone)]
 pub struct MassiveAffectedSIMD<const LANES: usize, T, S>
 where
@@ -122,9 +125,24 @@ where
     T: simd::SIMD<LANES>,
     S: simd::SIMD<LANES>,
 {
-    /// Creates a new [`FromMassiveSIMD`] instance with the given vectors of particles.
+    /// Creates a new [`MassiveAffectedSIMD`] from the given vector of particles of [`simd::SIMD::Element`].
+    ///
+    /// This method populates the `affected` vector with the given particles and copies the ones with mass to the `massive` vector.
+    pub fn from_affected(affected: Vec<PointMass<T::Element, S::Element>>) -> Self {
+        let massive = affected
+            .iter()
+            .filter(|p| p.is_massive())
+            .copied()
+            .collect();
+
+        Self::particles_to_simd(massive, affected)
+    }
+
+    /// Creates a new [`MassiveAffectedSIMD`] instance with the given vectors of particles of [`simd::SIMD::Element`].
+    ///
+    /// The given massive vector will be iterated over `LANES` elements at a time and mapped to particles of [`simd::SIMD`] values.
     #[inline]
-    pub fn new(
+    pub fn particles_to_simd(
         massive: Vec<PointMass<T::Element, S::Element>>,
         affected: Vec<PointMass<T::Element, S::Element>>,
     ) -> Self {
@@ -145,63 +163,6 @@ where
     }
 }
 
-impl<I, T, S> From<I> for ParticleSet<T, S>
-where
-    T: Copy,
-    S: Default + PartialEq + Copy,
-    I: Iterator<Item = PointMass<T, S>>,
-{
-    /// Creates a new [`ParticleSet`] instance from an iterator of particles.
-    #[inline]
-    fn from(particles: I) -> Self {
-        Self::new(particles.collect())
-    }
-}
-
-impl<I, T, S> From<I> for MassiveAffected<T, S>
-where
-    T: Copy,
-    S: Default + PartialEq + Copy,
-    I: Iterator<Item = PointMass<T, S>>,
-{
-    /// Creates a new [`FromMassive`] instance from an iterator of particles.
-    ///
-    /// This method collects the particles from the iterator into the `affected` vector and copies the ones with mass to populate the `massive` vector.
-    #[inline]
-    fn from(particles: I) -> Self {
-        let affected: Vec<_> = particles.collect();
-        let massive = affected
-            .iter()
-            .filter(|p| p.is_massive())
-            .copied()
-            .collect();
-
-        Self::new(massive, affected)
-    }
-}
-
-impl<I, const LANES: usize, T, S> From<I> for MassiveAffectedSIMD<LANES, T, S>
-where
-    T: simd::SIMD<LANES>,
-    S: simd::SIMD<LANES>,
-    I: Iterator<Item = PointMass<T::Element, S::Element>>,
-{
-    /// Creates a new [`FromMassiveSIMD`] instance from an iterator of particles.
-    ///
-    /// This method collects the particles from the iterator into the `affected` vector and copies the ones with mass to populate the `massive` vector.
-    #[inline]
-    fn from(particles: I) -> Self {
-        let affected: Vec<_> = particles.collect();
-        let massive = affected
-            .iter()
-            .filter(|p| p.is_massive())
-            .copied()
-            .collect();
-
-        Self::new(massive, affected)
-    }
-}
-
 impl<T, S, V> Storage<PointMass<V, S>> for ParticleSet<T, S>
 where
     S: internal::Scalar,
@@ -210,7 +171,7 @@ where
 {
     #[inline]
     fn store<I: Iterator<Item = PointMass<V, S>>>(input: I) -> Self {
-        Self::from(input.map(PointMass::into_internal))
+        Self(input.map(PointMass::into_internal).collect())
     }
 }
 
@@ -222,7 +183,7 @@ where
 {
     #[inline]
     fn store<I: Iterator<Item = PointMass<V, S>>>(input: I) -> Self {
-        Self::from(input.map(PointMass::into_internal))
+        Self::from_affected(input.map(PointMass::into_internal).collect())
     }
 }
 
@@ -235,6 +196,6 @@ where
 {
     #[inline]
     fn store<I: Iterator<Item = PointMass<V, S::Element>>>(input: I) -> Self {
-        Self::from(input.map(PointMass::into_simd_element))
+        Self::from_affected(input.map(PointMass::into_element).collect())
     }
 }

@@ -179,8 +179,8 @@ pub mod particular_derive {
 /// Everything needed to use Particular.
 pub mod prelude {
     pub use crate::algorithms::compute_methods::*;
-    pub use crate::compute_method;
-    pub use crate::iterator::{Accelerations, MapAccelerations};
-    pub use crate::particle::{IntoPointMass, Particle, PointMass};
+    pub use crate::compute_method::{ComputeMethod, Storage};
+    pub use crate::iterator::{Accelerations, MapZipAccelerations, ZipAccelerations};
+    pub use crate::particle::{IntoPointMass, Particle, ParticlePointMass};
     pub use crate::particular_derive::*;
 }

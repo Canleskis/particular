@@ -30,7 +30,7 @@ where
                 storage
                     .massive
                     .iter()
-                    .fold(T::default(), |acceleration, &p2| {
+                    .fold(T::default(), |acceleration, p2| {
                         let dir = p2.position - p1.position;
                         let mag_2 = dir.length_squared();
                         let grav_acc = if mag_2 != S::default() {

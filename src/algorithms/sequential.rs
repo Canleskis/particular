@@ -28,7 +28,7 @@ where
                 storage
                     .massive
                     .iter()
-                    .fold(T::default(), |acceleration, &p2| {
+                    .fold(T::default(), |acceleration, p2| {
                         let dir = p2.position - p1.position;
                         let mag_2 = dir.length_squared();
                         let grav_acc = if mag_2 != S::default() {
@@ -47,13 +47,13 @@ where
 
 /// Brute-force [`ComputeMethod`] using the CPU.
 ///
-/// Faster than [`BruteForce`] because it computes the acceleration over the combination of pairs of particles instead of all the pairs.
+/// Typically faster than [`BruteForce`] because it computes the acceleration over the combination of pairs of particles instead of all the pairs.
 ///
-/// For small numbers of particles however, prefer [`BruteForce`] or [`BruteForceCombinationsAlt`].
+/// For small numbers of particles however, prefer [`BruteForce`] or [`BruteForcePairsAlt`].
 #[derive(Default, Clone, Copy)]
-pub struct BruteForceCombinations;
+pub struct BruteForcePairs;
 
-impl<T, S, V> ComputeMethod<MassiveAffected<T, S>, V> for BruteForceCombinations
+impl<T, S, V> ComputeMethod<MassiveAffected<T, S>, V> for BruteForcePairs
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
@@ -73,13 +73,9 @@ where
             .copied()
             .collect();
 
-        let mut accelerations = vec![T::default(); affected_len];
-        brute_force_combinations(
-            &[storage.massive, massless].concat(),
-            affected_len,
-            massive_len,
-            &mut accelerations,
-        );
+        let mut accelerations =
+            BruteForcePairsCore::new(vec![T::default(); affected_len], massive_len, affected_len)
+                .compute([storage.massive, massless].concat());
 
         let (mut massive_acc, mut massless_acc) = {
             let remainder = accelerations.split_off(massive_len);
@@ -104,11 +100,11 @@ where
 
 /// Brute-force [`ComputeMethod`] using the CPU.
 ///
-/// Typically faster than [`BruteForceCombinations`] except when most particles are massless (they are considered massive for this computation).
+/// Faster than [`BruteForcePairs`] except when most particles are massless (they are considered massive for this computation).
 #[derive(Default, Clone, Copy)]
-pub struct BruteForceCombinationsAlt;
+pub struct BruteForcePairsAlt;
 
-impl<T, S, V> ComputeMethod<ParticleSet<T, S>, V> for BruteForceCombinationsAlt
+impl<T, S, V> ComputeMethod<ParticleSet<T, S>, V> for BruteForcePairsAlt
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
@@ -119,40 +115,78 @@ where
     #[inline]
     fn compute(self, storage: ParticleSet<T, S>) -> Self::Output {
         let len = storage.0.len();
-        let mut accelerations = vec![T::default(); len];
-        brute_force_combinations(&storage.0, len, len, &mut accelerations);
 
-        accelerations.into_iter().map(V::from_internal).collect()
+        BruteForcePairsCore::new(vec![T::default(); len], len, len)
+            .compute(storage.0)
+            .into_iter()
+            .map(V::from_internal)
+            .collect()
     }
 }
 
-#[inline]
-fn brute_force_combinations<T, S, A>(
-    particles: &[PointMass<T, S>],
-    affected_len: usize,
-    massive_len: usize,
-    accelerations: &mut A,
-) where
+/// Low-level brute-force [`ComputeMethod`] using the CPU.
+/// Useful if you are looking for the smallest overhead (most performance) with small numbers of particles (fixed or not).
+///
+/// Can only be used by calling [`compute`](ComputeMethod::compute) directly and with vectors implementing [`internal::Vector`].
+/// If `massive_len` != `affected_len`, all the massive particles should be contained before the affected particles in the given storage.
+#[derive(Default, Clone, Copy)]
+pub struct BruteForcePairsCore<A> {
+    /// Initial value of the output accelerations.
+    pub accelerations: A,
+    /// Number of particles with mass for the computation.
+    pub massive_len: usize,
+    /// Number of affected particles for the computation.
+    pub affected_len: usize,
+}
+
+impl<A> BruteForcePairsCore<A> {
+    /// Creates a new [`BruteForcePairsBase`] with the given massive and affected number of particles.
+    #[inline]
+    pub fn new(accelerations: A, massive_len: usize, affected_len: usize) -> Self {
+        Self {
+            accelerations,
+            massive_len,
+            affected_len,
+        }
+    }
+}
+
+impl<I, T, S, A> ComputeMethod<I, T> for BruteForcePairsCore<A>
+where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    A: std::ops::IndexMut<usize, Output = T>,
+    I: std::ops::Index<usize, Output = PointMass<T, S>>,
+    A: std::ops::IndexMut<usize, Output = T> + IntoIterator<Item = T>,
 {
-    for i in 0..massive_len {
-        let p1 = particles[i];
-        let mut acceleration = T::default();
+    type Output = A;
 
-        for j in (i + 1)..affected_len {
-            let p2 = particles[j];
+    #[inline]
+    fn compute(self, particles: I) -> Self::Output {
+        let Self {
+            mut accelerations,
+            massive_len,
+            affected_len,
+        } = self;
 
-            let dir = p2.position - p1.position;
-            let mag_2 = dir.length_squared();
-            let f = dir / (mag_2 * mag_2.sqrt());
+        for i in 0..massive_len {
+            let p1 = particles[i];
+            let mut acceleration = T::default();
 
-            acceleration += f * p2.mass;
-            accelerations[j] -= f * p1.mass;
+            for j in (i + 1)..affected_len {
+                let p2 = particles[j];
+
+                let dir = p2.position - p1.position;
+                let mag_2 = dir.length_squared();
+                let f = dir / (mag_2 * mag_2.sqrt());
+
+                acceleration += f * p2.mass;
+                accelerations[j] -= f * p1.mass;
+            }
+
+            accelerations[i] += acceleration;
         }
 
-        accelerations[i] += acceleration;
+        accelerations
     }
 }
 
@@ -231,13 +265,13 @@ mod tests {
     }
 
     #[test]
-    fn brute_force_combinations() {
-        tests::acceleration_computation(BruteForceCombinations, 1e-2);
+    fn brute_force_pairs() {
+        tests::acceleration_computation(BruteForcePairs, 1e-2);
     }
 
     #[test]
-    fn brute_force_combinations_alt() {
-        tests::acceleration_computation(BruteForceCombinationsAlt, 1e-2);
+    fn brute_force_pairs_alt() {
+        tests::acceleration_computation(BruteForcePairsAlt, 1e-2);
     }
 
     #[test]
