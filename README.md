@@ -17,16 +17,9 @@ Multiple algorithms are available to compute the acceleration between particles 
 
 ### Computation algorithms
 
-| ComputeMethod       | [BruteForce] | [BarnesHut] |
-| :------------------ | :----------- | :---------- |
-| GPU                 | &check;      | &cross;     |
-| CPU single-threaded | &check;      | &check;     |
-| CPU multi-threaded  | &check;      | &check;     |
+There are currently 2 algorithms used by the available compute methods: [BruteForce](https://en.wikipedia.org/wiki/N-body_problem#Simulation) and [BarnesHut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation).
 
-[BruteForce]: https://en.wikipedia.org/wiki/N-body_problem#Simulation
-[BarnesHut]: https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation
-
-Generally speaking, the BruteForce algoritm is more accurate, but slower. The BarnesHut algorithm allows trading accuracy for speed by increasing the `theta` parameter.  
+Generally speaking, the BruteForce algorithm is more accurate, but slower. The BarnesHut algorithm allows trading accuracy for speed by increasing the `theta` parameter.  
 You can read more about their relative performance [here](#notes-on-performance).
 
 Particular uses [rayon](https://github.com/rayon-rs/rayon) for parallelization. Enable the "parallel" feature to access the available compute methods.
@@ -54,7 +47,7 @@ struct Body {
 
 #### Manual implementation
 
-Used when the type cannot directly provide a position and a gravitational parameter.
+Used when the type does not directly provide a position and a gravitational parameter.
 
 ```rust
 struct Body {
@@ -89,12 +82,7 @@ assert_eq!(particle.mu(), 5.0);
 
 ### Computing and using the gravitational acceleration
 
-In order to get the acceleration of a type, you can use the [accelerations] or [map_accelerations] methods on iterators.  
-These effectively return the original iterator zipped with the acceleration of its items.
-
-As such, you can create an iterator from a collection and get the acceleration using either methods depending on if the items implement Particle.
-
-Pass a mutable reference to a [`ComputeMethod`] when calling either method.
+In order to compute the accelerations of your particles, you can use the [accelerations] method on iterators, passing in a [`ComputeMethod`] of your choice.
 
 ### Examples
 
@@ -104,10 +92,11 @@ Pass a mutable reference to a [`ComputeMethod`] when calling either method.
 // Items are a tuple of a velocity, a position and a mass.
 // We map them to a tuple of the position and the mu, since this implements `Particle`.
 let accelerations = items
-    .iter_mut()
-    .map_accelerations(|(_, position, mass)| (*position, *mass * G), &mut cm);
+    .iter()
+    .map(|(_, position, mass)| (*position, *mass * G))
+    .accelerations(cm);
 
-for ((velocity, position, _), acceleration) in accelerations {
+for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
     *velocity += acceleration * DT;
     *position += *velocity * DT;
 }
@@ -116,7 +105,7 @@ for ((velocity, position, _), acceleration) in accelerations {
 #### When the iterated type implements Particle
 
 ```rust
-for (body, acceleration) in bodies.iter_mut().accelerations(&mut cm) {
+for (acceleration, body) in bodies.iter().accelerations(cm).zip(&mut bodies) {
     body.velocity += acceleration * DT;
     body.position += body.velocity * DT;
 }
@@ -124,13 +113,13 @@ for (body, acceleration) in bodies.iter_mut().accelerations(&mut cm) {
 
 ## Notes on performance
 
-Particular is built with performance in mind and uses multiple ways of computing the acceleration between particles in the form of [`ComputeMethods`].
+Particular is built with performance in mind and provides multiple ways of computing the acceleration between particles in the form of [`ComputeMethods`].
 
-Here is a comparison of the five current available compute methods on an i9 9900KF and an RTX 3080:
+Here is a comparison of 7 available on an i9 9900KF and an RTX 3080:
 
 <div align="center"><img src="particular-comparison.png" alt="Performance chart" /></div>
 
-Depending on your needs and platform, you may opt for one compute method or another. You can also implement the trait on your own type to combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
+Depending on your needs and platform, you may opt for one compute method or another. You can also implement the trait on your own type use other algorithms or combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
 ## Contribution
 
@@ -140,4 +129,3 @@ PRs are welcome!
 [`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
 [`ComputeMethods`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
 [accelerations]: https://docs.rs/particular/latest/particular/iterator/trait.Compute.html#method.accelerations
-[map_accelerations]: https://docs.rs/particular/latest/particular/iterator/trait.MapCompute.html#method.map_accelerations

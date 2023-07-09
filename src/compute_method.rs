@@ -1,5 +1,3 @@
-use std::iter::{zip, Zip};
-
 /// Trait to perform a computation of values of type `V` between objects contained in a storage of type `S`.
 ///
 /// # Example
@@ -11,7 +9,7 @@ use std::iter::{zip, Zip};
 ///
 /// struct AccelerationCalculator;
 ///
-/// impl compute_method::ComputeMethod<MassiveAffected<Vec3A, f32>, Vec3> for AccelerationCalculator {
+/// impl ComputeMethod<MassiveAffected<Vec3A, f32>, Vec3> for AccelerationCalculator {
 ///     type Output = Vec<Vec3>;
 ///     
 ///     fn compute(self, storage: MassiveAffected<Vec3A, f32>) -> Self::Output {
@@ -25,8 +23,6 @@ pub trait ComputeMethod<S, V> {
     type Output: IntoIterator<Item = V>;
 
     /// Performs the computation between objects contained in the storage.
-    ///
-    /// The computed values of type `V` should be contained in a type implementing [`IntoIterator`] as defined by [`ComputeMethod::Output`].
     fn compute(self, storage: S) -> Self::Output;
 }
 
@@ -42,7 +38,7 @@ pub trait ComputeMethod<S, V> {
 /// // An emtpy storage...
 /// struct MyStorage;
 ///
-/// impl compute_method::Storage<PointMass<Vec3, f32>> for MyStorage {
+/// impl Storage<PointMass<Vec3, f32>> for MyStorage {
 ///     fn store<I: Iterator<Item = PointMass<Vec3, f32>>>(input: I) -> Self {
 ///         // ...
 ///         # MyStorage
@@ -53,6 +49,21 @@ pub trait Storage<P> {
     /// Creates a new storage.
     fn store<I: Iterator<Item = P>>(input: I) -> Self;
 }
+
+/// Trait to perform a computation from an iterator using a provided [`ComputeMethod`].
+pub trait Compute: Iterator + Sized {
+    /// Returns the computed value of each item using the provided [`ComputeMethod`].
+    #[inline]
+    fn compute<S, C, V>(self, cm: C) -> <C::Output as IntoIterator>::IntoIter
+    where
+        S: Storage<Self::Item>,
+        C: ComputeMethod<S, V>,
+    {
+        cm.compute(S::store(self)).into_iter()
+    }
+}
+
+impl<I: Iterator> Compute for I {}
 
 impl<C, S, V> ComputeMethod<S, V> for &C
 where
@@ -77,26 +88,3 @@ where
         (*self).compute(storage)
     }
 }
-
-pub(crate) type ComputeResult<U, O> = Zip<std::vec::IntoIter<U>, <O as IntoIterator>::IntoIter>;
-
-/// Trait to perform a computation from an iterator using a provided [`ComputeMethod`].
-pub trait Compute: Iterator + Sized {
-    /// Performs the computation on the iterated items using the provided [`ComputeMethod`] after calling the closure on them.
-    ///
-    /// This method effectively returns the original iterator zipped with the computed value of each item.
-    #[inline]
-    fn compute<B, F, S, C, V>(self, f: F, cm: C) -> ComputeResult<Self::Item, C::Output>
-    where
-        F: FnMut(&Self::Item) -> B,
-        S: Storage<B>,
-        C: ComputeMethod<S, V>,
-    {
-        let items: Vec<_> = self.collect();
-        let storage = S::store(items.iter().map(f));
-
-        zip(items, cm.compute(storage))
-    }
-}
-
-impl<I: Iterator> Compute for I {}

@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `Storage` trait for inputs of `ComputeMethod::compute`.
-- `Compute` trait extending `Iterator` with a `compute` method used by `Accelerations` and `MapAccelerations`.
+- `Compute` trait extending `Iterator` with a `compute` method used by the `Accelerations` trait.
 - `algorithms` module.
 - `sequential::BruteForcePairsAlt` compute method.
 - `parallel::BruteForceSIMD` and `sequential::BruteForceSIMD` compute methods making use of explicit SIMD instructions for major performance benefits on compatible platforms using [ultraviolet](https://github.com/fu5ha/ultraviolet).
@@ -23,10 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `Compute` trait renamed to `Accelerations`, no longer generic and only returns the computed accelerations. Zip its output with your collection instead.
 - `ComputeMethod` generic over a storage and output type.
 - `ComputeMethod::compute` expects a storage type.
 - `ComputeMethod` has `Output` associated type returned by `ComputeMethod::compute`.
-- `Compute`, `MapCompute` traits renamed to `Accelerations` and `MapAccelerations` and no longer generic.
 - `Vector` trait renamed to `IntoVectorArray` and its associated type to `Vector` and moved to `internal` submodule.
 - `InternalVector` trait renamed to `Vector` and moved with `Scalar` trait to `internal` submodule.
 - `compute_method` no longer glob imported in prelude.
@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - `Accelerations` iterator. Relevant methods now use the `Zip` iterator directly.
+- `MapCompute` trait.
 
 ## [0.5.2] - 2023-16-05
 

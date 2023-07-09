@@ -11,16 +11,9 @@
 //!
 //! ### Computation algorithms
 //!
-//! | ComputeMethod       | [BruteForce] | [BarnesHut] |
-//! | :------------------ | :----------- | :---------- |
-//! | GPU                 | &check;      | &cross;     |
-//! | CPU single-threaded | &check;      | &check;     |
-//! | CPU multi-threaded  | &check;      | &check;     |
+//! There are currently 2 algorithms used by the available compute methods: [BruteForce](https://en.wikipedia.org/wiki/N-body_problem#Simulation) and [BarnesHut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation).
 //!
-//! [BruteForce]: https://en.wikipedia.org/wiki/N-body_problem#Simulation
-//! [BarnesHut]: https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation
-//!
-//! Generally speaking, the BruteForce algoritm is more accurate, but slower. The BarnesHut algorithm allows trading accuracy for speed by increasing the `theta` parameter.  
+//! Generally speaking, the BruteForce algorithm is more accurate, but slower. The BarnesHut algorithm allows trading accuracy for speed by increasing the `theta` parameter.  
 //! You can read more about their relative performance [here](#notes-on-performance).
 //!
 //! Particular uses [rayon](https://github.com/rayon-rs/rayon) for parallelization. Enable the "parallel" feature to access the available compute methods.
@@ -50,7 +43,7 @@
 //! ```
 //! #### Manual implementation
 //!
-//! Used when the type cannot directly provide a position and a gravitational parameter.
+//! Used when the type does not directly provide a position and a gravitational parameter.
 //!
 //! ```
 //! # const G: f32 = 1.0;
@@ -92,13 +85,8 @@
 //!
 //! ### Computing and using the gravitational acceleration
 //!
-//! In order to get the acceleration of a type, you can use the [accelerations](iterator::Accelerations::accelerations)
-//! or [map_accelerations](iterator::MapAccelerations::map_accelerations) methods on iterators.  
-//! These effectively return the original iterator zipped with the acceleration of its items.
-//!
-//! As such, you can create an iterator from a collection and get the acceleration using either methods depending on if the items implement Particle.
-//!
-//! Pass a mutable reference to a [`ComputeMethod`](compute_method::ComputeMethod) when calling either method.
+//! In order to compute the accelerations of your particles, you can use the [accelerations](iterator::Accelerations::accelerations) method on iterators,
+//! passing in a [`ComputeMethod`](compute_method::ComputeMethod) of your choice.
 //!
 //! ### Examples
 //!
@@ -119,10 +107,11 @@
 //! // Items are a tuple of a velocity, a position and a mass.
 //! // We map them to a tuple of the position and the mu, since this implements `Particle`.
 //! let accelerations = items
-//!     .iter_mut()
-//!     .map_accelerations(|(_, position, mass)| (*position, *mass * G), &mut cm);
+//!     .iter()
+//!     .map(|(_, position, mass)| (*position, *mass * G))
+//!     .accelerations(cm);
 //!
-//! for ((velocity, position, _), acceleration) in accelerations {
+//! for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
 //!     *velocity += acceleration * DT;
 //!     *position += *velocity * DT;
 //! }
@@ -142,7 +131,7 @@
 //! #     mu: f32,
 //! # }
 //! # let mut bodies = Vec::<Body>::new();
-//! for (body, acceleration) in bodies.iter_mut().accelerations(&mut cm) {
+//! for (acceleration, body) in bodies.iter().accelerations(cm).zip(&mut bodies) {
 //!     body.velocity += acceleration * DT;
 //!     body.position += body.velocity * DT;
 //! }
@@ -150,11 +139,11 @@
 //!
 //! ## Notes on performance
 //!
-//! Particular is built with performance in mind and uses multiple ways of computing the acceleration between particles.
+//! Particular is built with performance in mind and provides multiple ways of computing the acceleration between particles.
 //!
-//! A comparison of the five current available compute methods using an i9 9900KF and an RTX 3080 is available in the [README](https://crates.io/crates/particular).
+//! A comparison between 7 available compute methods using an i9 9900KF and an RTX 3080 is available in the [README](https://crates.io/crates/particular).
 //!
-//! Depending on your needs, you may opt for one compute method or another. You can also implement the trait on your own type to
+//! Depending on your needs, you may opt for one compute method or another. You can also implement the trait on your own type to use other algorithms or
 //! combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
 #![warn(missing_docs)]
@@ -171,7 +160,7 @@ pub mod iterator;
 /// Algorithms to compute the acceleration of particles.
 pub mod algorithms;
 
-/// Derive macro for types representing particles.
+/// Derive macro for the [`Particle`](crate::particle::Particle) trait.
 pub mod particular_derive {
     pub use particular_derive::Particle;
 }
@@ -180,7 +169,7 @@ pub mod particular_derive {
 pub mod prelude {
     pub use crate::algorithms::compute_methods::*;
     pub use crate::compute_method::{ComputeMethod, Storage};
-    pub use crate::iterator::{Accelerations, MapZipAccelerations, ZipAccelerations};
+    pub use crate::iterator::Accelerations;
     pub use crate::particle::{IntoPointMass, Particle, ParticlePointMass};
-    pub use crate::particular_derive::*;
+    pub use crate::particular_derive::Particle;
 }
