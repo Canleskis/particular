@@ -1,6 +1,6 @@
 # Particular
 
-<div align="center"><img src="./particular-showcase.gif"></div>
+<div align="center"><img src="https://github.com/Canleskis/particular/blob/main/particular/particular-showcase.gif?raw=true"></div>
 
 [![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/canleskis/particular#license)
 [![Crates.io](https://img.shields.io/crates/v/particular)](https://crates.io/crates/particular)
@@ -117,7 +117,9 @@ Particular is built with performance in mind and provides multiple ways of compu
 
 Here is a comparison of 7 available on an i9 9900KF and an RTX 3080:
 
-<div align="center"><img src="particular-comparison.png" alt="Performance chart" /></div>
+<div align="center">
+<img src="https://github.com/Canleskis/particular/blob/main/particular/particular-comparison.png?raw=true" alt="Performance chart" />
+</div>
 
 Depending on your needs and platform, you may opt for one compute method or another. You can also implement the trait on your own type use other algorithms or combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
