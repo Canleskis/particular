@@ -1,4 +1,4 @@
-# EXAMPLE-BEVY
+# example-bevy
 
 A basic showcase of how Particular can be used with Bevy. This example shows a simple `PhysicsPlugin` interacting with Particular.  
 See the `nbody` module.

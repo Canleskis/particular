@@ -15,7 +15,6 @@ where
     /// # use particular::prelude::*;
     /// # use glam::Vec2;
     /// let mut particles = vec![(Vec2::Y, 1.0), (Vec2::ZERO, 1.0)];
-    ///
     /// let mut accelerations = particles.iter().accelerations(sequential::BruteForce);
     ///
     /// assert_eq!(accelerations.next().unwrap(), Vec2::NEG_Y);

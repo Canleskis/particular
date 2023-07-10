@@ -121,7 +121,7 @@ Here is a comparison of 7 available on an i9 9900KF and an RTX 3080:
 <img src="https://github.com/Canleskis/particular/blob/main/particular/particular-comparison.png?raw=true" alt="Performance chart" />
 </div>
 
-Depending on your needs and platform, you may opt for one compute method or another. You can also implement the trait on your own type use other algorithms or combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
+Depending on your needs and platform, you may opt for one compute method or another. You can also implement the trait on your own type to use other algorithms or combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
 ## Contribution
 

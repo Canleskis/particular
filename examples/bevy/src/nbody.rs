@@ -11,10 +11,7 @@ impl Plugin for ParticularPlugin {
     }
 }
 
-fn accelerate_particles(
-    // mut cm: ResMut<Method<sequential::BarnesHut<f32>>>,
-    mut query: Query<(&mut Acceleration, &Transform, &Mass)>,
-) {
+fn accelerate_particles(mut query: Query<(&mut Acceleration, &Transform, &Mass)>) {
     query
         .iter()
         .map(|(_, transform, mass)| (transform.translation, mass.0))
