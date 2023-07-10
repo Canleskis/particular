@@ -1,0 +1,9 @@
+[package]
+name = "example-bevy"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+particular = { path = "../../particular" }
+bevy = "0.11"
