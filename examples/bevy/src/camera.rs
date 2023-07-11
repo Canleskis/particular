@@ -17,7 +17,7 @@ pub struct OrbitCamera {
 
 impl Default for OrbitCamera {
     fn default() -> Self {
-        OrbitCamera { distance: 100.0 }
+        OrbitCamera { distance: 200.0 }
     }
 }
 

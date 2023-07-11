@@ -123,9 +123,13 @@ Here is a comparison of 7 available on an i9 9900KF and an RTX 3080:
 
 Depending on your needs and platform, you may opt for one compute method or another. You can also implement the trait on your own type to use other algorithms or combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
+## License
+
+This project is licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT), at your option.
+
 ## Contribution
 
-PRs are welcome!
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project by you, as defined in the Apache 2.0 license, shall be dual licensed as above, without any additional terms or conditions.
 
 [`Particle`]: https://docs.rs/particular/latest/particular/particle/trait.Particle.html
 [`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html

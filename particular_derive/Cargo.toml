@@ -3,7 +3,7 @@ name = "particular_derive"
 version = "0.5.0"
 edition = "2021"
 authors = ["Canleskis"]
-description = "Derive macro for the 'particular' crate."
+description = "Derive macro for the particular crate."
 license = "MIT OR Apache-2.0"
 
 [dependencies]
