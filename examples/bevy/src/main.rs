@@ -1,22 +1,32 @@
+mod camera;
+use camera::*;
+
 mod physics;
 use physics::*;
 
 mod nbody;
 use nbody::*;
 
-use bevy::{
-    core_pipeline::bloom::BloomSettings,
-    input::mouse::{MouseScrollUnit, MouseWheel},
-    prelude::*,
-};
+mod orbit_prediction;
+use orbit_prediction::*;
+
+use bevy::{core_pipeline::bloom::BloomSettings, prelude::*};
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, PhysicsPlugin, ParticularPlugin))
+        .add_plugins((
+            DefaultPlugins,
+            CameraPlugin,
+            PhysicsPlugin,
+            ParticularPlugin,
+            OrbitPredictionPlugin,
+        ))
         .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(FixedTime::default())
+        .insert_resource(SelectableEntities::default())
         .add_systems(Startup, setup_scene)
-        .add_systems(Update, (switch_parent_camera, zoom_camera))
+        .add_systems(PostStartup, find_selectable_entities)
+        .add_systems(PreUpdate, switch_selected_entity)
         .run();
 }
 
@@ -25,7 +35,7 @@ fn setup_scene(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let light_color = Color::rgb(1.0, 1.0, 0.9);
+    let main_color = Color::rgb(1.0, 1.0, 0.9);
 
     let camera = commands
         .spawn((
@@ -38,6 +48,7 @@ fn setup_scene(
                 },
                 ..default()
             },
+            OrbitCamera::default(),
             BloomSettings {
                 intensity: 0.15,
                 ..default()
@@ -48,7 +59,7 @@ fn setup_scene(
     let light = commands
         .spawn(PointLightBundle {
             point_light: PointLight {
-                color: light_color,
+                color: main_color,
                 intensity: 1E5,
                 range: 2E3,
                 shadows_enabled: true,
@@ -65,56 +76,63 @@ fn setup_scene(
     let secondary_position = Vec3::new(60.0, 0.0, 0.0);
     let secondary_mu = 100.0;
 
-    let tertiary_position = secondary_position + Vec3::new(0.0, 4.0, 4.0);
+    let tertiary_position = secondary_position + Vec3::new(0.0, 4.6, 4.6);
     let tertiary_mu = 0.0;
 
     commands
-        .spawn(ParticleBundle {
-            pbr_bundle: PbrBundle {
-                mesh: meshes.add(
-                    shape::UVSphere {
-                        radius: 8.0,
+        .spawn((
+            ParticleBundle {
+                pbr_bundle: PbrBundle {
+                    mesh: meshes.add(
+                        shape::UVSphere {
+                            radius: 8.0,
+                            ..default()
+                        }
+                        .into(),
+                    ),
+                    material: materials.add(StandardMaterial {
+                        emissive: main_color * 2.0,
                         ..default()
-                    }
-                    .into(),
-                ),
-                material: materials.add(StandardMaterial {
-                    emissive: light_color * 2.0,
+                    }),
+                    transform: Transform::from_translation(Vec3::ZERO),
                     ..default()
-                }),
-                transform: Transform::from_translation(Vec3::ZERO),
+                },
+                mass: Mass(main_mu),
                 ..default()
             },
-            mass: Mass(main_mu),
-            ..default()
-        })
+            PredictionState::default(),
+        ))
         .add_child(light)
         .add_child(camera);
 
     let secondary_velocity =
         circular_orbit_velocity(secondary_position, main_position, main_mu, Vec3::Z);
-    commands.spawn(ParticleBundle {
-        pbr_bundle: PbrBundle {
-            mesh: meshes.add(
-                shape::UVSphere {
-                    radius: 2.0,
+
+    commands.spawn((
+        ParticleBundle {
+            pbr_bundle: PbrBundle {
+                mesh: meshes.add(
+                    shape::UVSphere {
+                        radius: 2.0,
+                        ..default()
+                    }
+                    .into(),
+                ),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::rgb(0.0, 0.3, 1.0),
                     ..default()
-                }
-                .into(),
-            ),
-            material: materials.add(StandardMaterial {
-                base_color: Color::rgb(0.0, 0.3, 1.0),
+                }),
+                transform: Transform::from_translation(secondary_position),
                 ..default()
-            }),
-            transform: Transform::from_translation(secondary_position),
+            },
+            velocity: Velocity {
+                linear: secondary_velocity,
+            },
+            mass: Mass(secondary_mu),
             ..default()
         },
-        velocity: Velocity {
-            linear: secondary_velocity,
-        },
-        mass: Mass(secondary_mu),
-        ..default()
-    });
+        PredictionState::default(),
+    ));
 
     let tertiary_velocity = circular_orbit_velocity(
         tertiary_position,
@@ -122,74 +140,60 @@ fn setup_scene(
         secondary_mu,
         Vec3::new(1.0, 1.0, 0.0),
     ) + secondary_velocity;
-    commands.spawn(ParticleBundle {
-        pbr_bundle: PbrBundle {
-            mesh: meshes.add(
-                shape::UVSphere {
-                    radius: 0.8,
+
+    commands.spawn((
+        ParticleBundle {
+            pbr_bundle: PbrBundle {
+                mesh: meshes.add(
+                    shape::UVSphere {
+                        radius: 0.8,
+                        ..default()
+                    }
+                    .into(),
+                ),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::rgb(1.0, 0.97, 0.91),
                     ..default()
-                }
-                .into(),
-            ),
-            material: materials.add(StandardMaterial {
-                base_color: Color::rgb(1.0, 0.97, 0.91),
+                }),
+                transform: Transform::from_translation(tertiary_position),
                 ..default()
-            }),
-            transform: Transform::from_translation(tertiary_position),
+            },
+            velocity: Velocity {
+                linear: tertiary_velocity,
+            },
+            mass: Mass(tertiary_mu),
             ..default()
         },
-        velocity: Velocity {
-            linear: tertiary_velocity,
-        },
-        mass: Mass(tertiary_mu),
-        ..default()
-    });
+        PredictionState::default(),
+    ));
 }
 
-fn switch_parent_camera(
-    mut commands: Commands,
-    input: Res<Input<KeyCode>>,
+#[derive(Resource, Default, Deref, DerefMut)]
+pub struct SelectableEntities(Vec<Entity>);
+
+impl SelectableEntities {
+    pub fn selected(&self) -> Option<Entity> {
+        self.first().copied()
+    }
+}
+
+fn find_selectable_entities(
+    mut selectable_entites: ResMut<SelectableEntities>,
     query_bodies: Query<Entity, With<Mass>>,
-    query_camera: Query<Entity, With<Camera>>,
-    mut current: Local<usize>,
 ) {
-    let Ok(camera_entity) = query_camera.get_single() else {
-        return
-    };
+    let mut bodies: Vec<_> = query_bodies.iter().collect();
+    bodies.sort();
 
-    if input.just_pressed(KeyCode::Space) {
-        let mut bodies: Vec<_> = query_bodies.iter().collect();
-        bodies.sort();
-
-        *current = (*current + 1) % bodies.len();
-
-        commands.entity(camera_entity).set_parent(bodies[*current]);
-    }
+    selectable_entites.0 = bodies;
 }
 
-fn zoom_camera(
-    mut scroll_events: EventReader<MouseWheel>,
-    mut query_camera: Query<&mut Transform, With<Camera>>,
+fn switch_selected_entity(
+    input: Res<Input<KeyCode>>,
+    mut selectable_entites: ResMut<SelectableEntities>,
 ) {
-    let Ok(mut camera_transform) = query_camera.get_single_mut() else {
-        return
-    };
-
-    let pixels_per_line = 10.;
-    let scroll = scroll_events
-        .iter()
-        .map(|ev| match ev.unit {
-            MouseScrollUnit::Pixel => ev.y,
-            MouseScrollUnit::Line => ev.y * pixels_per_line,
-        })
-        .sum::<f32>();
-
-    if scroll == 0.0 {
-        return;
+    if input.just_pressed(KeyCode::Space) {
+        selectable_entites.rotate_left(1);
     }
-
-    camera_transform.translation.z =
-        (camera_transform.translation.z * (1.0 + -scroll * 0.01)).max(10.0);
 }
 
 #[derive(Component, Default)]

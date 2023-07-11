@@ -32,6 +32,7 @@ fn integrate_position(
     mut query: Query<(&mut Acceleration, &mut Velocity, &mut Transform)>,
 ) {
     let dt = fixed_time.period.as_secs_f32();
+
     for (mut acceleration, mut velocity, mut transform) in &mut query {
         velocity.linear += acceleration.linear * dt;
         transform.translation += velocity.linear * dt;
