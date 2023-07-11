@@ -5,6 +5,7 @@ use crate::{
 
 /// Point-mass representation of an object in space.
 #[derive(Debug, Default, Clone, Copy)]
+#[repr(C)]
 pub struct PointMass<V, S> {
     /// Position of the object.
     pub position: V,
