@@ -38,9 +38,10 @@ fn main() {
 
         bodies
             .iter()
-            // Calling accelerations returns an iterator over the accelerations of each body.
+            // Calling accelerations returns an iterator over the acceleration of each body.
             .accelerations(sequential::BruteForce)
-            // Zipping the accelerations with a mutable reference to the collection of bodies to change their state based on Particular's computation.
+            // Zipping the accelerations with a mutable reference to the bodies 
+            // to change the state of each body using their computed acceleration.
             .zip(&mut bodies)
             .for_each(|(acceleration, body)| {
                 // Integrating using the semi-implicit Euler method https://en.wikipedia.org/wiki/Semi-implicit_Euler_method.

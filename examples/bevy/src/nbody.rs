@@ -1,4 +1,4 @@
-use crate::{physics::*, Mass};
+use crate::{Acceleration, Mass, PhysicsSet};
 
 use bevy::prelude::*;
 use particular::prelude::*;

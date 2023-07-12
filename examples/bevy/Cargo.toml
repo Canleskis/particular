@@ -7,3 +7,4 @@ publish = false
 [dependencies]
 particular = { path = "../../particular" }
 bevy = "0.11"
+humantime = "2"

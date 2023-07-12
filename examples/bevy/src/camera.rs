@@ -52,7 +52,7 @@ fn camera_controls(
     }
 
     if is_zooming {
-        orbit.distance -= scroll * orbit.distance * 0.2;
+        orbit.distance -= orbit.distance * scroll * 0.2;
         orbit.distance = orbit.distance.clamp(10.0, 1000.0);
     }
 

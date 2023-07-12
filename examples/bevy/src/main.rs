@@ -1,14 +1,17 @@
 mod camera;
 use camera::*;
 
-mod physics;
-use physics::*;
-
 mod nbody;
 use nbody::*;
 
 mod orbit_prediction;
 use orbit_prediction::*;
+
+mod physics;
+use physics::*;
+
+mod ui;
+use ui::*;
 
 use bevy::{core_pipeline::bloom::BloomSettings, prelude::*};
 
@@ -20,14 +23,34 @@ fn main() {
             PhysicsPlugin,
             ParticularPlugin,
             OrbitPredictionPlugin,
+            UiPlugin,
         ))
         .insert_resource(ClearColor(Color::BLACK))
-        .insert_resource(FixedTime::default())
         .insert_resource(SelectableEntities::default())
+        .insert_resource(PhysicsSettings::default())
         .add_systems(Startup, setup_scene)
         .add_systems(PostStartup, find_selectable_entities)
         .add_systems(PreUpdate, switch_selected_entity)
         .run();
+}
+
+#[derive(Default, Clone)]
+struct BodySetting {
+    velocity: Vec3,
+    position: Vec3,
+    mu: f32,
+    radius: f32,
+    material: StandardMaterial,
+}
+
+impl BodySetting {
+    fn orbiting(mut self, orbiting: &Self, axis: Vec3) -> Self {
+        self.velocity =
+            circular_orbit_velocity(orbiting.position, orbiting.mu, self.position, self.mu, axis)
+                + orbiting.velocity;
+
+        self
+    }
 }
 
 fn setup_scene(
@@ -35,137 +58,125 @@ fn setup_scene(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let main_color = Color::rgb(1.0, 1.0, 0.9);
-
-    let camera = commands
-        .spawn((
-            Camera3dBundle {
-                transform: Transform::from_xyz(0.0, 0.0, 200.0)
-                    .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
-                camera: Camera {
-                    hdr: true,
-                    ..default()
-                },
+    commands.spawn((
+        Camera3dBundle {
+            transform: Transform::from_xyz(0.0, 0.0, 200.0)
+                .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
+            camera: Camera {
+                hdr: true,
                 ..default()
             },
-            OrbitCamera::default(),
-            BloomSettings {
-                intensity: 0.15,
-                ..default()
-            },
-        ))
-        .id();
-
-    let light = commands
-        .spawn(PointLightBundle {
-            point_light: PointLight {
-                color: main_color,
-                intensity: 1E5,
-                range: 2E3,
-                shadows_enabled: true,
-                ..default()
-            },
-            transform: Transform::from_xyz(0.0, 0.0, 0.0),
             ..default()
-        })
-        .id();
+        },
+        OrbitCamera::default(),
+        BloomSettings {
+            intensity: 0.15,
+            ..default()
+        },
+    ));
 
-    let main_position = Vec3::ZERO;
-    let main_mu = 5E3;
+    let star_color = Color::rgb(1.0, 1.0, 0.9);
+    let star = BodySetting {
+        mu: 5E3,
+        radius: 8.0,
+        material: StandardMaterial {
+            base_color: star_color,
+            emissive: star_color * 2.0,
+            ..default()
+        },
+        ..default()
+    };
 
-    let secondary_position = Vec3::new(60.0, 0.0, 0.0);
-    let secondary_mu = 100.0;
+    let planet = BodySetting {
+        position: Vec3::new(0.0, 60.0, 0.0),
+        mu: 100.0,
+        radius: 2.0,
+        material: StandardMaterial {
+            base_color: Color::rgb(0.0, 0.6, 1.0),
+            ..default()
+        },
+        ..default()
+    }
+    .orbiting(&star, Vec3::Z);
 
-    let tertiary_position = secondary_position + Vec3::new(0.0, 4.6, 4.6);
-    let tertiary_mu = 0.0;
+    let moon = BodySetting {
+        position: planet.position + Vec3::new(4.5, 0.0, 0.0),
+        mu: 1.0,
+        radius: 0.6,
+        material: StandardMaterial {
+            base_color: Color::rgb(0.6, 0.4, 0.1),
+            ..default()
+        },
+        ..default()
+    }
+    .orbiting(&planet, Vec3::new(0.0, 0.5, -1.0));
 
-    commands
-        .spawn((
+    let comet = BodySetting {
+        velocity: Vec3::new(3.0, 0.2, 0.4),
+        position: Vec3::new(-200.0, 138.0, -18.0),
+        mu: 0.0,
+        radius: 0.1,
+        material: StandardMaterial {
+            base_color: Color::rgb(0.3, 0.3, 0.3),
+            ..default()
+        },
+    };
+
+    let bodies = vec![
+        ("Star", star),
+        ("Planet", planet),
+        ("Moon", moon),
+        ("Comet", comet),
+    ];
+
+    for (name, body) in bodies {
+        let light_entity = (body.material.emissive != Color::BLACK).then(|| {
+            commands
+                .spawn(PointLightBundle {
+                    point_light: PointLight {
+                        color: body.material.emissive,
+                        intensity: 5E4,
+                        range: 2E3,
+                        shadows_enabled: true,
+                        ..default()
+                    },
+                    transform: Transform::from_xyz(0.0, 0.0, 0.0),
+                    ..default()
+                })
+                .id()
+        });
+
+        let mut body_entity = commands.spawn((
+            Name::new(name),
+            PredictionState {
+                color: body.material.base_color,
+                ..default()
+            },
             ParticleBundle {
                 pbr_bundle: PbrBundle {
                     mesh: meshes.add(
                         shape::UVSphere {
-                            radius: 8.0,
+                            radius: body.radius,
                             ..default()
                         }
                         .into(),
                     ),
-                    material: materials.add(StandardMaterial {
-                        emissive: main_color * 2.0,
-                        ..default()
-                    }),
-                    transform: Transform::from_translation(Vec3::ZERO),
+                    material: materials.add(body.material),
+                    transform: Transform::from_translation(body.position),
                     ..default()
                 },
-                mass: Mass(main_mu),
+                mass: Mass(body.mu),
+                velocity: Velocity {
+                    linear: body.velocity,
+                },
                 ..default()
             },
-            PredictionState::default(),
-        ))
-        .add_child(light)
-        .add_child(camera);
+        ));
 
-    let secondary_velocity =
-        circular_orbit_velocity(secondary_position, main_position, main_mu, Vec3::Z);
-
-    commands.spawn((
-        ParticleBundle {
-            pbr_bundle: PbrBundle {
-                mesh: meshes.add(
-                    shape::UVSphere {
-                        radius: 2.0,
-                        ..default()
-                    }
-                    .into(),
-                ),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::rgb(0.0, 0.3, 1.0),
-                    ..default()
-                }),
-                transform: Transform::from_translation(secondary_position),
-                ..default()
-            },
-            velocity: Velocity {
-                linear: secondary_velocity,
-            },
-            mass: Mass(secondary_mu),
-            ..default()
-        },
-        PredictionState::default(),
-    ));
-
-    let tertiary_velocity = circular_orbit_velocity(
-        tertiary_position,
-        secondary_position,
-        secondary_mu,
-        Vec3::new(1.0, 1.0, 0.0),
-    ) + secondary_velocity;
-
-    commands.spawn((
-        ParticleBundle {
-            pbr_bundle: PbrBundle {
-                mesh: meshes.add(
-                    shape::UVSphere {
-                        radius: 0.8,
-                        ..default()
-                    }
-                    .into(),
-                ),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::rgb(1.0, 0.97, 0.91),
-                    ..default()
-                }),
-                transform: Transform::from_translation(tertiary_position),
-                ..default()
-            },
-            velocity: Velocity {
-                linear: tertiary_velocity,
-            },
-            mass: Mass(tertiary_mu),
-            ..default()
-        },
-        PredictionState::default(),
-    ));
+        if let Some(light_entity) = light_entity {
+            body_entity.add_child(light_entity);
+        }
+    }
 }
 
 #[derive(Resource, Default, Deref, DerefMut)]
@@ -209,11 +220,12 @@ struct ParticleBundle {
 
 fn circular_orbit_velocity(
     orbiting_position: Vec3,
+    orbiting_mu: f32,
     main_position: Vec3,
     main_mu: f32,
     axis: Vec3,
 ) -> Vec3 {
     let distance = main_position - orbiting_position;
 
-    distance.cross(axis).normalize() * (main_mu / distance.length()).sqrt()
+    distance.cross(axis).normalize() * ((main_mu + orbiting_mu) / distance.length()).sqrt()
 }
