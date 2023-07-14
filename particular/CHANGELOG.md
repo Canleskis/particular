@@ -5,24 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-11-07
+## [0.6.0] - 2023-14-07
 
 ### Added
 
-- `Storage` trait for inputs of `ComputeMethod::compute`.
-- `Compute` trait extending `Iterator` with a `compute` method used by the `Accelerations` trait.
-- `algorithms` module.
 - `sequential::BruteForcePairsAlt` compute method.
 - `parallel::BruteForceSIMD` and `sequential::BruteForceSIMD` compute methods making use of explicit SIMD instructions for major performance benefits on compatible platforms using [ultraviolet](https://github.com/fu5ha/ultraviolet).
+- `Tree`, `Node`, `SizedOrthant`, `BoundingBox` structs and `TreeData`, `Subdivide`, `Positionable`, `BarnesHutTree` traits backing BarnesHut compute methods.
+- `PointMass` struct representing a particle for built-in storages.
 - `internal::Scalar` and `internal::Vector` traits to help genericity of built-in non-SIMD compute methods.
 - `simd::IntoVectorElement`, `simd::SIMD`, `simd::Scalar`, `simd::Vector` and `simd::ReduceAdd` traits to help genericity of built-in SIMD compute methods.
 - `MassiveAffected` and `ParticleSet` structs implementing `Storage` backing non-SIMD compute methods.
 - `MassiveAffectedSIMD` struct implementing `Storage` backing SIMD compute methods.
-- `PointMass` struct representing a particle for built-in storages.
-- `Tree`, `Node`, `SizedOrthant`, `BoundingBox` structs and `TreeData`, `Subdivide`, `Positionable`, `BarnesHutTree` traits backing BarnesHut compute methods.
+- `Storage` trait for inputs of `ComputeMethod::compute`.
+- `Compute` trait extending `Iterator` with a `compute` method used by the `Accelerations` trait.
+- `algorithms` module.
 
 ### Changed
 
+- renamed `sequential::BruteForce` to `sequential::BruteForcePairs`. `sequential::BruteForce` is changed to a naive implementation iterating over all pairs.
 - `Compute` trait renamed to `Accelerations`, no longer generic and only returns the computed accelerations. Zip its output with your collection instead.
 - `ComputeMethod` generic over a storage and output type.
 - `ComputeMethod::compute` expects a storage type.
@@ -32,13 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `compute_method` no longer glob imported in prelude.
 - `tree` module and submodules made public.
 - `vector` module made public and part of `algorithms`.
-- renamed `sequential::BruteForce` to `sequential::BruteForcePairs`. `sequential::BruteForce` is changed to a naive implementation iterating over all pairs.
 - Built-in compute methods moved to `algorithms` module.
-- Built-in `ComputeMethod` implementations use `internal::Scalar` and `internal::Vector` traits.
 
 ### Removed
 
-- `Accelerations` iterator. Relevant methods now use the `Zip` iterator directly.
+- `Accelerations` iterator.
 - `MapCompute` trait.
 
 ## [0.5.2] - 2023-16-05
@@ -154,6 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release.
 
+[0.6.0]: https://github.com/Canleskis/particular/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/Canleskis/particular/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/Canleskis/particular/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/Canleskis/particular/compare/v0.4.0...v0.5.0

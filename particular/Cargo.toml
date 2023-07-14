@@ -1,6 +1,6 @@
 [package]
 name = "particular"
-version = "0.5.2"
+version = "0.6.0"
 edition = "2021"
 authors = ["Canleskis"]
 description = "N-body simulation library written in Rust featuring BarnesHut and GPU accelerated algorithms."
@@ -20,7 +20,7 @@ parallel = ["dep:rayon"]
 gpu = ["dep:wgpu", "dep:bytemuck", "dep:pollster"]
 
 [dependencies]
-particular_derive = { path = "../particular_derive" }
+particular_derive = { version = "0.6.0", path = "../particular_derive" }
 
 ultraviolet = { version = "0", features = ["f64"] }
 wide = "0"
