@@ -7,7 +7,7 @@
 //! The main goal of this crate is to provide users with a simple API to set up N-body gravitational simulations that can easily be integrated into existing game and physics engines.
 //! Thus it does not concern itself with numerical integration or other similar tools and instead only focuses on the acceleration calculations.
 //!
-//! Multiple algorithms are available to compute the acceleration between particles as [`ComputeMethods`](compute_method::ComputeMethod).
+//! Particular is also built with performance in mind and provides multiple ways of computing the acceleration between particles.
 //!
 //! ### Computation algorithms
 //!
@@ -139,12 +139,10 @@
 //!
 //! ## Notes on performance
 //!
-//! Particular is built with performance in mind and provides multiple ways of computing the acceleration between particles.
-//!
 //! A comparison between 7 available compute methods using an i9 9900KF and an RTX 3080 is available in the [README](https://crates.io/crates/particular).
 //!
-//! Depending on your needs, you may opt for one compute method or another. You can also implement the trait on your own type to use other algorithms or
-//! combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
+//! Depending on your needs and platform, you may opt for one compute method or another.
+//! You can also implement the trait on your own type to use other algorithms or combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
 
 #![warn(missing_docs)]
 

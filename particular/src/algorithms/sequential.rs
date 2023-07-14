@@ -140,7 +140,7 @@ pub struct BruteForcePairsCore<A> {
 }
 
 impl<A> BruteForcePairsCore<A> {
-    /// Creates a new [`BruteForcePairsBase`] with the given massive and affected number of particles.
+    /// Creates a new [`BruteForcePairsCore`] with the given massive and affected number of particles.
     #[inline]
     pub fn new(accelerations: A, massive_len: usize, affected_len: usize) -> Self {
         Self {
