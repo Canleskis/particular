@@ -20,15 +20,14 @@ Particular is also built with performance in mind and provides multiple ways of 
 There are currently 2 algorithms used by the available compute methods: [BruteForce](https://en.wikipedia.org/wiki/N-body_problem#Simulation) and [BarnesHut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation).
 
 Generally speaking, the BruteForce algorithm is more accurate, but slower. The BarnesHut algorithm allows trading accuracy for speed by increasing the `theta` parameter.  
-You can see more about their relative performance [here](#notes-on-performance).
+You can read more about their relative performance [here](#notes-on-performance).
 
-Particular uses [rayon](https://github.com/rayon-rs/rayon) for parallelization. Enable the "parallel" feature to access the available compute methods.
-
+Particular uses [rayon](https://github.com/rayon-rs/rayon) for parallelization. Enable the "parallel" feature to access the available compute methods.  
 Particular uses [wgpu](https://github.com/gfx-rs/wgpu) for GPU computation. Enable the "gpu" feature to access the available compute methods.
 
 ## Using Particular
 
-### Implementing the Particle trait
+### Implementing the [`Particle`] trait
 
 When possible, it can be useful to implement [`Particle`] on a type.
 
@@ -71,7 +70,7 @@ impl Particle for Body {
 }
 ```
 
-If you can't implement Particle on a type, you can almost certainly use the fact that it is implemented for tuples of a vector and its scalar type.
+If you can't implement [`Particle`] on a type, you can almost certainly use the fact that it is implemented for tuples of a vector and its scalar type.
 
 ```rust
 let particle = (Vec3::ONE, 5.0);
@@ -86,7 +85,7 @@ In order to compute the accelerations of your particles, you can use the [accele
 
 ### Examples
 
-#### When the iterated type doesn't implement Particle
+#### When the iterated type doesn't implement [`Particle`]
 
 ```rust
 // Items are a tuple of a velocity, a position and a mass.
@@ -102,7 +101,7 @@ for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
 }
 ```
 
-#### When the iterated type implements Particle
+#### When the iterated type implements [`Particle`]
 
 ```rust
 for (acceleration, body) in bodies.iter().accelerations(cm).zip(&mut bodies) {
@@ -131,5 +130,5 @@ This project is licensed under either of [Apache License, Version 2.0](LICENSE-A
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project by you, as defined in the Apache 2.0 license, shall be dual licensed as above, without any additional terms or conditions.
 
 [`Particle`]: https://docs.rs/particular/latest/particular/particle/trait.Particle.html
+[accelerations]: https://docs.rs/particular/latest/particular/particle/trait.Accelerations.html#method.accelerations
 [`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
-[accelerations]: https://docs.rs/particular/latest/particular/iterator/trait.Compute.html#method.accelerations

@@ -16,13 +16,12 @@
 //! Generally speaking, the BruteForce algorithm is more accurate, but slower. The BarnesHut algorithm allows trading accuracy for speed by increasing the `theta` parameter.  
 //! You can read more about their relative performance [here](#notes-on-performance).
 //!
-//! Particular uses [rayon](https://github.com/rayon-rs/rayon) for parallelization. Enable the "parallel" feature to access the available compute methods.
-//!
+//! Particular uses [rayon](https://github.com/rayon-rs/rayon) for parallelization. Enable the "parallel" feature to access the available compute methods.  
 //! Particular uses [wgpu](https://github.com/gfx-rs/wgpu) for GPU computation. Enable the "gpu" feature to access the available compute methods.
 //!
 //! ## Using Particular
 //!
-//! ### Implementing the Particle trait
+//! ### Implementing the [`Particle`](particle::Particle) trait
 //!
 //! When possible, it can be useful to implement [`Particle`](particle::Particle) on a type.
 //!
@@ -72,7 +71,7 @@
 //! }
 //! ```
 //!
-//! If you can't implement Particle on a type, you can almost certainly use the fact that it is implemented for tuples of a vector and its scalar type.
+//! If you can't implement [`Particle`](particle::Particle) on a type, you can almost certainly use the fact that it is implemented for tuples of a vector and its scalar type.
 //!
 //! ```
 //! # use particular::prelude::*;
@@ -85,12 +84,12 @@
 //!
 //! ### Computing and using the gravitational acceleration
 //!
-//! In order to compute the accelerations of your particles, you can use the [accelerations](iterator::Accelerations::accelerations) method on iterators,
+//! In order to compute the accelerations of your particles, you can use the [accelerations](particle::Accelerations::accelerations) method on iterators,
 //! passing in a [`ComputeMethod`](compute_method::ComputeMethod) of your choice.
 //!
 //! ### Examples
 //!
-//! #### When the iterated type doesn't implement Particle
+//! #### When the iterated type doesn't implement [`Particle`](particle::Particle)
 //! ```
 //! # use particular::prelude::*;
 //! # use glam::Vec3;
@@ -116,7 +115,7 @@
 //!     *position += *velocity * DT;
 //! }
 //! ```
-//! #### When the iterated type implements Particle
+//! #### When the iterated type implements [`Particle`](particle::Particle)
 //! ```
 //! # use particular::prelude::*;
 //! # use glam::Vec3;
@@ -146,14 +145,11 @@
 
 #![warn(missing_docs)]
 
-/// Traits for computing accelerations.
+/// Traits to perform computation of values from iterators.
 pub mod compute_method;
 
-/// Trait to implement on types representing particles.
+/// Traits for particle representation of objects and computing their acceleration.
 pub mod particle;
-
-/// Iterators and methods to get the acceleration of particles.
-pub mod iterator;
 
 /// Algorithms to compute the acceleration of particles.
 pub mod algorithms;
@@ -163,11 +159,13 @@ pub mod particular_derive {
     pub use particular_derive::Particle;
 }
 
-/// Everything needed to use Particular.
+/// Most commonly used re-exported types.
 pub mod prelude {
-    pub use crate::algorithms::compute_methods::*;
-    pub use crate::compute_method::{ComputeMethod, Storage};
-    pub use crate::iterator::Accelerations;
-    pub use crate::particle::{IntoPointMass, Particle, ParticlePointMass};
-    pub use crate::particular_derive::Particle;
+    #[doc(hidden)]
+    pub use crate::{
+        algorithms::compute_methods::*,
+        compute_method::{ComputeMethod, Storage},
+        particle::{Accelerations, IntoPointMass, Particle, ParticlePointMass},
+        particular_derive::Particle,
+    };
 }
