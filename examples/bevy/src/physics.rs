@@ -22,15 +22,19 @@ impl Default for PhysicsSettings {
     }
 }
 
-#[derive(Component, Default, Reflect)]
-pub struct Acceleration {
-    pub linear: Vec3,
+#[derive(Component, Clone, Copy, Default, Deref, DerefMut, Reflect)]
+pub struct Position(pub Vec3);
+
+#[derive(Component, Clone, Copy, Debug, Default, Reflect)]
+pub struct Interpolated {
+    previous_position: Option<Vec3>,
 }
 
-#[derive(Component, Default, Reflect)]
-pub struct Velocity {
-    pub linear: Vec3,
-}
+#[derive(Component, Clone, Copy, Default, Deref, DerefMut, Reflect)]
+pub struct Velocity(pub Vec3);
+
+#[derive(Component, Clone, Copy, Default, Deref, DerefMut, Reflect)]
+pub struct Acceleration(pub Vec3);
 
 pub struct PhysicsPlugin;
 
@@ -40,12 +44,14 @@ impl Plugin for PhysicsPlugin {
             FixedUpdate,
             (PhysicsSet::First, PhysicsSet::Main, PhysicsSet::Last).chain(),
         )
-        .insert_resource(PhysicsSettings {
-            time_scale: 1.0,
-            ..default()
-        })
         .add_systems(PreUpdate, time_scale)
-        .add_systems(FixedUpdate, integrate_position.in_set(PhysicsSet::Main))
+        .add_systems(
+            FixedUpdate,
+            (cache_previous_position, integrate_position)
+                .chain()
+                .in_set(PhysicsSet::Main),
+        )
+        .add_systems(Update, update_transform)
         .register_type::<Acceleration>()
         .register_type::<Velocity>();
     }
@@ -54,27 +60,55 @@ impl Plugin for PhysicsPlugin {
 fn time_scale(
     time: Res<Time>,
     input: Res<Input<KeyCode>>,
-    mut physics: ResMut<PhysicsSettings>,
     mut fixed_time: ResMut<FixedTime>,
+    mut physics: ResMut<PhysicsSettings>,
 ) {
-    let input = input.pressed(KeyCode::Right) as isize - input.pressed(KeyCode::Left) as isize;
+    let left_input = input.pressed(KeyCode::Left) as isize;
+    let right_input = input.pressed(KeyCode::Right) as isize;
+    let input_value = right_input - left_input;
 
-    if input != 0 || physics.is_added() {
-        physics.time_scale += physics.time_scale * input as f32 * time.delta_seconds() * 2.0;
-        physics.time_scale = physics.time_scale.clamp(0.5, 100.0);
+    if input_value != 0 || physics.is_added() {
+        physics.time_scale += physics.time_scale * input_value as f32 * time.delta_seconds() * 2.0;
+        physics.time_scale = physics.time_scale.clamp(0.05, 100.0);
         fixed_time.period =
             std::time::Duration::from_secs_f32(physics.delta_time / physics.time_scale);
     }
 }
 
+fn cache_previous_position(mut query: Query<(&Position, &mut Interpolated)>) {
+    for (position, mut interpolated) in &mut query {
+        interpolated.previous_position = Some(**position);
+    }
+}
+
 fn integrate_position(
     physics: Res<PhysicsSettings>,
-    mut query: Query<(&mut Acceleration, &mut Velocity, &mut Transform)>,
+    mut query: Query<(&mut Acceleration, &mut Velocity, &mut Position)>,
 ) {
-    for (mut acceleration, mut velocity, mut transform) in &mut query {
-        velocity.linear += acceleration.linear * physics.delta_time;
-        transform.translation += velocity.linear * physics.delta_time;
+    for (mut acceleration, mut velocity, mut position) in &mut query {
+        **velocity += **acceleration * physics.delta_time;
+        **position += **velocity * physics.delta_time;
 
-        acceleration.linear = Vec3::ZERO;
+        **acceleration = Vec3::ZERO;
+    }
+}
+
+/// Interpolates or sets the transform depending on if the entity has an [`Interpolated`] component.
+/// Interpolation doesn't behave properly when the time scale is changed with high time steps.
+fn update_transform(
+    fixed_time: Res<FixedTime>,
+    mut query: Query<(&mut Transform, &Position, Option<&Interpolated>)>,
+) {
+    let s = fixed_time.accumulated().as_secs_f32() / fixed_time.period.as_secs_f32();
+
+    for (mut transform, position, interpolated) in &mut query {
+        let new_position = interpolated
+            .and_then(|interpolated| interpolated.previous_position)
+            .map(|previous_position| previous_position.lerp(**position, s))
+            .unwrap_or(**position);
+
+        if transform.translation != new_position {
+            transform.translation = new_position;
+        }
     }
 }

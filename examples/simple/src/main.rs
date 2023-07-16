@@ -40,7 +40,7 @@ fn main() {
             .iter()
             // Calling accelerations returns an iterator over the acceleration of each body.
             .accelerations(sequential::BruteForce)
-            // Zipping the accelerations with a mutable reference to the bodies 
+            // Zipping the accelerations with a mutable reference to the bodies
             // to change the state of each body using their computed acceleration.
             .zip(&mut bodies)
             .for_each(|(acceleration, body)| {

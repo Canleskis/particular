@@ -1,4 +1,4 @@
-use crate::{Mass, PhysicsSettings, SelectableEntities, Velocity, COMPUTE_METHOD};
+use crate::{Mass, PhysicsSettings, Position, Selected, Velocity, COMPUTE_METHOD};
 
 use bevy::prelude::*;
 use particular::prelude::*;
@@ -9,7 +9,7 @@ pub struct PredictionDuration(pub Duration);
 
 #[derive(Component, Default)]
 pub struct PredictionState {
-    pub velocities: Vec<Vec3>,
+    pub velocity: Option<Vec3>,
     pub positions: Vec<Vec3>,
     pub reference: Option<Entity>,
     pub color: Color,
@@ -25,7 +25,7 @@ impl Plugin for OrbitPredictionPlugin {
         })
         .insert_resource(PredictionDuration::default())
         .add_systems(
-            Update,
+            PostUpdate,
             (reset_prediction, compute_prediction, draw_prediction).chain(),
         );
     }
@@ -35,13 +35,13 @@ fn compute_prediction(
     time: Res<Time>,
     input: Res<Input<KeyCode>>,
     physics: Res<PhysicsSettings>,
-    selectable_entites: Res<SelectableEntities>,
+    query_selected: Query<Entity, Added<Selected>>,
     mut prediction_duration: ResMut<PredictionDuration>,
-    mut query: Query<(&Velocity, &Transform, &Mass, &mut PredictionState)>,
+    mut query: Query<(&Velocity, &Position, &Mass, &mut PredictionState)>,
 ) {
-    if selectable_entites.is_changed() {
+    if let Ok(selected_entity) = query_selected.get_single() {
         for (_, _, _, mut prediction) in &mut query {
-            prediction.reference = selectable_entites.selected();
+            prediction.reference = Some(selected_entity);
         }
     }
 
@@ -51,15 +51,14 @@ fn compute_prediction(
 
         for (_, _, _, mut prediction) in &mut query {
             prediction.positions.reserve(steps);
-            prediction.velocities.reserve(steps);
         }
 
         let mut mapped_query: Vec<_> = query
             .iter_mut()
-            .map(|(v, t, mass, prediction)| {
+            .map(|(v, p, mass, prediction)| {
                 (
-                    *prediction.positions.last().unwrap_or(&t.translation),
-                    *prediction.velocities.last().unwrap_or(&v.linear),
+                    *prediction.positions.last().unwrap_or(p),
+                    prediction.velocity.unwrap_or(**v),
                     mass.0,
                     prediction,
                 )
@@ -76,7 +75,7 @@ fn compute_prediction(
                     *velocity += acceleration * physics.delta_time;
                     *position += *velocity * physics.delta_time;
 
-                    prediction.velocities.push(*velocity);
+                    prediction.velocity.replace(*velocity);
                     prediction.positions.push(*position);
                 });
         }
@@ -86,26 +85,23 @@ fn compute_prediction(
 fn draw_prediction(mut gizmos: Gizmos, query: Query<(&Transform, &PredictionState)>) {
     let resolution = 5;
     for (_, prediction) in &query {
-        let reference_positions = prediction.reference.and_then(|reference| {
-            query
-                .get(reference)
-                .map(|(transform, prediction)| {
-                    prediction
-                        .positions
-                        .iter()
-                        .map(|&position| position - transform.translation)
-                })
-                .ok()
-        });
+        let reference = prediction.reference.and_then(|r| query.get(r).ok());
 
-        if let Some(reference_positions) = reference_positions {
+        if let Some((ref_transform, ref_prediction)) = reference {
             gizmos.linestrip(
                 prediction
                     .positions
                     .iter()
-                    .zip(reference_positions)
+                    .zip(&ref_prediction.positions)
                     .step_by(resolution)
-                    .map(|(&position, reference_position)| position - reference_position),
+                    .map(|(&pred_position, &ref_pred_position)| {
+                        pred_position - ref_pred_position + ref_transform.translation
+                    }),
+                prediction.color,
+            )
+        } else {
+            gizmos.linestrip(
+                prediction.positions.iter().step_by(resolution).copied(),
                 prediction.color,
             )
         }
@@ -121,7 +117,7 @@ fn reset_prediction(
         *prediction_duration = Default::default();
 
         for mut prediction in &mut query {
-            prediction.velocities.clear();
+            prediction.velocity.take();
             prediction.positions.clear();
         }
     }

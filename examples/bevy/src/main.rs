@@ -10,6 +10,9 @@ use orbit_prediction::*;
 mod physics;
 use physics::*;
 
+mod selection;
+use selection::*;
+
 mod ui;
 use ui::*;
 
@@ -23,19 +26,25 @@ fn main() {
             PhysicsPlugin,
             ParticularPlugin,
             OrbitPredictionPlugin,
+            SelectionPlugin,
             UiPlugin,
         ))
         .insert_resource(ClearColor(Color::BLACK))
-        .insert_resource(SelectableEntities::default())
-        .insert_resource(PhysicsSettings::default())
+        .insert_resource(AmbientLight {
+            color: Color::NONE,
+            brightness: 0.0,
+        })
+        .insert_resource(PhysicsSettings {
+            time_scale: 1.0,
+            delta_time: 1.0 / 60.0,
+        })
         .add_systems(Startup, setup_scene)
-        .add_systems(PostStartup, find_selectable_entities)
-        .add_systems(PreUpdate, switch_selected_entity)
         .run();
 }
 
 #[derive(Default, Clone)]
 struct BodySetting {
+    label: &'static str,
     velocity: Vec3,
     position: Vec3,
     mu: f32,
@@ -77,6 +86,7 @@ fn setup_scene(
 
     let star_color = Color::rgb(1.0, 1.0, 0.9);
     let star = BodySetting {
+        label: "Star",
         mu: 5E3,
         radius: 8.0,
         material: StandardMaterial {
@@ -88,6 +98,7 @@ fn setup_scene(
     };
 
     let planet = BodySetting {
+        label: "Planet",
         position: Vec3::new(0.0, 60.0, 0.0),
         mu: 100.0,
         radius: 2.0,
@@ -100,6 +111,7 @@ fn setup_scene(
     .orbiting(&star, Vec3::Z);
 
     let moon = BodySetting {
+        label: "Moon",
         position: planet.position + Vec3::new(4.5, 0.0, 0.0),
         mu: 1.0,
         radius: 0.6,
@@ -112,6 +124,7 @@ fn setup_scene(
     .orbiting(&planet, Vec3::new(0.0, 0.5, -1.0));
 
     let comet = BodySetting {
+        label: "Comet",
         velocity: Vec3::new(3.0, 0.2, 0.4),
         position: Vec3::new(-200.0, 138.0, -18.0),
         mu: 0.0,
@@ -122,32 +135,40 @@ fn setup_scene(
         },
     };
 
-    let bodies = vec![
-        ("Star", star),
-        ("Planet", planet),
-        ("Moon", moon),
-        ("Comet", comet),
-    ];
-
-    for (name, body) in bodies {
-        let light_entity = (body.material.emissive != Color::BLACK).then(|| {
-            commands
-                .spawn(PointLightBundle {
-                    point_light: PointLight {
-                        color: body.material.emissive,
-                        intensity: 5E4,
-                        range: 2E3,
-                        shadows_enabled: true,
-                        ..default()
-                    },
-                    transform: Transform::from_xyz(0.0, 0.0, 0.0),
-                    ..default()
-                })
-                .id()
+    for body in [star, planet, moon, comet] {
+        let light_bundle = (body.material.emissive != Color::BLACK).then(|| PointLightBundle {
+            point_light: PointLight {
+                color: body.material.emissive,
+                intensity: 5E4,
+                range: 2E3,
+                shadows_enabled: true,
+                ..default()
+            },
+            transform: Transform::from_xyz(0.0, 0.0, 0.0),
+            ..default()
         });
 
-        let mut body_entity = commands.spawn((
-            Name::new(name),
+        let label = commands
+            .spawn(TextBundle::from_section(
+                body.label,
+                TextStyle {
+                    font_size: 6.0 * (1000.0 * body.radius).log10(),
+                    color: Color::GRAY,
+                    ..default()
+                },
+            ))
+            .id();
+
+        let mut cmds = commands.spawn((
+            Selectable {
+                radius: body.radius,
+                min_camera_distance: body.radius * 3.0,
+                saved_transform: Transform::from_xyz(0.0, 0.0, body.radius * 20.0),
+            },
+            Labelled {
+                entity: label,
+                offset: Vec2::new(body.radius, body.radius) * 1.1,
+            },
             PredictionState {
                 color: body.material.base_color,
                 ..default()
@@ -166,55 +187,31 @@ fn setup_scene(
                     ..default()
                 },
                 mass: Mass(body.mu),
-                velocity: Velocity {
-                    linear: body.velocity,
-                },
+                velocity: Velocity(body.velocity),
+                position: Position(body.position),
                 ..default()
             },
+            Interpolated::default(),
         ));
 
-        if let Some(light_entity) = light_entity {
-            body_entity.add_child(light_entity);
+        cmds.with_children(|parent| {
+            if let Some(light_bundle) = light_bundle {
+                parent.spawn(light_bundle);
+            }
+        });
+
+        if body.label == "Star" {
+            cmds.insert(Selected);
         }
     }
 }
-
-#[derive(Resource, Default, Deref, DerefMut)]
-pub struct SelectableEntities(Vec<Entity>);
-
-impl SelectableEntities {
-    pub fn selected(&self) -> Option<Entity> {
-        self.first().copied()
-    }
-}
-
-fn find_selectable_entities(
-    mut selectable_entites: ResMut<SelectableEntities>,
-    query_bodies: Query<Entity, With<Mass>>,
-) {
-    let mut bodies: Vec<_> = query_bodies.iter().collect();
-    bodies.sort();
-
-    selectable_entites.0 = bodies;
-}
-
-fn switch_selected_entity(
-    input: Res<Input<KeyCode>>,
-    mut selectable_entites: ResMut<SelectableEntities>,
-) {
-    if input.just_pressed(KeyCode::Space) {
-        selectable_entites.rotate_left(1);
-    }
-}
-
-#[derive(Component, Default)]
-struct Mass(f32);
 
 #[derive(Bundle, Default)]
 struct ParticleBundle {
     pbr_bundle: PbrBundle,
     acceleration: Acceleration,
     velocity: Velocity,
+    position: Position,
     mass: Mass,
 }
 
