@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2023-19-07
+
+### Added
+
+- `acceleration_*` and `total_acceleration_*` methods for `PointMass` to calculate the acceleration between particles of vectors implementing `simd` and `internal`.
+
+### Changed
+
+- Built-in compute methods use `total_acceleration_*` methods when applicable.
+- `sequential::BruteForcePairs` is more efficient with less allocations.
+
 ## [0.6.0] - 2023-14-07
 
 ### Added
@@ -153,6 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release.
 
+[0.6.1]: https://github.com/Canleskis/particular/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/Canleskis/particular/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/Canleskis/particular/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/Canleskis/particular/compare/v0.5.0...v0.5.1

@@ -24,23 +24,7 @@ where
         storage
             .affected
             .iter()
-            .map(|p1| {
-                storage
-                    .massive
-                    .iter()
-                    .fold(T::default(), |acceleration, p2| {
-                        let dir = p2.position - p1.position;
-                        let mag_2 = dir.length_squared();
-                        let grav_acc = if mag_2 != S::default() {
-                            dir * p2.mass / (mag_2 * mag_2.sqrt())
-                        } else {
-                            dir
-                        };
-
-                        acceleration + grav_acc
-                    })
-            })
-            .map(V::from_internal)
+            .map(|p| V::from_internal(p.total_acceleration_internal(&storage.massive)))
             .collect()
     }
 }
@@ -66,31 +50,31 @@ where
         let massive_len = storage.massive.len();
         let affected_len = storage.affected.len();
 
-        let massless: Vec<_> = storage
-            .affected
+        let particles: Vec<_> = storage
+            .massive
             .iter()
-            .filter(|p| p.is_massless())
+            .chain(storage.affected.iter().filter(|p| p.is_massless()))
             .copied()
             .collect();
 
-        let mut accelerations =
+        let accelerations =
             BruteForcePairsCore::new(vec![T::default(); affected_len], massive_len, affected_len)
-                .compute([storage.massive, massless].concat());
+                .compute(particles);
 
         let (mut massive_acc, mut massless_acc) = {
-            let remainder = accelerations.split_off(massive_len);
+            let (massive_acc, massless_acc) = accelerations.split_at(massive_len);
 
-            (accelerations.into_iter(), remainder.into_iter())
+            (massive_acc.iter().copied(), massless_acc.iter().copied())
         };
 
         storage
             .affected
             .iter()
             .filter_map(|p| {
-                if p.is_massive() {
-                    massive_acc.next()
-                } else {
+                if p.is_massless() {
                     massless_acc.next()
+                } else {
+                    massive_acc.next()
                 }
             })
             .map(V::from_internal)
@@ -208,17 +192,12 @@ where
         storage
             .affected
             .iter()
-            .map(|p1| {
-                let p1 = PointMass::new(T::splat(p1.position), S::splat(p1.mass));
-                storage.massive.iter().fold(T::default(), |acc, p2| {
-                    let dir = p2.position - p1.position;
-                    let mag_2 = dir.length_squared();
-                    let grav_acc = dir * p2.mass * (mag_2.recip_sqrt() * mag_2.recip());
-
-                    acc + grav_acc.nan_to_zero()
-                })
+            .map(|p| {
+                V::from_after_reduce(
+                    PointMass::new(T::splat(p.position), S::splat(p.mass))
+                        .total_acceleration_simd(&storage.massive),
+                )
             })
-            .map(V::from_after_reduce)
             .collect()
     }
 }
