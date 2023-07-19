@@ -39,7 +39,8 @@ impl<V, S> PointMass<V, S> {
 }
 
 impl<V, S> PointMass<V, S> {
-    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<T, S>`] provided `V` implements [`Into<T>`].
+    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<T, S>`]
+    /// provided `V` implements [`Into<T>`].
     #[inline]
     pub fn into<T>(self) -> PointMass<T, S>
     where
@@ -51,7 +52,8 @@ impl<V, S> PointMass<V, S> {
         }
     }
 
-    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<V::Internal, S>`] provided `V` implements [`internal::IntoVectorArray`].
+    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<V::Internal, S>`]
+    /// provided `V` implements [`internal::IntoVectorArray`].
     #[inline]
     pub fn into_internal<A>(self) -> PointMass<V::Vector, S>
     where
@@ -60,13 +62,75 @@ impl<V, S> PointMass<V, S> {
         PointMass::new(self.position.into_internal(), self.mass)
     }
 
-    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<E, S>`] provided `V` implements [`simd::IntoVectorElement<E>`].
+    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<E, S>`]
+    /// provided `V` implements [`simd::IntoVectorElement<E>`].
     #[inline]
     pub fn into_element<E>(self) -> PointMass<E, S>
     where
         V: simd::IntoVectorElement<E>,
     {
         PointMass::new(self.position.into_element(), self.mass)
+    }
+}
+
+impl<V, S> PointMass<V, S> {
+    /// Computes the gravitational acceleration exerted on this particle by the provided particle
+    /// provided `S` and `V` implement [`internal::Scalar`] and [`internal::Vector`] respectively.
+    #[inline]
+    pub fn acceleration_internal(&self, particle: &Self) -> V
+    where
+        S: internal::Scalar,
+        V: internal::Vector<Scalar = S>,
+    {
+        let dir = particle.position - self.position;
+        let mag_2 = dir.length_squared();
+
+        if mag_2 != S::default() {
+            dir * particle.mass / (mag_2 * mag_2.sqrt())
+        } else {
+            dir
+        }
+    }
+
+    /// Computes the total gravitational acceleration exerted on this particle by the provided slice of particles
+    /// provided `S` and `V` implement [`internal::Scalar`] and [`internal::Vector`] respectively.
+    #[inline]
+    pub fn total_acceleration_internal(&self, particles: &[Self]) -> V
+    where
+        S: internal::Scalar,
+        V: internal::Vector<Scalar = S>,
+    {
+        particles.iter().fold(V::default(), |acceleration, p2| {
+            acceleration + self.acceleration_internal(p2)
+        })
+    }
+
+    /// Computes the gravitational acceleration exerted on this particle by the provided particle
+    /// provided `S` and `V` implement [`simd::Scalar`] and [`simd::Vector`] respectively.
+    #[inline]
+    pub fn acceleration_simd<const LANES: usize>(&self, particle: &Self) -> V
+    where
+        S: simd::Scalar<LANES>,
+        V: simd::Vector<LANES, Scalar = S>,
+    {
+        let dir = particle.position - self.position;
+        let mag_2 = dir.length_squared();
+        let grav_acc = dir * particle.mass * (mag_2.recip_sqrt() * mag_2.recip());
+
+        grav_acc.nan_to_zero()
+    }
+
+    /// Computes the total gravitational acceleration exerted on this particle by the provided slice of particles
+    /// provided `S` and `V` implement [`simd::Scalar`] and [`simd::Vector`] respectively.
+    #[inline]
+    pub fn total_acceleration_simd<const LANES: usize>(&self, particles: &[Self]) -> V
+    where
+        S: simd::Scalar<LANES>,
+        V: simd::Vector<LANES, Scalar = S>,
+    {
+        particles.iter().fold(V::default(), |acceleration, p2| {
+            acceleration + self.acceleration_simd(p2)
+        })
     }
 }
 
@@ -171,7 +235,10 @@ where
     V: internal::IntoVectorArray<T::Array, Vector = T>,
 {
     #[inline]
-    fn store<I: Iterator<Item = PointMass<V, S>>>(input: I) -> Self {
+    fn store<I>(input: I) -> Self
+    where
+        I: Iterator<Item = PointMass<V, S>>,
+    {
         Self(input.map(PointMass::into_internal).collect())
     }
 }
@@ -183,7 +250,10 @@ where
     V: internal::IntoVectorArray<T::Array, Vector = T>,
 {
     #[inline]
-    fn store<I: Iterator<Item = PointMass<V, S>>>(input: I) -> Self {
+    fn store<I>(input: I) -> Self
+    where
+        I: Iterator<Item = PointMass<V, S>>,
+    {
         Self::from_affected(input.map(PointMass::into_internal).collect())
     }
 }
@@ -196,7 +266,10 @@ where
     V: simd::IntoVectorElement<T::Element, Vector = T>,
 {
     #[inline]
-    fn store<I: Iterator<Item = PointMass<V, S::Element>>>(input: I) -> Self {
+    fn store<I>(input: I) -> Self
+    where
+        I: Iterator<Item = PointMass<V, S::Element>>,
+    {
         Self::from_affected(input.map(PointMass::into_element).collect())
     }
 }

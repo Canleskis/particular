@@ -1,6 +1,6 @@
 [package]
 name = "particular"
-version = "0.6.0"
+version = "0.6.1"
 edition = "2021"
 authors = ["Canleskis"]
 description = "N-body simulation library written in Rust featuring BarnesHut and GPU accelerated algorithms."

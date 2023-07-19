@@ -16,8 +16,8 @@ const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass<[f32; 3], f32>>() as u6
 /// Currently only available for 3D f32 vectors. You can still use it in 2D by converting your 2D f32 vectors to 3D f32 vectors.
 pub struct BruteForce {
     wgpu_data: Option<WgpuData>,
-    device: ::wgpu::Device,
-    queue: ::wgpu::Queue,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
 }
 
 impl<V> ComputeMethod<MassiveAffected<[f32; 3], f32>, V> for &mut BruteForce
@@ -34,7 +34,7 @@ where
         if massive_len == 0 {
             return storage
                 .affected
-                .into_iter()
+                .iter()
                 .map(|_| V::from([0.0; 3]))
                 .collect();
         }

@@ -250,7 +250,7 @@ pub mod simd {
         /// Norm squared, defined by the dot product on itself.
         fn length(self) -> Self::Scalar;
 
-        /// Returns itself with NaNs replaced with zeroes.
+        /// Returns itself with NaNs replaced with zeros.
         fn nan_to_zero(self) -> Self;
     }
 

@@ -26,23 +26,7 @@ where
         storage
             .affected
             .par_iter()
-            .map(|p1| {
-                storage
-                    .massive
-                    .iter()
-                    .fold(T::default(), |acceleration, p2| {
-                        let dir = p2.position - p1.position;
-                        let mag_2 = dir.length_squared();
-                        let grav_acc = if mag_2 != S::default() {
-                            dir * p2.mass / (mag_2 * mag_2.sqrt())
-                        } else {
-                            dir
-                        };
-
-                        acceleration + grav_acc
-                    })
-            })
-            .map(V::from_internal)
+            .map(|p| V::from_internal(p.total_acceleration_internal(&storage.massive)))
             .collect()
     }
 }
@@ -65,17 +49,12 @@ where
         storage
             .affected
             .par_iter()
-            .map(|p1| {
-                let p1 = PointMass::new(T::splat(p1.position), S::splat(p1.mass));
-                storage.massive.iter().fold(T::default(), |acc, p2| {
-                    let dir = p2.position - p1.position;
-                    let mag_2 = dir.length_squared();
-                    let grav_acc = dir * p2.mass * (mag_2.recip_sqrt() * mag_2.recip());
-
-                    acc + grav_acc.nan_to_zero()
-                })
+            .map(|p| {
+                V::from_after_reduce(
+                    PointMass::new(T::splat(p.position), S::splat(p.mass))
+                        .total_acceleration_simd(&storage.massive),
+                )
             })
-            .map(V::from_after_reduce)
             .collect()
     }
 }

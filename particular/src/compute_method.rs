@@ -26,7 +26,7 @@ pub trait ComputeMethod<S, V> {
     fn compute(self, storage: S) -> Self::Output;
 }
 
-/// Trait for storage created from objects of type `P`.
+/// Trait for storages created from objects of type `P`.
 ///
 /// # Example
 ///
@@ -47,7 +47,9 @@ pub trait ComputeMethod<S, V> {
 /// ```
 pub trait Storage<P> {
     /// Creates a new storage.
-    fn store<I: Iterator<Item = P>>(input: I) -> Self;
+    fn store<I>(input: I) -> Self
+    where
+        I: Iterator<Item = P>;
 }
 
 /// Trait to perform a computation from an iterator using a provided [`ComputeMethod`].
