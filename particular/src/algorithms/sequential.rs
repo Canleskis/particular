@@ -19,7 +19,7 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: MassiveAffected<T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffected<T, S>) -> Self::Output {
         storage
             .affected
             .iter()
@@ -45,7 +45,7 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: MassiveAffected<T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffected<T, S>) -> Self::Output {
         let massive_len = storage.massive.len();
         let affected_len = storage.affected.len();
 
@@ -57,8 +57,8 @@ where
             .collect();
 
         let accelerations =
-            BruteForcePairsCore::new(vec![T::default(); affected_len], massive_len, affected_len)
-                .compute(particles);
+            BruteForcePairsCore::new(vec![T::ZERO; affected_len], massive_len, affected_len)
+                .compute(&particles);
 
         let (mut massive_acc, mut massless_acc) = {
             let (massive_acc, massless_acc) = accelerations.split_at(massive_len);
@@ -96,11 +96,11 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: ParticleSet<T, S>) -> Self::Output {
+    fn compute(self, storage: &ParticleSet<T, S>) -> Self::Output {
         let len = storage.0.len();
 
-        BruteForcePairsCore::new(vec![T::default(); len], len, len)
-            .compute(storage.0)
+        BruteForcePairsCore::new(vec![T::ZERO; len], len, len)
+            .compute(&storage.0)
             .into_iter()
             .map(V::from_internal)
             .collect()
@@ -144,7 +144,7 @@ where
     type Output = A;
 
     #[inline]
-    fn compute(self, particles: I) -> Self::Output {
+    fn compute(self, particles: &I) -> Self::Output {
         let Self {
             mut accelerations,
             massive_len,
@@ -153,7 +153,7 @@ where
 
         for i in 0..massive_len {
             let p1 = particles[i];
-            let mut acceleration = T::default();
+            let mut acceleration = T::ZERO;
 
             for j in (i + 1)..affected_len {
                 let p2 = particles[j];
@@ -187,14 +187,15 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: MassiveAffectedSIMD<LANES, T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedSIMD<LANES, T, S>) -> Self::Output {
         storage
             .affected
             .iter()
             .map(|p| {
-                V::from_after_reduce(
+                V::from_reduced(
                     PointMass::new(T::splat(p.position), S::splat(p.mass))
-                        .total_acceleration_simd(&storage.massive),
+                        .total_acceleration_simd(&storage.massive)
+                        .reduce_add(),
                 )
             })
             .collect()
@@ -218,7 +219,7 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: TreeAffected<N, DIM, T, S>) -> Self::Output {
+    fn compute(self, storage: &TreeAffected<N, DIM, T, S>) -> Self::Output {
         let TreeAffected {
             tree,
             root,
@@ -227,7 +228,7 @@ where
 
         affected
             .iter()
-            .map(|p| V::from_internal(tree.acceleration_at(root, p.position, self.theta)))
+            .map(|p| V::from_internal(tree.acceleration_at(*root, p.position, self.theta)))
             .collect()
     }
 }

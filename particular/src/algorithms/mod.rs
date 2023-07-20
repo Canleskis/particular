@@ -65,7 +65,7 @@ pub(crate) mod tests {
         ];
 
         let storage = S::store(particles.clone().into_iter());
-        let computed = cm.compute(storage);
+        let computed = cm.compute(&storage);
 
         for (&point_mass1, computed) in particles.iter().zip(computed) {
             let mut acceleration = Vec3A::ZERO;

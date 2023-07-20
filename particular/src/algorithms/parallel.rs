@@ -21,7 +21,7 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: MassiveAffected<T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffected<T, S>) -> Self::Output {
         storage
             .affected
             .par_iter()
@@ -44,14 +44,15 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: MassiveAffectedSIMD<LANES, T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedSIMD<LANES, T, S>) -> Self::Output {
         storage
             .affected
             .par_iter()
             .map(|p| {
-                V::from_after_reduce(
+                V::from_reduced(
                     PointMass::new(T::splat(p.position), S::splat(p.mass))
-                        .total_acceleration_simd(&storage.massive),
+                        .total_acceleration_simd(&storage.massive)
+                        .reduce_add(),
                 )
             })
             .collect()
@@ -75,7 +76,7 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: TreeAffected<N, DIM, T, S>) -> Self::Output {
+    fn compute(self, storage: &TreeAffected<N, DIM, T, S>) -> Self::Output {
         let TreeAffected {
             tree,
             root,
@@ -84,7 +85,7 @@ where
 
         affected
             .par_iter()
-            .map(|p| V::from_internal(tree.acceleration_at(root, p.position, self.theta)))
+            .map(|p| V::from_internal(tree.acceleration_at(*root, p.position, self.theta)))
             .collect()
     }
 }

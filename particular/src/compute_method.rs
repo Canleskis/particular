@@ -12,7 +12,7 @@
 /// impl ComputeMethod<MassiveAffected<Vec3A, f32>, Vec3> for AccelerationCalculator {
 ///     type Output = Vec<Vec3>;
 ///     
-///     fn compute(self, storage: MassiveAffected<Vec3A, f32>) -> Self::Output {
+///     fn compute(self, storage: &MassiveAffected<Vec3A, f32>) -> Self::Output {
 ///         // ...
 ///         # Vec::new()
 ///     }
@@ -23,7 +23,7 @@ pub trait ComputeMethod<S, V> {
     type Output: IntoIterator<Item = V>;
 
     /// Performs the computation between objects contained in the storage.
-    fn compute(self, storage: S) -> Self::Output;
+    fn compute(self, storage: &S) -> Self::Output;
 }
 
 /// Trait for storages created from objects of type `P`.
@@ -61,7 +61,7 @@ pub trait Compute: Iterator + Sized {
         S: Storage<Self::Item>,
         C: ComputeMethod<S, V>,
     {
-        cm.compute(S::store(self)).into_iter()
+        cm.compute(&S::store(self)).into_iter()
     }
 }
 
@@ -74,7 +74,7 @@ where
     type Output = C::Output;
 
     #[inline]
-    fn compute(self, storage: S) -> Self::Output {
+    fn compute(self, storage: &S) -> Self::Output {
         (*self).compute(storage)
     }
 }
@@ -86,7 +86,7 @@ where
     type Output = C::Output;
 
     #[inline]
-    fn compute(self, storage: S) -> Self::Output {
+    fn compute(self, storage: &S) -> Self::Output {
         (*self).compute(storage)
     }
 }

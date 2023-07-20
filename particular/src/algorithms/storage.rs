@@ -2,6 +2,7 @@ use crate::{
     algorithms::{
         internal, simd,
         tree::{BoundingBox, NodeID, SizedOrthant, SubDivide, Tree},
+        Zero,
     },
     compute_method::Storage,
 };
@@ -16,6 +17,10 @@ pub struct PointMass<V, S> {
     pub mass: S,
 }
 
+impl<V: Zero, S: Zero> PointMass<V, S> {
+    const ZERO: Self = PointMass::new(V::ZERO, S::ZERO);
+}
+
 impl<V, S> PointMass<V, S> {
     /// Creates a new [`PointMass`] with the given position and mass.
     pub const fn new(position: V, mass: S) -> Self {
@@ -26,18 +31,18 @@ impl<V, S> PointMass<V, S> {
     #[inline]
     pub fn is_massless(&self) -> bool
     where
-        S: Default + PartialEq,
+        S: Zero + PartialEq,
     {
-        self.mass == S::default()
+        self.mass == S::ZERO
     }
 
     /// Returns false if the mass is zero.
     #[inline]
     pub fn is_massive(&self) -> bool
     where
-        S: Default + PartialEq,
+        S: Zero + PartialEq,
     {
-        self.mass != S::default()
+        self.mass != S::ZERO
     }
 }
 
@@ -88,7 +93,7 @@ impl<V, S> PointMass<V, S> {
         let dir = particle.position - self.position;
         let mag_2 = dir.length_squared();
 
-        if mag_2 != S::default() {
+        if mag_2 != S::ZERO {
             dir * particle.mass / (mag_2 * mag_2.sqrt())
         } else {
             dir
@@ -103,7 +108,7 @@ impl<V, S> PointMass<V, S> {
         S: internal::Scalar,
         V: internal::Vector<Scalar = S>,
     {
-        particles.iter().fold(V::default(), |acceleration, p2| {
+        particles.iter().fold(V::ZERO, |acceleration, p2| {
             acceleration + self.acceleration_internal(p2)
         })
     }
@@ -131,7 +136,7 @@ impl<V, S> PointMass<V, S> {
         S: simd::Scalar<LANES>,
         V: simd::Vector<LANES, Scalar = S>,
     {
-        particles.iter().fold(V::default(), |acceleration, p2| {
+        particles.iter().fold(V::ZERO, |acceleration, p2| {
             acceleration + self.acceleration_simd(p2)
         })
     }
@@ -158,7 +163,7 @@ impl<T, S> MassiveAffected<T, S> {
     /// This method populates the `affected` vector with the given particles and copies the ones with mass to the `massive` vector.
     pub fn from_affected(affected: Vec<PointMass<T, S>>) -> Self
     where
-        S: Copy + Default + PartialEq,
+        S: Copy + Zero + PartialEq,
         T: Copy,
     {
         let massive = affected
@@ -256,7 +261,7 @@ where
         let massive = massive
             .chunks(LANES)
             .map(|slice| {
-                let mut body_8 = [PointMass::default(); LANES];
+                let mut body_8 = [PointMass::ZERO; LANES];
                 body_8[..slice.len()].copy_from_slice(slice);
 
                 PointMass::new(

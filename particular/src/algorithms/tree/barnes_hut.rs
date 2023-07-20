@@ -20,7 +20,7 @@ where
 {
     fn acceleration_at(&self, node: Option<NodeID>, position: T, theta: S) -> T {
         let Some(id) = node else {
-            return T::default();
+            return T::ZERO;
         };
         let id = id as usize;
 
@@ -32,12 +32,12 @@ where
 
         match self.nodes[id] {
             Node::Internal(SizedOrthant(orthant, bbox)) if theta < bbox.width() / mag => {
-                orthant.iter().fold(T::default(), |acceleration, &node| {
+                orthant.iter().fold(T::ZERO, |acceleration, &node| {
                     acceleration + self.acceleration_at(node, position, theta)
                 })
             }
             _ => {
-                if mag_2 == S::default() {
+                if mag_2 == S::ZERO {
                     return dir;
                 }
 

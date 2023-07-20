@@ -1,11 +1,12 @@
-/// [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
-pub type InternalVector<V, A> = <V as internal::IntoVectorArray<A>>::Vector;
-
-/// [`InternalScalar`](internal::Vector::Scalar) of the [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
-pub type InternalScalar<V, A> = <InternalVector<V, A> as internal::Vector>::Scalar;
+/// Trait for the identity element zero.
+pub trait Zero {
+    /// Zero value of the type.
+    const ZERO: Self;
+}
 
 /// Internal representation of vectors used for expensive computations.
 pub mod internal {
+    use super::Zero;
     use std::{
         fmt::Debug,
         iter::Sum,
@@ -30,6 +31,7 @@ pub mod internal {
         + Sync
         + Send
         + Copy
+        + Zero
         + Debug
         + Default
         + PartialEq
@@ -66,6 +68,7 @@ pub mod internal {
         + Sync
         + Send
         + Copy
+        + Zero
         + Debug
         + Default
         + PartialEq
@@ -115,6 +118,10 @@ pub mod internal {
                     (self + rhs) / 2.0
                 }
             }
+
+            impl Zero for $s {
+                const ZERO: Self = 0.0;
+            }
         $(
             impl Vector for $t {
                 type Scalar = $s;
@@ -125,6 +132,10 @@ pub mod internal {
                 fn length_squared(self) -> $s {
                     self.length_squared()
                 }
+            }
+
+            impl Zero for $t {
+                const ZERO: Self = <$t>::ZERO;
             }
 
             impl<V> IntoVectorArray<[$s; $dim]> for V
@@ -151,17 +162,15 @@ pub mod internal {
     internal_vector!(f64, (glam::DVec2, 2), (glam::DVec3, 3), (glam::DVec4, 4));
 }
 
-/// [`Element`](simd::SIMD::Element) of a SIMD type with L lanes.
-pub type SIMDElement<S, const L: usize> = <S as simd::SIMD<L>>::Element;
+/// [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
+pub type InternalVector<V, A> = <V as internal::IntoVectorArray<A>>::Vector;
 
-/// [`SIMDVector`](simd::IntoVectorElement::Vector) of an arbitrary vector.
-pub type SIMDVector<V, E> = <V as simd::IntoVectorElement<E>>::Vector;
-
-/// [`SIMDScalar`](simd::Vector::Scalar) of the [`SIMDVector`](simd::IntoVectorElement::Vector) of an arbitrary vector.
-pub type SIMDScalar<V, E, const L: usize> = <SIMDVector<V, E> as simd::Vector<L>>::Scalar;
+/// [`InternalScalar`](internal::Vector::Scalar) of the [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
+pub type InternalScalar<V, A> = <InternalVector<V, A> as internal::Vector>::Scalar;
 
 /// SIMD representation of vectors used for expensive computations.
 pub mod simd {
+    use super::Zero;
     use std::{
         fmt::Debug,
         ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
@@ -175,8 +184,10 @@ pub mod simd {
         /// Converts the arbitrary vector into its [`SIMD::Element`].
         fn into_element(self) -> E;
 
-        /// Reduces the SIMD vector (by summing its lanes) into the arbitrary vector.
-        fn from_after_reduce(vector: Self::Vector) -> Self;
+        /// Creates a new arbitrary vector from its reduced SIMD representation.
+        fn from_reduced(reduced: <Self::Vector as ReduceAdd>::Output) -> Self
+        where
+            Self::Vector: ReduceAdd;
     }
 
     /// Trait for SIMD objects and their creation.
@@ -192,13 +203,14 @@ pub mod simd {
     }
 
     /// Elements of [`SIMD`] objects.
-    pub trait Element: Send + Sync + Copy + Default + PartialEq {}
+    pub trait Element: Send + Sync + Copy + Zero + Default + PartialEq {}
 
     /// Scalar types that compose [`Vector`] objects.
     pub trait Scalar<const LANES: usize>:
         Send
         + Sync
         + Copy
+        + Zero
         + Debug
         + Default
         + AddAssign
@@ -228,13 +240,14 @@ pub mod simd {
         Send
         + Sync
         + Copy
+        + Zero
         + Debug
         + Default
-        + ReduceAdd
         + AddAssign
         + SubAssign
         + MulAssign
         + DivAssign
+        + ReduceAdd
         + SIMD<LANES>
         + Add<Output = Self>
         + Sub<Output = Self>
@@ -265,6 +278,8 @@ pub mod simd {
 
     macro_rules! simd_vector {
         ($l: literal, $s: ty => $se: ty, $(($t: ty => $te: ty, $dim: literal)),*) => {
+            impl Element for $se {}
+
             impl SIMD<$l> for $s {
                 type Element = $se;
 
@@ -279,8 +294,16 @@ pub mod simd {
                 }
             }
 
-            impl Element for $se {}
+            impl Zero for $s {
+                const ZERO: Self = <$s>::ZERO;
+            }
         $(
+            impl Element for $te {}
+
+            impl Zero for $te {
+                const ZERO: Self = Self::broadcast(<$se>::ZERO);
+            }
+
             impl SIMD<$l> for $t {
                 type Element = $te;
 
@@ -294,8 +317,6 @@ pub mod simd {
                     Self::from(values)
                 }
             }
-
-            impl Element for $te {}
 
             impl Vector<$l> for $t {
                 type Scalar = $s;
@@ -316,20 +337,24 @@ pub mod simd {
                 }
             }
 
-            impl<V> IntoVectorElement<<$t as SIMD<$l>>::Element> for V
+            impl Zero for $t {
+                const ZERO: Self = Self::broadcast(<$s>::ZERO);
+            }
+
+            impl<V> IntoVectorElement<$te> for V
             where
-                V: Into<<$t as ReduceAdd>::Output> + From<<$t as ReduceAdd>::Output>,
+                V: Into<[$se; $dim]> + From<[$se; $dim]>,
             {
                 type Vector = $t;
 
                 #[inline]
-                fn into_element(self) -> <$t as SIMD<$l>>::Element {
-                    <$t as SIMD<$l>>::Element::from(self.into())
+                fn into_element(self) -> $te {
+                    <$te>::from(self.into())
                 }
 
                 #[inline]
-                fn from_after_reduce(vector: Self::Vector) -> Self {
-                    V::from(vector.reduce_add())
+                fn from_reduced(reduced: [$se; $dim]) -> Self {
+                    V::from(reduced)
                 }
             }
         )*
@@ -419,3 +444,12 @@ pub mod simd {
 
     impl_reduce_add_vec4!((ultraviolet::Vec4x8, f32), (ultraviolet::DVec4x4, f64));
 }
+
+/// [`Element`](simd::SIMD::Element) of a SIMD type with L lanes.
+pub type SIMDElement<S, const L: usize> = <S as simd::SIMD<L>>::Element;
+
+/// [`SIMDVector`](simd::IntoVectorElement::Vector) of an arbitrary vector.
+pub type SIMDVector<V, E> = <V as simd::IntoVectorElement<E>>::Vector;
+
+/// [`SIMDScalar`](simd::Vector::Scalar) of the [`SIMDVector`](simd::IntoVectorElement::Vector) of an arbitrary vector.
+pub type SIMDScalar<V, E, const L: usize> = <SIMDVector<V, E> as simd::Vector<L>>::Scalar;

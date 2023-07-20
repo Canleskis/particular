@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `ParticleStorage` trait blanket implemented for storages of `PointMass`.
+- `ParticleStorage` trait blanket implemented for storages of `ParticlePointMass`.
 - `TreeAffected` storage.
+- `Zero` trait for types that have an identity value.
 
 ### Changed
 
 - `BarnesHut` compute methods use `TreeAffected` instead of `MassiveAffected`. This gives potential access to the tree built to compute the accelerations.
+- `ComputeMethod::compute` takes the storage by reference.
+- Use the `Zero` trait in place of the `Default` trait when applicable.
 
 ## [0.6.1] - 2023-19-07
 

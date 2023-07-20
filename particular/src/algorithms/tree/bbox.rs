@@ -50,8 +50,8 @@ where
         let half_length = result
             .size()
             .into_iter()
-            .fold(S::default(), S::max)
-            .midpoint(S::default());
+            .fold(S::ZERO, S::max)
+            .midpoint(S::ZERO);
 
         for i in 0..DIM {
             result.min[i] = center[i] - half_length;
@@ -64,7 +64,7 @@ where
     /// Returns the center of the [`BoundingBox`].
     #[inline]
     pub fn center(&self) -> [S; DIM] {
-        let mut r = [S::default(); DIM];
+        let mut r = [S::ZERO; DIM];
         for i in 0..DIM {
             r[i] = self.min[i].midpoint(self.max[i])
         }
@@ -74,7 +74,7 @@ where
     /// Returns the size of the [`BoundingBox`].
     #[inline]
     pub fn size(&self) -> [S; DIM] {
-        let mut r = [S::default(); DIM];
+        let mut r = [S::ZERO; DIM];
         for i in 0..DIM {
             r[i] = self.max[i] - self.min[i]
         }
@@ -124,8 +124,8 @@ where
 
         let mut result = <Self as SubDivide>::Divison::default();
         for i in 0..Self::N {
-            let mut corner_min = [S::default(); DIM];
-            let mut corner_max = [S::default(); DIM];
+            let mut corner_min = [S::ZERO; DIM];
+            let mut corner_max = [S::ZERO; DIM];
 
             for j in 0..DIM {
                 if (i & (1 << j)) == 0 {

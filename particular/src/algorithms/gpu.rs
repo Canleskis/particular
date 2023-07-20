@@ -27,7 +27,7 @@ where
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: MassiveAffected<[f32; 3], f32>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffected<[f32; 3], f32>) -> Self::Output {
         let particles_len = storage.affected.len() as u64;
         let massive_len = storage.massive.len() as u64;
 
