@@ -32,11 +32,7 @@ where
         let massive_len = storage.massive.len() as u64;
 
         if massive_len == 0 {
-            return storage
-                .affected
-                .iter()
-                .map(|_| V::from([0.0; 3]))
-                .collect();
+            return storage.affected.iter().map(|_| V::from([0.0; 3])).collect();
         }
 
         if let Some(wgpu_data) = &self.wgpu_data {

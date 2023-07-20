@@ -60,6 +60,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         .sample_size(50);
 
     let particle_count_iterator = (1..16).map(|i| 2usize.pow(i));
+    let thetas = [0.2, 0.8];
 
     for i in particle_count_iterator {
         let b = random_bodies(StdRng::seed_from_u64(1808), i);
@@ -73,15 +74,21 @@ fn criterion_benchmark(c: &mut Criterion) {
         {
             bench_compute_method(&b, &mut gr, parallel::BruteForce, "");
             bench_compute_method(&b, &mut gr, parallel::BruteForceSIMD, "");
-            bench_compute_method(&b, &mut gr, parallel::BarnesHut { theta: 0.2 }, "::0.2");
-            bench_compute_method(&b, &mut gr, parallel::BarnesHut { theta: 0.8 }, "::0.8");
+            for theta in thetas {
+                let suffix = format!("::{theta}");
+                bench_compute_method(&b, &mut gr, parallel::BarnesHut { theta }, &suffix);
+            }
         }
 
         {
+            bench_compute_method(&b, &mut gr, sequential::BruteForce, "");
             bench_compute_method(&b, &mut gr, sequential::BruteForcePairs, "");
+            bench_compute_method(&b, &mut gr, sequential::BruteForcePairsAlt, "");
             bench_compute_method(&b, &mut gr, sequential::BruteForceSIMD, "");
-            bench_compute_method(&b, &mut gr, sequential::BarnesHut { theta: 0.2 }, "::0.2");
-            bench_compute_method(&b, &mut gr, sequential::BarnesHut { theta: 0.8 }, "::0.8");
+            for theta in thetas {
+                let suffix = format!("::{theta}");
+                bench_compute_method(&b, &mut gr, sequential::BarnesHut { theta }, &suffix);
+            }
         }
     }
 

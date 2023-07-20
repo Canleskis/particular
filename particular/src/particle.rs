@@ -91,6 +91,29 @@ pub trait IntoPointMass: Particle {
 
 impl<P: Particle> IntoPointMass for P {}
 
+/// Trait for [`Storage`]s created from objects implementing [`Particle`].
+pub trait ParticleStorage<P>: Storage<ParticlePointMass<P>>
+where
+    P: Particle,
+{
+    /// Creates a new storage.
+    #[inline]
+    fn store_particles<I>(input: I) -> Self
+    where
+        Self: Sized,
+        I: Iterator<Item = P>,
+    {
+        Self::store(input.map(|p| p.point_mass()))
+    }
+}
+
+impl<P, S> ParticleStorage<P> for S
+where
+    P: Particle,
+    S: Storage<ParticlePointMass<P>>,
+{
+}
+
 /// Trait to compute accelerations from an iterator of [`Particle`] objects using a provided [`ComputeMethod`].
 pub trait Accelerations: Compute
 where

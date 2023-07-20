@@ -1,8 +1,7 @@
 use crate::{
     algorithms::{
-        internal, simd,
-        tree::{BarnesHutTree, BoundingBox, SubDivide, Tree},
-        MassiveAffected, MassiveAffectedSIMD, PointMass,
+        internal, simd, tree::BarnesHutTree, MassiveAffected, MassiveAffectedSIMD, PointMass,
+        TreeAffected,
     },
     compute_method::ComputeMethod,
 };
@@ -66,24 +65,24 @@ pub struct BarnesHut<S> {
     pub theta: S,
 }
 
-impl<T, S, const DIM: usize, const N: usize, V> ComputeMethod<MassiveAffected<T, S>, V>
+impl<const N: usize, const DIM: usize, T, S, V> ComputeMethod<TreeAffected<N, DIM, T, S>, V>
     for BarnesHut<S>
 where
     S: internal::Scalar,
-    T: internal::Vector<Scalar = S, Array = [S; DIM]>,
+    T: internal::Vector<Scalar = S>,
     V: internal::IntoVectorArray<T::Array, Vector = T> + Send,
-    BoundingBox<T::Array>: SubDivide<Divison = [BoundingBox<T::Array>; N]>,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: MassiveAffected<T, S>) -> Self::Output {
-        let mut tree = Tree::new();
-        let bbox = BoundingBox::square_with(storage.massive.iter().map(|p| p.position.into()));
-        let root = tree.build_node(&storage.massive, bbox);
+    fn compute(self, storage: TreeAffected<N, DIM, T, S>) -> Self::Output {
+        let TreeAffected {
+            tree,
+            root,
+            affected,
+        } = storage;
 
-        storage
-            .affected
+        affected
             .par_iter()
             .map(|p| V::from_internal(tree.acceleration_at(root, p.position, self.theta)))
             .collect()
