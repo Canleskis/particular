@@ -115,6 +115,7 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        tests::acceleration_computation(&mut BruteForce::new(), 1e-2);
+        tests::acceleration_computation(BruteForce::new(), 1e-2);
+        tests::circular_orbit_stability(BruteForce::new(), 100, 1e-2);
     }
 }

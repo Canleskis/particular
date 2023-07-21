@@ -241,25 +241,30 @@ mod tests {
     #[test]
     fn brute_force() {
         tests::acceleration_computation(BruteForce, 1e-2);
+        tests::circular_orbit_stability(BruteForce, 1_000, 1e-2);
     }
 
     #[test]
     fn brute_force_pairs() {
         tests::acceleration_computation(BruteForcePairs, 1e-2);
+        tests::circular_orbit_stability(BruteForcePairs, 1_000, 1e-2);
     }
 
     #[test]
     fn brute_force_pairs_alt() {
         tests::acceleration_computation(BruteForcePairsAlt, 1e-2);
+        tests::circular_orbit_stability(BruteForcePairsAlt, 1_000, 1e-2);
     }
 
     #[test]
     fn brute_force_simd() {
         tests::acceleration_computation(BruteForceSIMD, 1e-2);
+        tests::circular_orbit_stability(BruteForceSIMD, 1_000, 1e-2);
     }
 
     #[test]
     fn barnes_hut() {
         tests::acceleration_computation(BarnesHut { theta: 0.0 }, 1e-2);
+        tests::circular_orbit_stability(BarnesHut { theta: 0.0 }, 1_000, 1e-2);
     }
 }
