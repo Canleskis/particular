@@ -2,7 +2,7 @@ use crate::{
     algorithms::{
         internal, simd,
         tree::{BoundingBox, NodeID, SizedOrthant, SubDivide, Tree},
-        Zero,
+        vector, Zero,
     },
     compute_method::Storage,
 };
@@ -63,9 +63,9 @@ impl<V, S> PointMass<V, S> {
     /// Converts from a [`PointMass<V, S>`] to a [`PointMass<V::Internal, S>`]
     /// provided `V` implements [`internal::IntoVectorArray`].
     #[inline]
-    pub fn into_internal<A>(self) -> PointMass<V::Vector, S>
+    pub fn into_internal<const DIM: usize>(self) -> PointMass<V::Vector, S>
     where
-        V: internal::IntoVectorArray<A>,
+        V: internal::ConvertInternalVector<DIM, S>,
     {
         PointMass::new(self.position.into_internal(), self.mass)
     }
@@ -144,13 +144,15 @@ impl<V, S> PointMass<V, S> {
 
 /// Simple storage for particles using a vector.
 #[derive(Debug, Default, Clone)]
-pub struct ParticleSet<T, S>(pub Vec<PointMass<T, S>>);
+pub struct ParticleSetInternal<const DIM: usize, S, V>(pub Vec<PointMass<V::Vector, S>>)
+where
+    V: internal::ConvertInternalVector<DIM, S>;
 
 /// Storage for particles with massive and affected particles in two separate vectors.
 #[derive(Debug, Default, Clone)]
-pub struct MassiveAffected<T, S> {
+pub struct MassiveAffected<T, S, TM = T, SM = S> {
     /// Particles used to compute the acceleration of the `affected` particles.
-    pub massive: Vec<PointMass<T, S>>,
+    pub massive: Vec<PointMass<TM, SM>>,
     /// Particles for which the acceleration is computed.
     ///
     /// This vector and the `massive` vector can share particles.
@@ -176,32 +178,47 @@ impl<T, S> MassiveAffected<T, S> {
     }
 }
 
+/// Storage for particles with massive and affected particles in two separate vectors using arrays for the position.
+#[derive(Debug, Default, Clone)]
+pub struct MassiveAffectedArray<const DIM: usize, S, V>(pub MassiveAffected<V::Array, S>)
+where
+    V: vector::ConvertArray<DIM, S>;
+
+/// Storage for particles with massive and affected particles in two separate vectors using [`internal::Vector`]s for the position.
+#[derive(Debug, Default, Clone)]
+pub struct MassiveAffectedInternal<const DIM: usize, S, V>(pub MassiveAffected<V::Vector, S>)
+where
+    V: internal::ConvertInternalVector<DIM, S>;
+
 /// Storage with a [`Tree`] built from the massive particles and affected particles in another vector.
 #[derive(Debug, Default, Clone)]
-pub struct TreeAffected<const N: usize, const DIM: usize, T, S> {
+#[allow(clippy::type_complexity)]
+pub struct TreeAffectedInternal<const N: usize, const DIM: usize, S, V>
+where
+    V: internal::ConvertInternalVector<DIM, S>,
+{
     /// [`Tree`] built from the massive particles.
-    pub tree: Tree<SizedOrthant<N, BoundingBox<[S; DIM]>>, PointMass<T, S>>,
+    pub tree: Tree<SizedOrthant<N, BoundingBox<[S; DIM]>>, PointMass<V::Vector, S>>,
     /// Root of the `tree`.
     pub root: Option<NodeID>,
     /// Particles for which the acceleration is computed.
-    pub affected: Vec<PointMass<T, S>>,
+    pub affected: Vec<PointMass<V::Vector, S>>,
 }
 
-impl<const N: usize, const DIM: usize, T, S> TreeAffected<N, DIM, T, S> {
+impl<const N: usize, const DIM: usize, S, V, T> TreeAffectedInternal<N, DIM, S, V>
+where
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
+{
     /// Creates a new [`MassiveAffected`] from the given vector of particles.
     ///
     /// This method populates the `affected` vector with the given particles and copies the ones with mass to the `massive` vector.
     pub fn from_affected(affected: Vec<PointMass<T, S>>) -> Self
     where
         S: internal::Scalar,
-        T: internal::Vector<Scalar = S, Array = [S; DIM]>,
-        BoundingBox<T::Array>: SubDivide<Divison = [BoundingBox<T::Array>; N]>,
+        T: internal::Vector<Scalar = S> + Into<[S; DIM]>,
+        BoundingBox<[S; DIM]>: SubDivide<Divison = [BoundingBox<[S; DIM]>; N]>,
     {
-        let massive: Vec<_> = affected
-            .iter()
-            .filter(|p| p.is_massive())
-            .copied()
-            .collect();
+        let MassiveAffected { massive, affected } = MassiveAffected::from_affected(affected);
 
         let mut tree = Tree::new();
         let bbox = BoundingBox::square_with(massive.iter().map(|p| p.position.into()));
@@ -215,9 +232,7 @@ impl<const N: usize, const DIM: usize, T, S> TreeAffected<N, DIM, T, S> {
     }
 }
 
-/// Storage for particles with massive and affected particles in two separate vectors.
-///
-/// To be used with [`simd::Vector`] and [`simd::Scalar`] types.
+/// Storage for particles with massive and affected particles in two separate vectors using [`simd::Vector`]s for the position and [`simd::Scalar`]s for the mass.
 #[derive(Debug, Default, Clone)]
 pub struct MassiveAffectedSIMD<const LANES: usize, T, S>
 where
@@ -275,11 +290,11 @@ where
     }
 }
 
-impl<T, S, V> Storage<PointMass<V, S>> for ParticleSet<T, S>
+impl<const DIM: usize, S, V, T> Storage<PointMass<V, S>> for ParticleSetInternal<DIM, S, V>
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T>,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
 {
     #[inline]
     fn store<I>(input: I) -> Self
@@ -290,26 +305,44 @@ where
     }
 }
 
-impl<T, S, V> Storage<PointMass<V, S>> for MassiveAffected<T, S>
+impl<const DIM: usize, S, V, A> Storage<PointMass<V, S>> for MassiveAffectedArray<DIM, S, V>
 where
     S: internal::Scalar,
-    T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T>,
+    A: Copy,
+    V: vector::ConvertArray<DIM, S, Array = A>,
 {
     #[inline]
     fn store<I>(input: I) -> Self
     where
         I: Iterator<Item = PointMass<V, S>>,
     {
-        Self::from_affected(input.map(PointMass::into_internal).collect())
+        Self(MassiveAffected::from_affected(
+            input.map(PointMass::into).collect(),
+        ))
     }
 }
 
-impl<const LANES: usize, T, S, V> Storage<PointMass<V, S::Element>>
-    for MassiveAffectedSIMD<LANES, T, S>
+impl<const DIM: usize, S, V, T> Storage<PointMass<V, S>> for MassiveAffectedInternal<DIM, S, V>
 where
-    S: simd::Scalar<LANES>,
-    T: simd::Vector<LANES, Scalar = S>,
+    S: internal::Scalar,
+    T: internal::Vector<Scalar = S>,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
+{
+    #[inline]
+    fn store<I>(input: I) -> Self
+    where
+        I: Iterator<Item = PointMass<V, S>>,
+    {
+        Self(MassiveAffected::from_affected(
+            input.map(PointMass::into_internal).collect(),
+        ))
+    }
+}
+
+impl<const L: usize, T, S, V> Storage<PointMass<V, S::Element>> for MassiveAffectedSIMD<L, T, S>
+where
+    S: simd::Scalar<L>,
+    T: simd::Vector<L, Scalar = S>,
     V: simd::IntoVectorElement<T::Element, Vector = T>,
 {
     #[inline]
@@ -321,13 +354,13 @@ where
     }
 }
 
-impl<const N: usize, const DIM: usize, T, S, V> Storage<PointMass<V, S>>
-    for TreeAffected<N, DIM, T, S>
+impl<const N: usize, const DIM: usize, S, V, T> Storage<PointMass<V, S>>
+    for TreeAffectedInternal<N, DIM, S, V>
 where
     S: internal::Scalar,
-    T: internal::Vector<Scalar = S, Array = [S; DIM]>,
-    V: internal::IntoVectorArray<T::Array, Vector = T>,
-    BoundingBox<T::Array>: SubDivide<Divison = [BoundingBox<T::Array>; N]>,
+    T: internal::Vector<Scalar = S> + Into<[S; DIM]>,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
+    BoundingBox<[S; DIM]>: SubDivide<Divison = [BoundingBox<[S; DIM]>; N]>,
 {
     #[inline]
     fn store<I>(input: I) -> Self

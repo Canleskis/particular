@@ -1,7 +1,7 @@
 use crate::{
     algorithms::{
-        internal, simd, tree::BarnesHutTree, MassiveAffected, MassiveAffectedSIMD, ParticleSet,
-        PointMass, TreeAffected,
+        internal, simd, tree::BarnesHutTree, MassiveAffectedInternal, MassiveAffectedSIMD,
+        ParticleSetInternal, PointMass, TreeAffectedInternal,
     },
     compute_method::ComputeMethod,
 };
@@ -10,16 +10,17 @@ use crate::{
 #[derive(Default, Clone, Copy)]
 pub struct BruteForce;
 
-impl<T, S, V> ComputeMethod<MassiveAffected<T, S>, V> for BruteForce
+impl<const DIM: usize, S, V, T> ComputeMethod<MassiveAffectedInternal<DIM, S, V>, V> for BruteForce
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T>,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &MassiveAffected<T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedInternal<DIM, S, V>) -> Self::Output {
+        let storage = &storage.0;
         storage
             .affected
             .iter()
@@ -36,16 +37,18 @@ where
 #[derive(Default, Clone, Copy)]
 pub struct BruteForcePairs;
 
-impl<T, S, V> ComputeMethod<MassiveAffected<T, S>, V> for BruteForcePairs
+impl<const DIM: usize, S, V, T> ComputeMethod<MassiveAffectedInternal<DIM, S, V>, V>
+    for BruteForcePairs
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T>,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &MassiveAffected<T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedInternal<DIM, S, V>) -> Self::Output {
+        let storage = &storage.0;
         let massive_len = storage.massive.len();
         let affected_len = storage.affected.len();
 
@@ -87,16 +90,17 @@ where
 #[derive(Default, Clone, Copy)]
 pub struct BruteForcePairsAlt;
 
-impl<T, S, V> ComputeMethod<ParticleSet<T, S>, V> for BruteForcePairsAlt
+impl<const DIM: usize, S, V, T> ComputeMethod<ParticleSetInternal<DIM, S, V>, V>
+    for BruteForcePairsAlt
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T>,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &ParticleSet<T, S>) -> Self::Output {
+    fn compute(self, storage: &ParticleSetInternal<DIM, S, V>) -> Self::Output {
         let len = storage.0.len();
 
         BruteForcePairsCore::new(vec![T::ZERO; len], len, len)
@@ -209,18 +213,18 @@ pub struct BarnesHut<S> {
     pub theta: S,
 }
 
-impl<const N: usize, const DIM: usize, T, S, V> ComputeMethod<TreeAffected<N, DIM, T, S>, V>
+impl<const N: usize, const DIM: usize, S, V, T> ComputeMethod<TreeAffectedInternal<N, DIM, S, V>, V>
     for BarnesHut<S>
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T>,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T>,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &TreeAffected<N, DIM, T, S>) -> Self::Output {
-        let TreeAffected {
+    fn compute(self, storage: &TreeAffectedInternal<N, DIM, S, V>) -> Self::Output {
+        let TreeAffectedInternal {
             tree,
             root,
             affected,

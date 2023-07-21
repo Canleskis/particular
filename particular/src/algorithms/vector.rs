@@ -4,25 +4,44 @@ pub trait Zero {
     const ZERO: Self;
 }
 
+/// Marker trait for arbitrary vectors that can be converted from and into an array.
+pub trait ConvertArray<const DIM: usize, S>: From<Self::Array> + Into<Self::Array> {
+    /// Internal representation of a vector.
+    type Array;
+}
+
+impl<const DIM: usize, S, V> ConvertArray<DIM, S> for V
+where
+    V: From<[S; DIM]> + Into<[S; DIM]>,
+{
+    type Array = [S; DIM];
+}
+
 /// Internal representation of vectors used for expensive computations.
 pub mod internal {
-    use super::Zero;
+    use super::{ConvertArray, Zero};
     use std::{
         fmt::Debug,
         iter::Sum,
         ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
     };
 
-    /// Arbitrary vectors that can be converted from and into the [`Vector::Array`] of a given [`Vector`].
-    pub trait IntoVectorArray<A> {
+    /// Trait for arbitrary vectors that can be converted from and into a specified [`Vector`].
+    pub trait ConvertInternalVector<const DIM: usize, S>: ConvertArray<DIM, S> {
         /// Internal representation of a vector.
-        type Vector;
+        type Vector: From<Self::Array> + Into<Self::Array>;
 
         /// Converts the arbitrary vector into its internal representation.
-        fn into_internal(self) -> Self::Vector;
+        #[inline]
+        fn into_internal(self) -> Self::Vector {
+            Self::Vector::from(self.into())
+        }
 
         /// Converts the internal representation into the arbitrary vector.
-        fn from_internal(vector: Self::Vector) -> Self;
+        #[inline]
+        fn from_internal(vector: Self::Vector) -> Self {
+            Self::from(vector.into())
+        }
     }
 
     /// Scalar types that compose [`Vector`] objects.
@@ -138,21 +157,11 @@ pub mod internal {
                 const ZERO: Self = <$t>::ZERO;
             }
 
-            impl<V> IntoVectorArray<[$s; $dim]> for V
+            impl<V> ConvertInternalVector<$dim, $s> for V
             where
                 V: Into<[$s; $dim]> + From<[$s; $dim]>,
             {
                 type Vector = $t;
-
-                #[inline]
-                fn into_internal(self) -> Self::Vector {
-                    Self::Vector::from(self.into())
-                }
-
-                #[inline]
-                fn from_internal(vector: Self::Vector) -> V {
-                    Self::from(vector.into())
-                }
             }
         )*
         }
@@ -162,11 +171,11 @@ pub mod internal {
     internal_vector!(f64, (glam::DVec2, 2), (glam::DVec3, 3), (glam::DVec4, 4));
 }
 
-/// [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
-pub type InternalVector<V, A> = <V as internal::IntoVectorArray<A>>::Vector;
+// /// [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
+// pub type InternalVector<V, A> = <V as internal::IntoVectorArray<A>>::Vector;
 
-/// [`InternalScalar`](internal::Vector::Scalar) of the [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
-pub type InternalScalar<V, A> = <InternalVector<V, A> as internal::Vector>::Scalar;
+// /// [`InternalScalar`](internal::Vector::Scalar) of the [`InternalVector`](internal::IntoVectorArray::Vector) of an arbitrary vector.
+// pub type InternalScalar<V, A> = <InternalVector<V, A> as internal::Vector>::Scalar;
 
 /// SIMD representation of vectors used for expensive computations.
 pub mod simd {

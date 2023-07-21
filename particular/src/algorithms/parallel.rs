@@ -1,7 +1,7 @@
 use crate::{
     algorithms::{
-        internal, simd, tree::BarnesHutTree, MassiveAffected, MassiveAffectedSIMD, PointMass,
-        TreeAffected,
+        internal, simd, tree::BarnesHutTree, MassiveAffectedInternal, MassiveAffectedSIMD,
+        PointMass, TreeAffectedInternal,
     },
     compute_method::ComputeMethod,
 };
@@ -12,16 +12,17 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 #[derive(Default, Clone, Copy)]
 pub struct BruteForce;
 
-impl<T, S, V> ComputeMethod<MassiveAffected<T, S>, V> for BruteForce
+impl<const DIM: usize, S, V, T> ComputeMethod<MassiveAffectedInternal<DIM, S, V>, V> for BruteForce
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T> + Send,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &MassiveAffected<T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedInternal<DIM, S, V>) -> Self::Output {
+        let storage = &storage.0;
         storage
             .affected
             .par_iter()
@@ -66,18 +67,18 @@ pub struct BarnesHut<S> {
     pub theta: S,
 }
 
-impl<const N: usize, const DIM: usize, T, S, V> ComputeMethod<TreeAffected<N, DIM, T, S>, V>
+impl<const N: usize, const DIM: usize, S, V, T> ComputeMethod<TreeAffectedInternal<N, DIM, S, V>, V>
     for BarnesHut<S>
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T> + Send,
+    V: internal::ConvertInternalVector<DIM, S, Vector = T> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &TreeAffected<N, DIM, T, S>) -> Self::Output {
-        let TreeAffected {
+    fn compute(self, storage: &TreeAffectedInternal<N, DIM, S, V>) -> Self::Output {
+        let TreeAffectedInternal {
             tree,
             root,
             affected,
