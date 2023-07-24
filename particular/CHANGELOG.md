@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ParticleStorage` trait blanket implemented for storages of `ParticlePointMass`.
 - `TreeAffected` storage.
+- `MassiveAffectedInternal` and `MassiveAffectedArray`, newtypes around `MassiveAffected`.
+- `BarnesHutTree` alias.
 - `Zero` trait for types that have an identity value.
 
 ### Changed
@@ -18,6 +20,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BarnesHut` compute methods use `TreeAffected` instead of `MassiveAffected`. This gives potential access to the tree built to compute the accelerations.
 - `ComputeMethod::compute` takes the storage by reference.
 - Use the `Zero` trait in place of the `Default` trait when applicable.
+- `IntoVectorArray` is now `ConvertInternal` and `IntoVectorElement` is now `ConvertSIMD`.
+- Renamed `ParticleSet` to `ParticleSetInternal`.
+- `MassiveAffected` no longer implements `Storage`. `MassiveAffectedInternal` and `MassiveAffectedArray` newtypes are used instead.
+- `BarnesHutTree` trait renamed to `BarnesHutAcceleration`.
+
+### Removed
+
+- Trait methods of `IntoVectorElement`.
+- `Element` trait.
+- `PointMass::into_element` method.
 
 ## [0.6.1] - 2023-19-07
 
