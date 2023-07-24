@@ -165,7 +165,7 @@ pub mod prelude {
     pub use crate::{
         algorithms::compute_methods::*,
         compute_method::{ComputeMethod, Storage},
-        particle::{Accelerations, IntoPointMass, Particle, ParticlePointMass},
+        particle::{Accelerations, IntoPointMass, Particle, ParticlePointMass, ParticleStorage},
         particular_derive::Particle,
     };
 }
