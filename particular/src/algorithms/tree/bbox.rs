@@ -12,20 +12,20 @@ pub struct BoundingBox<A> {
 }
 
 #[allow(clippy::needless_range_loop)]
-impl<const DIM: usize, S> BoundingBox<[S; DIM]>
+impl<const D: usize, S> BoundingBox<[S; D]>
 where
     S: internal::Scalar,
 {
     /// Creates a new [`BoundingBox`] with the given min and max values.
     #[inline]
-    pub fn new(min: [S; DIM], max: [S; DIM]) -> Self {
+    pub fn new(min: [S; D], max: [S; D]) -> Self {
         Self { min, max }
     }
 
     /// Extends the [`BoundingBox`] so that it contains the given position.
     #[inline]
-    pub fn extend(&mut self, position: [S; DIM]) {
-        for i in 0..DIM {
+    pub fn extend(&mut self, position: [S; D]) {
+        for i in 0..D {
             self.min[i] = self.min[i].min(position[i]);
             self.max[i] = self.max[i].max(position[i]);
         }
@@ -33,7 +33,7 @@ where
 
     /// Creates a new [`BoundingBox`] that contains the given positions.
     #[inline]
-    pub fn with(positions: impl Iterator<Item = [S; DIM]>) -> Self {
+    pub fn with(positions: impl Iterator<Item = [S; D]>) -> Self {
         let mut result = Self::default();
         for position in positions {
             result.extend(position)
@@ -43,7 +43,7 @@ where
 
     /// Creates a new square [`BoundingBox`] that contains the given positions.
     #[inline]
-    pub fn square_with(positions: impl Iterator<Item = [S; DIM]>) -> Self {
+    pub fn square_with(positions: impl Iterator<Item = [S; D]>) -> Self {
         let mut result = Self::with(positions);
 
         let center = result.center();
@@ -53,7 +53,7 @@ where
             .fold(S::ZERO, S::max)
             .midpoint(S::ZERO);
 
-        for i in 0..DIM {
+        for i in 0..D {
             result.min[i] = center[i] - half_length;
             result.max[i] = center[i] + half_length;
         }
@@ -63,9 +63,9 @@ where
 
     /// Returns the center of the [`BoundingBox`].
     #[inline]
-    pub fn center(&self) -> [S; DIM] {
-        let mut r = [S::ZERO; DIM];
-        for i in 0..DIM {
+    pub fn center(&self) -> [S; D] {
+        let mut r = [S::ZERO; D];
+        for i in 0..D {
             r[i] = self.min[i].midpoint(self.max[i])
         }
         r
@@ -73,9 +73,9 @@ where
 
     /// Returns the size of the [`BoundingBox`].
     #[inline]
-    pub fn size(&self) -> [S; DIM] {
-        let mut r = [S::ZERO; DIM];
-        for i in 0..DIM {
+    pub fn size(&self) -> [S; D] {
+        let mut r = [S::ZERO; D];
+        for i in 0..D {
             r[i] = self.max[i] - self.min[i]
         }
         r
@@ -88,15 +88,15 @@ where
     }
 }
 
-impl<const DIM: usize, S> Default for BoundingBox<[S; DIM]>
+impl<const D: usize, S> Default for BoundingBox<[S; D]>
 where
     S: internal::Scalar,
 {
     #[inline]
     fn default() -> Self {
         Self {
-            min: [S::INFINITY; DIM],
-            max: [-S::INFINITY; DIM],
+            min: [S::INFINITY; D],
+            max: [-S::INFINITY; D],
         }
     }
 }
@@ -110,7 +110,7 @@ pub trait SubDivide {
     type Divison: Default + Index<usize, Output = Self> + IndexMut<usize, Output = Self>;
 }
 
-impl<const DIM: usize, S> BoundingBox<[S; DIM]>
+impl<const D: usize, S> BoundingBox<[S; D]>
 where
     Self: SubDivide,
     S: internal::Scalar,
@@ -124,10 +124,10 @@ where
 
         let mut result = <Self as SubDivide>::Divison::default();
         for i in 0..Self::N {
-            let mut corner_min = [S::ZERO; DIM];
-            let mut corner_max = [S::ZERO; DIM];
+            let mut corner_min = [S::ZERO; D];
+            let mut corner_max = [S::ZERO; D];
 
-            for j in 0..DIM {
+            for j in 0..D {
                 if (i & (1 << j)) == 0 {
                     corner_min[j] = bbox_center[j];
                     corner_max[j] = bbox_max[j];

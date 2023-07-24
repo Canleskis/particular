@@ -5,15 +5,16 @@ use crate::algorithms::{
 };
 
 /// Trait to compute the acceleration of particles using the [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) algorithm.
-pub trait BarnesHutTree<T, S> {
+pub trait BarnesHutAcceleration<T, S> {
     /// Computes the acceleration at the given position from a node of the tree.
     fn acceleration_at(&self, node: Option<NodeID>, position: T, theta: S) -> T;
 }
 
-type CompatibleTree<T, S, const DIM: usize, const N: usize> =
-    Tree<SizedOrthant<N, BoundingBox<[S; DIM]>>, PointMass<T, S>>;
+/// Trees that can be used with the [`BarnesHutAcceleration`] trait.
+pub type BarnesHutTree<const N: usize, const D: usize, T, S> =
+    Tree<SizedOrthant<N, BoundingBox<[S; D]>>, PointMass<T, S>>;
 
-impl<T, S, const DIM: usize, const N: usize> BarnesHutTree<T, S> for CompatibleTree<T, S, DIM, N>
+impl<T, S, const D: usize, const N: usize> BarnesHutAcceleration<T, S> for BarnesHutTree<N, D, T, S>
 where
     S: internal::Scalar,
     T: internal::Vector<Scalar = S>,

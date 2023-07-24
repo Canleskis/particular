@@ -1,10 +1,10 @@
 use crate::{
     algorithms::{
-        internal,
+        vector,
         wgpu_data::{setup_wgpu, WgpuData},
-        MassiveAffected, PointMass,
+        MassiveAffectedArray, PointMass,
     },
-    compute_method::{ComputeMethod, Storage},
+    compute_method::ComputeMethod,
 };
 
 const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass<[f32; 3], f32>>() as u64;
@@ -20,14 +20,15 @@ pub struct BruteForce {
     queue: wgpu::Queue,
 }
 
-impl<V> ComputeMethod<MassiveAffected<[f32; 3], f32>, V> for &mut BruteForce
+impl<V> ComputeMethod<MassiveAffectedArray<3, f32, V>, V> for &mut BruteForce
 where
-    V: From<[f32; 3]>,
+    V: vector::ConvertArray<3, f32, Array = [f32; 3]>,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &MassiveAffected<[f32; 3], f32>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedArray<3, f32, V>) -> Self::Output {
+        let storage = &storage.0;
         let particles_len = storage.affected.len() as u64;
         let massive_len = storage.massive.len() as u64;
 
@@ -94,19 +95,8 @@ impl Default for BruteForce {
     }
 }
 
-impl<S, const DIM: usize, V> Storage<PointMass<V, S>> for MassiveAffected<[S; DIM], S>
-where
-    S: internal::Scalar,
-    V: Into<[S; DIM]>,
-{
-    #[inline]
-    fn store<I: Iterator<Item = PointMass<V, S>>>(input: I) -> Self {
-        Self::from_affected(input.map(PointMass::into).collect())
-    }
-}
-
-unsafe impl<S, const DIM: usize> bytemuck::Zeroable for super::PointMass<[S; DIM], S> {}
-unsafe impl<S: bytemuck::Pod, const DIM: usize> bytemuck::Pod for super::PointMass<[S; DIM], S> {}
+unsafe impl<S, const D: usize> bytemuck::Zeroable for super::PointMass<[S; D], S> {}
+unsafe impl<S: bytemuck::Pod, const D: usize> bytemuck::Pod for super::PointMass<[S; D], S> {}
 
 #[cfg(test)]
 mod tests {

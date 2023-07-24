@@ -1,7 +1,7 @@
 use crate::{
     algorithms::{
-        internal, simd, tree::BarnesHutTree, MassiveAffected, MassiveAffectedSIMD, PointMass,
-        TreeAffected,
+        internal, simd, tree::BarnesHutAcceleration, MassiveAffectedInternal, MassiveAffectedSIMD,
+        PointMass, TreeAffectedInternal,
     },
     compute_method::ComputeMethod,
 };
@@ -12,16 +12,16 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 #[derive(Default, Clone, Copy)]
 pub struct BruteForce;
 
-impl<T, S, V> ComputeMethod<MassiveAffected<T, S>, V> for BruteForce
+impl<const D: usize, S, V> ComputeMethod<MassiveAffectedInternal<D, S, V>, V> for BruteForce
 where
     S: internal::Scalar,
-    T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T> + Send,
+    V: internal::ConvertInternal<D, S> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &MassiveAffected<T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedInternal<D, S, V>) -> Self::Output {
+        let storage = &storage.0;
         storage
             .affected
             .par_iter()
@@ -34,26 +34,25 @@ where
 #[derive(Default, Clone, Copy)]
 pub struct BruteForceSIMD;
 
-impl<const LANES: usize, T, S, V> ComputeMethod<MassiveAffectedSIMD<LANES, T, S>, V>
+impl<const L: usize, const D: usize, S, V> ComputeMethod<MassiveAffectedSIMD<L, D, S, V>, V>
     for BruteForceSIMD
 where
-    S: simd::Scalar<LANES>,
-    T: simd::Vector<LANES, Scalar = S>,
-    V: simd::IntoVectorElement<T::Element, Vector = T> + Send,
+    S: Copy + Sync,
+    V: simd::ConvertSIMD<L, D, S> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &MassiveAffectedSIMD<LANES, T, S>) -> Self::Output {
+    fn compute(self, storage: &MassiveAffectedSIMD<L, D, S, V>) -> Self::Output {
         storage
+            .0
             .affected
             .par_iter()
             .map(|p| {
-                V::from_reduced(
-                    PointMass::new(T::splat(p.position), S::splat(p.mass))
-                        .total_acceleration_simd(&storage.massive)
-                        .reduce_add(),
-                )
+                V::from(simd::ReduceAdd::reduce_add(
+                    PointMass::new(simd::SIMD::splat(p.position), simd::SIMD::splat(p.mass))
+                        .total_acceleration_simd(&storage.0.massive),
+                ))
             })
             .collect()
     }
@@ -66,18 +65,17 @@ pub struct BarnesHut<S> {
     pub theta: S,
 }
 
-impl<const N: usize, const DIM: usize, T, S, V> ComputeMethod<TreeAffected<N, DIM, T, S>, V>
+impl<const N: usize, const D: usize, S, V> ComputeMethod<TreeAffectedInternal<N, D, S, V>, V>
     for BarnesHut<S>
 where
     S: internal::Scalar,
-    T: internal::Vector<Scalar = S>,
-    V: internal::IntoVectorArray<T::Array, Vector = T> + Send,
+    V: internal::ConvertInternal<D, S> + Send,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &TreeAffected<N, DIM, T, S>) -> Self::Output {
-        let TreeAffected {
+    fn compute(self, storage: &TreeAffectedInternal<N, D, S, V>) -> Self::Output {
+        let TreeAffectedInternal {
             tree,
             root,
             affected,
