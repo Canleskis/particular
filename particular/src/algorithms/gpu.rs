@@ -95,8 +95,8 @@ impl Default for BruteForce {
     }
 }
 
-unsafe impl<S, const DIM: usize> bytemuck::Zeroable for super::PointMass<[S; DIM], S> {}
-unsafe impl<S: bytemuck::Pod, const DIM: usize> bytemuck::Pod for super::PointMass<[S; DIM], S> {}
+unsafe impl<S, const D: usize> bytemuck::Zeroable for super::PointMass<[S; D], S> {}
+unsafe impl<S: bytemuck::Pod, const D: usize> bytemuck::Pod for super::PointMass<[S; D], S> {}
 
 #[cfg(test)]
 mod tests {
