@@ -179,7 +179,7 @@ where
 
 /// Storage for particles with massive and affected particles in two separate vectors.
 ///
-/// Particles are stored using [`simd::Vector`] and [`simd::Scalar`] for the massive ones and arrays for the massless ones.
+/// Particles are stored using [`simd::Vector`] and [`simd::Scalar`] for the massive ones and arrays for the affected ones.
 #[derive(Clone)]
 pub struct MassiveAffectedSIMD<const L: usize, const D: usize, S, V>(
     pub MassiveAffected<V::Array, S, V::Vector, V::Scalar>,
@@ -187,13 +187,13 @@ pub struct MassiveAffectedSIMD<const L: usize, const D: usize, S, V>(
 where
     V: simd::ConvertSIMD<L, D, S>;
 
-/// Storage with a [`Tree`] built from the massive particles and affected particles in another vector.
+/// Storage with a [`BarnesHutTree`] built from the massive particles and with affected particles in another vector.
 #[derive(Debug, Default, Clone)]
 pub struct TreeAffectedInternal<const N: usize, const D: usize, S, V>
 where
     V: internal::ConvertInternal<D, S>,
 {
-    /// [`Tree`] built from the massive particles.
+    /// [`BarnesHutTree`] built from the massive particles.
     pub tree: BarnesHutTree<N, D, V::Vector, S>,
     /// Root of the `tree`.
     pub root: Option<NodeID>,
@@ -292,8 +292,10 @@ where
         let MassiveAffected { massive, affected } = MassiveAffected::from_affected(affected);
 
         let mut tree = BarnesHutTree::new();
-        let bbox = BoundingBox::square_with(massive.iter().map(|p| p.position.into()));
-        let root = tree.build_node(&massive, bbox);
+        let root = tree.build_node(
+            &massive,
+            BoundingBox::square_with(massive.iter().map(|p| p.position.into())),
+        );
 
         Self {
             tree,
