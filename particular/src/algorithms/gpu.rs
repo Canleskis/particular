@@ -28,7 +28,7 @@ where
 
     #[inline]
     fn compute(self, storage: &MassiveAffectedArray<3, f32, V>) -> Self::Output {
-        let storage = &storage.0;
+        let MassiveAffectedArray(storage) = storage;
         let particles_len = storage.affected.len() as u64;
         let massive_len = storage.massive.len() as u64;
 

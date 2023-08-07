@@ -21,7 +21,8 @@ where
 
     #[inline]
     fn compute(self, storage: &MassiveAffectedInternal<D, S, V>) -> Self::Output {
-        let storage = &storage.0;
+        let MassiveAffectedInternal(storage) = storage;
+
         storage
             .affected
             .par_iter()
@@ -44,14 +45,15 @@ where
 
     #[inline]
     fn compute(self, storage: &MassiveAffectedSIMD<L, D, S, V>) -> Self::Output {
+        let MassiveAffectedSIMD(storage) = storage;
+
         storage
-            .0
             .affected
             .par_iter()
             .map(|p| {
                 V::from(simd::ReduceAdd::reduce_add(
                     PointMass::new(simd::SIMD::splat(p.position), simd::SIMD::splat(p.mass))
-                        .total_acceleration_simd(&storage.0.massive),
+                        .total_acceleration_simd(&storage.massive),
                 ))
             })
             .collect()

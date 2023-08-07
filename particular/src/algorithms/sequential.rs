@@ -19,7 +19,8 @@ where
 
     #[inline]
     fn compute(self, storage: &MassiveAffectedInternal<D, S, V>) -> Self::Output {
-        let storage = &storage.0;
+        let MassiveAffectedInternal(storage) = storage;
+
         storage
             .affected
             .iter()
@@ -45,7 +46,7 @@ where
 
     #[inline]
     fn compute(self, storage: &MassiveAffectedInternal<D, S, V>) -> Self::Output {
-        let storage = &storage.0;
+        let MassiveAffectedInternal(storage) = storage;
         let massive_len = storage.massive.len();
         let affected_len = storage.affected.len();
 
@@ -99,10 +100,11 @@ where
 
     #[inline]
     fn compute(self, storage: &ParticleSetInternal<D, S, V>) -> Self::Output {
-        let len = storage.0.len();
+        let ParticleSetInternal(storage) = storage;
+        let len = storage.len();
 
         BruteForcePairsCore::new(vec![vector::Zero::ZERO; len], len, len)
-            .compute(&storage.0)
+            .compute(storage)
             .into_iter()
             .map(V::from_internal)
             .collect()
@@ -189,14 +191,15 @@ where
 
     #[inline]
     fn compute(self, storage: &MassiveAffectedSIMD<L, D, S, V>) -> Self::Output {
+        let MassiveAffectedSIMD(storage) = storage;
+
         storage
-            .0
             .affected
             .iter()
             .map(|p| {
                 V::from(simd::ReduceAdd::reduce_add(
                     PointMass::new(simd::SIMD::splat(p.position), simd::SIMD::splat(p.mass))
-                        .total_acceleration_simd(&storage.0.massive),
+                        .total_acceleration_simd(&storage.massive),
                 ))
             })
             .collect()
