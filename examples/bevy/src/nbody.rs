@@ -1,4 +1,4 @@
-use crate::{Acceleration, PhysicsSet, Position};
+use crate::{Acceleration, PhysicsSchedule, PhysicsSet, Position};
 
 use bevy::prelude::*;
 use particular::prelude::*;
@@ -12,15 +12,20 @@ pub struct ParticularPlugin;
 
 impl Plugin for ParticularPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_systems(FixedUpdate, accelerate_particles.in_set(PhysicsSet::First));
+        app.add_systems(
+            PhysicsSchedule,
+            accelerate_particles.in_set(PhysicsSet::First),
+        );
     }
 }
 
 fn accelerate_particles(mut query: Query<(&mut Acceleration, &Position, &Mass)>) {
     query
         .iter()
-        .map(|(_, position, mass)| (**position, **mass))
+        .map(|(.., position, mass)| (**position, **mass))
         .accelerations(COMPUTE_METHOD)
         .zip(&mut query)
-        .for_each(|(acceleration, (mut acc, _, _))| **acc = acceleration);
+        .for_each(|(acceleration, (mut physics_acceleration, ..))| {
+            **physics_acceleration = acceleration
+        });
 }

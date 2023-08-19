@@ -1,124 +1,243 @@
-use crate::{Mass, PhysicsSettings, Position, Selected, Velocity, COMPUTE_METHOD};
+use crate::{Mass, PhysicsSettings, Position, Velocity, COMPUTE_METHOD};
 
 use bevy::prelude::*;
 use particular::prelude::*;
-use std::time::Duration;
 
-#[derive(Resource, Default, Deref, DerefMut)]
-pub struct PredictionDuration(pub Duration);
+#[derive(Event, Clone, Copy)]
+pub struct ComputePredictionEvent {
+    pub steps: usize,
+}
+
+impl FromWorld for ComputePredictionEvent {
+    fn from_world(world: &mut World) -> Self {
+        Self {
+            steps: world.resource::<PhysicsSettings>().steps_per_second() * 60 * 5,
+        }
+    }
+}
+
+#[derive(Event, Clone, Copy)]
+pub struct ResetPredictionEvent;
+
+#[derive(Bundle, Default)]
+pub struct PredictionBundle {
+    pub state: PredictionState,
+    pub draw: PredictionDraw,
+}
 
 #[derive(Component, Default)]
 pub struct PredictionState {
     pub velocity: Option<Vec3>,
     pub positions: Vec<Vec3>,
-    pub reference: Option<Entity>,
+}
+
+impl PredictionState {
+    pub fn push(&mut self, velocity: Vec3, position: Vec3) {
+        self.velocity.replace(velocity);
+        self.positions.push(position);
+    }
+
+    pub fn reset(&mut self) {
+        self.velocity.take();
+        self.positions.clear();
+    }
+}
+
+#[derive(Component)]
+pub struct PredictionDraw {
     pub color: Color,
+    pub resolution: usize,
+    pub steps: Option<usize>,
+    pub reference: Option<Entity>,
+}
+
+impl Default for PredictionDraw {
+    fn default() -> Self {
+        Self {
+            color: Default::default(),
+            resolution: 5,
+            steps: Default::default(),
+            reference: Default::default(),
+        }
+    }
 }
 
 pub struct OrbitPredictionPlugin;
 
 impl Plugin for OrbitPredictionPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(GizmoConfig {
-            line_width: 1.0,
-            ..default()
-        })
-        .insert_resource(PredictionDuration::default())
-        .add_systems(
-            PostUpdate,
-            (reset_prediction, compute_prediction, draw_prediction).chain(),
-        );
-    }
-}
-
-fn compute_prediction(
-    time: Res<Time>,
-    input: Res<Input<KeyCode>>,
-    physics: Res<PhysicsSettings>,
-    query_selected: Query<Entity, Added<Selected>>,
-    mut prediction_duration: ResMut<PredictionDuration>,
-    mut query: Query<(&Velocity, &Position, &Mass, &mut PredictionState)>,
-) {
-    if let Ok(selected_entity) = query_selected.get_single() {
-        for (_, _, _, mut prediction) in &mut query {
-            prediction.reference = Some(selected_entity);
-        }
-    }
-
-    if input.pressed(KeyCode::F) {
-        let steps = (physics.time_scale * time.delta_seconds() * 4000.0).ceil() as usize;
-        prediction_duration.0 += Duration::from_secs_f32(steps as f32 * physics.delta_time);
-
-        for (_, _, _, mut prediction) in &mut query {
-            prediction.positions.reserve(steps);
-        }
-
-        let mut mapped_query: Vec<_> = query
-            .iter_mut()
-            .map(|(v, p, mass, prediction)| {
-                (
-                    *prediction.positions.last().unwrap_or(p),
-                    prediction.velocity.unwrap_or(**v),
-                    mass.0,
-                    prediction,
-                )
+        app.add_event::<ComputePredictionEvent>()
+            .add_event::<ResetPredictionEvent>()
+            .insert_resource(GizmoConfig {
+                line_width: 1.0,
+                ..default()
             })
-            .collect();
-
-        for _ in 0..steps {
-            mapped_query
-                .iter()
-                .map(|&(position, _, mass, _)| (position, mass))
-                .accelerations(COMPUTE_METHOD)
-                .zip(&mut mapped_query)
-                .for_each(|(acceleration, (position, velocity, _, prediction))| {
-                    *velocity += acceleration * physics.delta_time;
-                    *position += *velocity * physics.delta_time;
-
-                    prediction.velocity.replace(*velocity);
-                    prediction.positions.push(*position);
-                });
-        }
-    }
-}
-
-fn draw_prediction(mut gizmos: Gizmos, query: Query<(&Transform, &PredictionState)>) {
-    let resolution = 5;
-    for (_, prediction) in &query {
-        let reference = prediction.reference.and_then(|r| query.get(r).ok());
-
-        if let Some((ref_transform, ref_prediction)) = reference {
-            gizmos.linestrip(
-                prediction
-                    .positions
-                    .iter()
-                    .zip(&ref_prediction.positions)
-                    .step_by(resolution)
-                    .map(|(&pred_position, &ref_pred_position)| {
-                        pred_position - ref_pred_position + ref_transform.translation
-                    }),
-                prediction.color,
-            )
-        } else {
-            gizmos.linestrip(
-                prediction.positions.iter().step_by(resolution).copied(),
-                prediction.color,
-            )
-        }
+            .add_systems(
+                PostUpdate,
+                (
+                    reset_prediction,
+                    compute_prediction,
+                    // compute_prediction_async,
+                    draw_prediction,
+                )
+                    .chain(),
+            );
     }
 }
 
 fn reset_prediction(
-    input: Res<Input<KeyCode>>,
-    mut prediction_duration: ResMut<PredictionDuration>,
+    reset_event: EventReader<ResetPredictionEvent>,
     mut query: Query<&mut PredictionState>,
 ) {
-    if input.just_pressed(KeyCode::R) {
-        *prediction_duration = Default::default();
+    if reset_event.is_empty() {
+        return;
+    }
 
-        for mut prediction in &mut query {
-            prediction.velocity.take();
-            prediction.positions.clear();
+    query.for_each_mut(|mut state| state.reset());
+}
+
+#[cfg(target_arch = "wasm32")]
+fn compute_prediction(
+    physics: Res<PhysicsSettings>,
+    mut compute_event: EventReader<ComputePredictionEvent>,
+    mut query: Query<(&Velocity, &Position, &Mass, &mut PredictionState)>,
+    mut progress: Local<usize>,
+) {
+    let mut steps_per_frame = 5000;
+    let event = compute_event.iter().next();
+    let dt = physics.delta_time;
+
+    if let Some(&ComputePredictionEvent { steps }) = event {
+        *progress = steps;
+
+        for (.., mut prediction) in &mut query {
+            prediction.positions.reserve(steps);
+        }
+    }
+
+    if *progress != 0 {
+        let mut mapped_query: Vec<_> = query
+            .iter_mut()
+            .map(|(velocity, position, mass, state)| {
+                (
+                    state.velocity.unwrap_or(**velocity),
+                    *state.positions.last().unwrap_or(position),
+                    **mass,
+                    state,
+                )
+            })
+            .collect();
+
+        steps_per_frame = steps_per_frame.min(*progress);
+
+        for _ in 0..steps_per_frame {
+            mapped_query
+                .iter()
+                .map(|&(.., position, mass, _)| (position, mass))
+                .accelerations(COMPUTE_METHOD)
+                .zip(&mut mapped_query)
+                .for_each(|(acceleration, (velocity, position, .., state))| {
+                    *velocity += acceleration * dt;
+                    *position += *velocity * dt;
+
+                    state.push(*velocity, *position);
+                });
+        }
+
+        *progress -= steps_per_frame;
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+type PredictionReceiver = crossbeam_channel::Receiver<Vec<(Entity, Vec3, Vec3)>>;
+
+#[cfg(not(target_arch = "wasm32"))]
+fn compute_prediction(
+    physics: Res<PhysicsSettings>,
+    mut compute_event: EventReader<ComputePredictionEvent>,
+    mut query: Query<(Entity, &Velocity, &Position, &Mass, &mut PredictionState)>,
+    mut receiver: Local<Option<PredictionReceiver>>,
+) {
+    let event = compute_event.iter().next();
+    let dt = physics.delta_time;
+
+    if let Some(&ComputePredictionEvent { steps }) = event {
+        let thread_pool = bevy::tasks::AsyncComputeTaskPool::get();
+
+        let (tx, rx) = crossbeam_channel::unbounded();
+        *receiver = Some(rx);
+
+        for (.., mut prediction) in &mut query {
+            prediction.positions.reserve(steps);
+        }
+
+        let mut mapped_query: Vec<_> = query
+            .iter()
+            .map(|(entity, velocity, position, mass, state)| {
+                (
+                    entity,
+                    state.velocity.unwrap_or(**velocity),
+                    *state.positions.last().unwrap_or(position),
+                    **mass,
+                )
+            })
+            .collect();
+
+        thread_pool
+            .spawn(async move {
+                for _ in 0..steps {
+                    tx.send(
+                        mapped_query
+                            .iter()
+                            .map(|&(.., position, mass)| (position, mass))
+                            .accelerations(COMPUTE_METHOD)
+                            .zip(&mut mapped_query)
+                            .map(|(acceleration, (entity, velocity, position, ..))| {
+                                *velocity += acceleration * dt;
+                                *position += *velocity * dt;
+
+                                (*entity, *velocity, *position)
+                            })
+                            .collect::<Vec<_>>(),
+                    )
+                    .unwrap();
+                }
+            })
+            .detach();
+    }
+
+    if let Some(receiver) = &*receiver {
+        for received in receiver.try_iter() {
+            for (entity, velocity, position) in received {
+                if let Ok((.., mut state)) = query.get_mut(entity) {
+                    state.push(velocity, position);
+                }
+            }
+        }
+    }
+}
+
+fn draw_prediction(
+    mut gizmos: Gizmos,
+    query: Query<(&Transform, &PredictionState, &PredictionDraw)>,
+) {
+    for (_, state, draw) in query.iter() {
+        let steps = draw.steps.unwrap_or(usize::MAX);
+        let positions = state.positions.iter().take(steps);
+
+        let reference = draw.reference.and_then(|r| query.get(r).ok());
+        if let Some((ref_transform, ref_state, _)) = reference {
+            gizmos.linestrip(
+                positions
+                    .zip(&ref_state.positions)
+                    .step_by(draw.resolution)
+                    .map(|(&pred_position, &ref_pred_position)| {
+                        pred_position - ref_pred_position + ref_transform.translation
+                    }),
+                draw.color,
+            )
+        } else {
+            gizmos.linestrip(positions.step_by(draw.resolution).copied(), draw.color)
         }
     }
 }

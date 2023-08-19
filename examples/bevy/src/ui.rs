@@ -1,112 +1,233 @@
-use crate::{PhysicsSettings, PredictionDuration};
+use std::time::Duration;
+
+use crate::{
+    format_duration, ComputePredictionEvent, ElapsedPhysicsTime, Followed, PhysicsSettings,
+    PhysicsTime, PredictionDraw, PredictionState, ResetPredictionEvent, Selected,
+};
 
 use bevy::prelude::*;
+use bevy_egui::{egui, EguiContexts, EguiPlugin};
+
+#[derive(Component, Default)]
+pub struct Labelled {
+    pub style: TextStyle,
+    pub offset: Vec2,
+}
 
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_ui)
-            // .add_systems(PostStartup, setup_labels)
+        app.add_plugins((EguiPlugin, bevy::diagnostic::FrameTimeDiagnosticsPlugin))
+            .add_systems(PostStartup, setup_egui)
+            .add_systems(First, spawn_labels)
             .add_systems(
-                Last,
+                Update,
                 (
-                    update_time_scale_ui,
-                    update_prediction_duration_ui,
-                    update_position_labels,
+                    windows_selection,
+                    window_simulation,
+                    update_labels_position,
+                    update_labels_color,
                 ),
             );
     }
 }
 
-#[derive(Component)]
-struct UiTimeScale;
+fn setup_egui(mut ctxs: EguiContexts) {
+    ctxs.ctx_mut().set_visuals(egui::Visuals {
+        window_fill: egui::Color32::from_rgba_premultiplied(27, 27, 27, 225),
+        window_stroke: egui::Stroke::NONE,
+        ..egui::Visuals::dark()
+    });
+}
 
-#[derive(Component)]
-struct UiPredictionDuration;
+fn window_simulation(
+    mut ctxs: EguiContexts,
+    diagnostics: Res<bevy::diagnostic::DiagnosticsStore>,
+    elapsed_time: Res<ElapsedPhysicsTime>,
+    mut physics: ResMut<PhysicsSettings>,
+    mut physics_time: ResMut<PhysicsTime>,
+    mut compute_event: EventWriter<ComputePredictionEvent>,
+    mut reset_event: EventWriter<ResetPredictionEvent>,
+    prediction_state: Query<&PredictionState>,
+    mut event: Local<ComputePredictionEvent>,
+) {
+    let dt = physics.delta_time;
+    let prediction_duration = Duration::from_secs_f32(
+        prediction_state
+            .iter()
+            .next()
+            .map(|state| state.positions.len() as f32 * dt)
+            .unwrap_or(0.0),
+    );
 
-fn setup_ui(mut commands: Commands) {
-    let style = TextStyle {
-        font_size: 20.0,
-        color: Color::GRAY,
-        ..default()
-    };
+    egui::Window::new("Simulation settings")
+        .default_width(255.0)
+        .resizable(false)
+        .anchor(egui::Align2::RIGHT_TOP, [0.0, 0.0])
+        .show(ctxs.ctx_mut(), |ui| {
+            if let Some(fps) = diagnostics.get(bevy::diagnostic::FrameTimeDiagnosticsPlugin::FPS) {
+                if let Some(value) = fps.smoothed() {
+                    ui.horizontal(|ui| {
+                        ui.label("FPS:");
+                        ui.label(format!("{value:.2}"));
+                    });
+                }
+            }
 
-    commands
-        .spawn(NodeBundle {
-            style: Style {
-                flex_direction: FlexDirection::Column,
-                margin: UiRect {
-                    top: Val::Px(5.0),
-                    left: Val::Px(5.0),
-                    ..default()
-                },
-                row_gap: Val::Px(5.0),
-                ..default()
-            },
-            ..default()
-        })
-        .with_children(|node| {
-            node.spawn((
-                TextBundle::from_sections([
-                    TextSection::new("Time scale: ", style.clone()),
-                    TextSection::from_style(style.clone()),
-                ]),
-                UiTimeScale,
-            ));
+            ui.horizontal(|ui| {
+                ui.label("Time elapsed:");
+                ui.label(format_duration(**elapsed_time, 3));
+            });
 
-            node.spawn((
-                TextBundle::from_sections([
-                    TextSection::new("Prediction duration: ", style.clone()),
-                    TextSection::from_style(style.clone()),
-                ]),
-                UiPredictionDuration,
-            ));
+            ui.horizontal(|ui| {
+                ui.label("Time scale:");
+                ui.add(egui::Slider::new(&mut physics.time_scale, 0.05..=100.0).logarithmic(true));
+            });
+
+            ui.checkbox(&mut physics_time.paused, "Paused");
+
+            ui.separator();
+
+            ui.horizontal(|ui| {
+                ui.label("Total prediction duration:");
+                ui.label(format_duration(prediction_duration, 2));
+            });
+
+            ui.horizontal(|ui| {
+                ui.label("Predict for:");
+                ui.add(
+                    egui::Slider::new_duration(
+                        &mut event.steps,
+                        physics.steps_per_second()..=physics.steps_per_second() * 3600 * 5,
+                        dt,
+                        2,
+                    )
+                    .logarithmic(true),
+                );
+            });
+
+            ui.horizontal(|ui| {
+                if ui.button("Start").clicked() {
+                    compute_event.send(*event)
+                }
+
+                if ui.button("Reset").clicked() {
+                    reset_event.send(ResetPredictionEvent)
+                }
+            });
         });
 }
 
-fn update_time_scale_ui(
+fn windows_selection(
+    mut ctxs: EguiContexts,
     physics: Res<PhysicsSettings>,
-    mut query_ui: Query<&mut Text, With<UiTimeScale>>,
+    mut followed: ResMut<Followed>,
+    mut query_prediction: Query<(&PredictionState, &mut PredictionDraw)>,
+    query_selection: Query<(Option<Entity>, &Name, bevy::ecs::query::Has<Selected>)>,
 ) {
-    if physics.is_changed() {
-        for mut text in &mut query_ui {
-            text.sections[1].value = format!("{:.1}", physics.time_scale);
+    let dt = physics.delta_time;
+
+    for (entity, selected_name, is_selected) in &query_selection {
+        if !is_selected {
+            continue;
         }
+
+        egui::Window::new(selected_name.to_string())
+            .default_width(245.0)
+            .resizable(false)
+            .collapsible(false)
+            .anchor(egui::Align2::LEFT_TOP, [0.0, 0.0])
+            .show(ctxs.ctx_mut(), |ui| {
+                ui.heading("Camera");
+
+                if ui.button("Follow").clicked() {
+                    **followed = entity;
+                }
+                ui.separator();
+
+                ui.heading("Prediction");
+
+                let prediction = entity.and_then(|e| query_prediction.get_mut(e).ok());
+                if let Some((state, mut draw)) = prediction {
+                    let none = (None, &Name::new("None"), false);
+                    let reference = draw
+                        .reference
+                        .and_then(|e| query_selection.get(e).ok())
+                        .unwrap_or(none);
+
+                    egui::ComboBox::from_label("Reference")
+                        .selected_text(reference.1.to_string())
+                        .show_ui(ui, |ui| {
+                            [none]
+                                .into_iter()
+                                .chain(query_selection.iter().filter(|(s, ..)| *s != entity))
+                                .for_each(|(entity, name, ..)| {
+                                    ui.selectable_value(
+                                        &mut draw.reference,
+                                        entity,
+                                        name.to_string(),
+                                    );
+                                });
+                        });
+
+                    if ui.checkbox(&mut draw.steps.is_none(), "Draw all").changed() {
+                        if draw.steps.is_none() {
+                            draw.steps.replace(state.positions.len());
+                        } else {
+                            draw.steps.take();
+                        }
+                    }
+
+                    ui.horizontal(|ui| {
+                        ui.label("Resolution:");
+                        ui.add(egui::Slider::new(&mut draw.resolution, 1..=50));
+                    });
+
+                    ui.add_enabled_ui(draw.steps.is_some(), |ui| {
+                        ui.horizontal(|ui| {
+                            ui.label("Draw for:");
+                            ui.add(egui::Slider::new_duration(
+                                draw.steps.as_mut().unwrap_or(&mut state.positions.len()),
+                                0..=state.positions.len(),
+                                dt,
+                                2,
+                            ));
+                        });
+                    });
+                }
+            });
     }
 }
 
-fn update_prediction_duration_ui(
-    prediction_duration: Res<PredictionDuration>,
-    mut query_ui: Query<&mut Text, With<UiPredictionDuration>>,
-) {
-    if prediction_duration.is_changed() {
-        let formatted = humantime::format_duration(std::time::Duration::from_secs(
-            prediction_duration.0.as_secs(),
-        ));
-        let duration_string: String = formatted.to_string().split_inclusive(' ').take(2).collect();
+#[derive(Component, Deref, DerefMut)]
+struct LabelEntity(Entity);
 
-        for mut text in &mut query_ui {
-            text.sections[1].value = duration_string.to_string();
-        }
+fn spawn_labels(
+    mut commands: Commands,
+    query_labelled: Query<(Entity, &Name, &Labelled), Added<Labelled>>,
+) {
+    for (entity, name, labelled) in &query_labelled {
+        let id = commands
+            .spawn(TextBundle::from_section(
+                name.to_string(),
+                labelled.style.clone(),
+            ))
+            .id();
+
+        commands.entity(entity).insert(LabelEntity(id));
     }
 }
 
-#[derive(Component)]
-pub struct Labelled {
-    pub entity: Entity,
-    pub offset: Vec2,
-}
-
-fn update_position_labels(
+fn update_labels_position(
     query_camera: Query<(&Camera, &GlobalTransform)>,
-    query_labelled: Query<(&Labelled, &GlobalTransform)>,
+    query_labelled: Query<(&LabelEntity, &Labelled, &GlobalTransform)>,
     mut query_labels: Query<(&mut Style, &Node)>,
 ) {
     let (camera, camera_transform) = query_camera.single();
 
-    for (label, transform) in &query_labelled {
-        let Ok((mut style, node)) = query_labels.get_mut(label.entity) else { continue };
+    for (entity, label, transform) in &query_labelled {
+        let Ok((mut style, node)) = query_labels.get_mut(**entity) else { continue };
 
         let rotation_matrix = Mat3::from_quat(camera_transform.to_scale_rotation_translation().1);
         let viewport_position = camera
@@ -126,3 +247,120 @@ fn update_position_labels(
         }
     }
 }
+
+fn update_labels_color(
+    mut query_labels: Query<&mut Text>,
+    query_labelled: Query<&LabelEntity>,
+    selected: Query<Entity, Added<Selected>>,
+    mut deselected: RemovedComponents<Selected>,
+) {
+    let mut set_label_color = |entity, color| {
+        if let Ok(mut text) = query_labelled
+            .get(entity)
+            .and_then(|e| query_labels.get_mut(**e))
+        {
+            text.sections[0].style.color = color;
+        }
+    };
+
+    for entity in deselected.iter() {
+        set_label_color(entity, Color::GRAY);
+    }
+
+    for entity in selected.iter() {
+        set_label_color(entity, Color::rgb(0.75, 0.0, 0.0));
+    }
+}
+
+// fn draw_tree(
+//     mut gizmos: Gizmos,
+//     tree: Res<BarnesHutTree>,
+//     query_comet: Query<(&Transform, &crate::CanSelect)>,
+// ) {
+//     // for node in &tree.0.tree.nodes {
+//     //     if let TreeNode::Internal(SizedOrthant(_, bbox)) = node {
+//     //         for bbox in bbox.subdivide() {
+//     //             draw_bbox(&mut gizmos, bbox, Color::WHITE);
+//     //         }
+//     //     }
+//     // }
+
+//     let position = query_comet
+//         .iter()
+//         .find_map(|(transform, selectable)| {
+//             (selectable.radius == 0.1).then_some(transform.translation)
+//         })
+//         .unwrap_or(Vec3::new(0.0, 100.0, 0.0));
+
+//     line_com(
+//         &tree,
+//         tree.0.root,
+//         position,
+//         crate::COMPUTE_METHOD.theta,
+//         &mut gizmos,
+//     )
+// }
+
+// fn draw_bbox(gizmos: &mut Gizmos, bbox: BoundingBox<[f32; 3]>, color: Color) {
+//     let translation = bbox.center().into();
+//     let scale = bbox.size().into();
+//     gizmos.cuboid(
+//         Transform::from_translation(translation).with_scale(scale),
+//         color,
+//     )
+// }
+
+// fn line_com(
+//     barneshut_tree: &BarnesHutTree,
+//     node: Option<NodeID>,
+//     position: Vec3,
+//     theta: f32,
+//     gizmos: &mut Gizmos,
+//     // rng: &mut StdRng,
+// ) {
+//     let Some(id) = node else {
+//         return;
+//     };
+//     let id = id as usize;
+
+//     let tree = &barneshut_tree.0.tree;
+
+//     let p2 = tree.data[id];
+//     let p2_pos = Vec3::from(p2.position);
+//     let dir = p2_pos - position;
+//     let mag_2 = dir.length_squared();
+//     let mag = mag_2.sqrt();
+
+//     let node = tree.nodes[id];
+
+//     match node {
+//         TreeNode::Internal(SizedOrthant(orthant, bbox)) if theta < bbox.width() / mag => {
+//             orthant
+//                 .iter()
+//                 .for_each(|&node| line_com(barneshut_tree, node, position, theta, gizmos));
+//         }
+//         _ => {
+//             let mut color = Color::RED;
+//             if let TreeNode::Internal(SizedOrthant(_, bbox)) = node {
+//                 draw_bbox(gizmos, bbox, Color::GREEN);
+//                 color = Color::BLUE;
+//             }
+//             gizmos.line(position, p2_pos, color);
+//         }
+//     }
+// }
+
+trait DurationSlider<'a> {
+    fn new_duration<Num: egui::emath::Numeric>(
+        value: &'a mut Num,
+        range: std::ops::RangeInclusive<Num>,
+        delta: f32,
+        precision: usize,
+    ) -> egui::Slider<'a> {
+        egui::Slider::new(value, range).custom_formatter(move |s, _| {
+            format_duration(Duration::from_secs_f32(s as f32 * delta), precision)
+        })
+    }
+}
+
+impl DurationSlider<'_> for egui::Slider<'_> {}
