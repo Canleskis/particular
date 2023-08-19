@@ -2,19 +2,21 @@ use std::time::Duration;
 
 use criterion::{AxisScale, BenchmarkGroup, BenchmarkId, Criterion, PlotConfiguration};
 
-use glam::Vec3 as Vector;
 use particular::prelude::*;
 use rand::prelude::*;
+
+type Scalar = f32;
+type Vector = glam::Vec3;
 
 #[derive(Debug, Default, Particle, Clone, Copy)]
 pub struct Body {
     position: Vector,
-    mu: f32,
+    mu: Scalar,
 }
 
-fn gen_range_vector<const N: usize, V>(rng: &mut StdRng, range: std::ops::Range<f32>) -> V
+fn gen_range_vector<const N: usize, V>(rng: &mut StdRng, range: std::ops::Range<Scalar>) -> V
 where
-    V: From<[f32; N]>,
+    V: From<[Scalar; N]>,
 {
     [0.0; N].map(|_| rng.gen_range(range.clone())).into()
 }
