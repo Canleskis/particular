@@ -1,6 +1,8 @@
 # Particular
 
-<div align="center"><img src="https://github.com/Canleskis/particular/blob/main/particular/particular-showcase.gif?raw=true"></div>
+<div align="center">
+    <img src="https://github.com/Canleskis/particular/blob/main/particular/particular-showcase.gif?raw=true">
+</div>
 
 [![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/canleskis/particular#license)
 [![Crates.io](https://img.shields.io/crates/v/particular)](https://crates.io/crates/particular)
@@ -115,7 +117,7 @@ for (acceleration, body) in bodies.iter().accelerations(cm).zip(&mut bodies) {
 Here is a comparison between 7 available compute methods using an i9 9900KF and an RTX 3080:
 
 <div align="center">
-<img src="https://github.com/Canleskis/particular/blob/main/particular/particular-comparison.png?raw=true" alt="Performance chart" />
+    <img src="https://github.com/Canleskis/particular/blob/main/particular/particular-comparison.png?raw=true" alt="Performance chart" />
 </div>
 
 Depending on your needs and platform, you may opt for one compute method or another.
@@ -123,7 +125,7 @@ You can also implement the trait on your own type to use other algorithms or com
 
 ## License
 
-This project is licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT), at your option.
+This project is licensed under either of [Apache License, Version 2.0](https://github.com/Canleskis/particular/blob/main/LICENSE-APACHE) or [MIT license](https://github.com/Canleskis/particular/blob/main/LICENSE-MIT), at your option.
 
 ## Contribution
 
