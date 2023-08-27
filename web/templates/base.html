@@ -225,17 +225,17 @@
                         <span></span>
                         <span></span>
                     </label>
-                    <a href="/">
+                    <a href="{{ get_url(path='/') }}">
                         <h1>PARTICULAR</h1>
                     </a>
                 </div>
 
                 <div class="header-content-main">
                     <div class="header-content-main-menu">
-                        <a href="/demos">
+                        <a href="{{ get_url(path='/demos/') }}">
                             <h1>demos</h1>
                         </a>
-                        <a href="/benchmarks">
+                        <a href="{{ get_url(path='/benchmarks/') }}">
                             <h1>benchmarks</h1>
                         </a>
                         <a href="https://docs.rs/particular/latest/particular/">
@@ -246,7 +246,7 @@
 
                 <div class="header-content-right">
                     <a href="https://github.com/Canleskis/particular">
-                        <img src="/github-mark-white.svg" alt="GitHub repository" />
+                        <img src="{{ get_url(path='/github-mark-white.svg') }} " alt="GitHub repository" />
                     </a>
                 </div>
             </div>
