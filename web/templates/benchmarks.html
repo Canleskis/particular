@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .graph-container {
+        display: flex;
+        flex-direction: column;
+        max-width: var(--default-width);
+        margin: 0;
+        border: 2px solid #5e5e5e;
+        border-radius: var(--border-radius);
+        padding: 0 20px 20px;
+    }
+
+    .graph-container img {
+        width: 100%;
+    }
+</style>
+
+{% for graph in section.pages %}
+<div class="padded-container">
+    <div class="graph-container">
+        <h1>{{ graph.title }}</h1>
+        {% if graph.extra.link %}
+        <img src="{{ graph.extra.link }}" alt="{{ graph.title }} benchmark graph" />
+        {% else %}
+        <h3>Coming soon...</h3>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}

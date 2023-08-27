@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .quickstart {
+        font-size: medium;
+        border: 2px solid #5e5e5e;
+        border-radius: var(--border-radius);
+        padding: 0 20px;
+    }
+
+    .quickstart h1,
+    h2 {
+        padding-bottom: 0.3em;
+        border-bottom: 1px solid #5e5e5e;
+    }
+
+    .quickstart pre {
+        overflow: scroll;
+    }
+
+    .quickstart img {
+        max-width: 100%;
+        border-radius: 10px;
+    }
+
+    .quickstart a:link {
+        color: #66c0df;
+        text-decoration: none;
+    }
+
+    .quickstart a:visited {
+        color: #7266df;
+    }
+
+    .quickstart a:hover {
+        text-decoration: underline;
+    }
+
+    .quickstart pre {
+        border-radius: 5px;
+        padding: 10px;
+    }
+</style>
+
+<div class="padded-container">
+    <div class="quickstart">
+        {{
+        load_data(url="https://github.com/Canleskis/particular/blob/main/particular/README.md?raw=true")
+        | markdown | safe }}
+    </div>
+</div>
+{% endblock content %}
