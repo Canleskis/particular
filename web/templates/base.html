@@ -10,6 +10,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ page_title }}</title>
+    <link rel="icon" type="image/png" href="{{ get_url(path='favicon.ico') }}">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet" />
     <style>
         :root {
@@ -73,10 +74,6 @@
 
         .header-content-left {
             margin-right: auto;
-        }
-
-        .header-content-main {
-            background-color: #121212;
         }
 
         .header-content-main-menu {
@@ -184,6 +181,7 @@
                 transform-origin: 0% 0%;
                 transform: translate(-100%, 0);
                 transition: transform 0.3s, opacity 0.3s;
+                background-color: #121212;
             }
 
             .header-content-main-menu {
