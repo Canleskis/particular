@@ -2,7 +2,7 @@
 base_url = "https://canleskis.github.io/particular"
 
 # Whether to automatically compile all Sass files in the sass directory
-compile_sass = true
+compile_sass = false
 
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = false
