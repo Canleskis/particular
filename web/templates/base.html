@@ -72,7 +72,6 @@
         }
 
         .header-content-left {
-            gap: 15px;
             margin-right: auto;
         }
 
@@ -82,12 +81,14 @@
 
         .header-content-main-menu {
             display: flex;
-            gap: 40px;
+        }
+
+        .header-content-main-menu a {
+            padding: 0 20px;
         }
 
         .header-content-right {
-            gap: 25px;
-            margin-left: 30px;
+            margin-left: 10px;
         }
 
         .backdrop {
@@ -112,10 +113,9 @@
         }
 
         #hamburger span {
-            display: block;
             position: absolute;
             height: 4px;
-            width: 100%;
+            width: 35px;
             background-color: #c0c0c0;
             border-radius: 2px;
             left: 0;
@@ -164,7 +164,11 @@
 
         @media (max-width: 920px) {
             #hamburger {
-                display: initial;
+                display: inline-block;
+            }
+
+            .header-content-left a {
+                padding: 0px 10px;
             }
 
             .header-content-main {
@@ -184,11 +188,15 @@
 
             .header-content-main-menu {
                 flex-direction: column;
-                align-items: center;
-                padding: 20px 0;
+                align-items: stretch;
                 width: 100%;
                 height: 100%;
                 overflow-y: auto;
+                text-align: center;
+            }
+
+            .header-content-main-menu a {
+                padding: 20px 0;
             }
 
             #mobile-state:checked+header .backdrop {
