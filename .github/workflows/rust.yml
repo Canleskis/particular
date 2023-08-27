@@ -1,10 +1,10 @@
-name: CI
+name: Rust
 
 on:
   push:
-    branches: ${{ github.ref }}
+    branches: [ "main" ]
   pull_request:
-    branches: ${{ github.ref }}
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
