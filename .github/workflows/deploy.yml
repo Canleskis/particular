@@ -23,7 +23,7 @@ jobs:
 
             - name: Build Examples
               run: |
-                  ./scripts/deploy_showcase.sh
+                  ./.github/scripts/deploy_showcase.sh
 
             - name: Deploy
               uses: shalzz/zola-deploy-action@v0.17.2
