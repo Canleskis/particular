@@ -1,5 +1,5 @@
 [package]
-name = "example-bevy"
+name = "pocket-solar-system"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -10,3 +10,8 @@ bevy = "0.11.2"
 bevy_egui = "0.21"
 crossbeam-channel = "0"
 humantime = "2"
+
+[metadata]
+demo = true
+title = "Pocket Solar System"
+mobile = false
