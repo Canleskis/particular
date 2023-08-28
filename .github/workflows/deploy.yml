@@ -1,8 +1,8 @@
 name: Deploy website
 
 on:
-  push:
-    branches: ["website"]
+    push:
+        branches: ["website"]
 
 jobs:
     deploy:
@@ -10,9 +10,28 @@ jobs:
 
         steps:
             - uses: actions/checkout@v3.0.0
-            - name: Build and deploy
+
+            - name: Setup Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  target: wasm32-unknown-unknown
+
+            - name: Setup wasm-bindgen
+              uses: jetli/wasm-bindgen-action@v0.2.0
+              with:
+                  version: "0.2.87"
+
+            - name: Build Examples
+              run: |
+                  for subfolder in examples/*; do
+                      if [ -d $subfolder ]; then
+                          ./examples/deploy_example.sh $subfolder website/content/demos
+                      fi
+                  done
+
+            - name: Deploy
               uses: shalzz/zola-deploy-action@v0.17.2
               env:
-                BUILD_DIR: website
-                PAGES_BRANCH: gh-pages
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  BUILD_DIR: website
+                  PAGES_BRANCH: gh-pages
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
