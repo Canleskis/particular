@@ -146,7 +146,7 @@ fn setup_scene(
 
     event_writer.send(ComputePredictionEvent {
         steps: physics.steps_per_second() * 60 * 5,
-    })
+    });
 }
 
 #[derive(Component, Clone)]

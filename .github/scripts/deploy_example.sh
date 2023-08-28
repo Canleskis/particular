@@ -3,7 +3,7 @@ out_dir=$2
 target_dir=${3:-"target"}
 
 if [[ $path = "" ]]; then
-    exit;
+    exit
 fi
 
 get_metadata() {
@@ -11,13 +11,14 @@ get_metadata() {
 }
 
 demo=$(get_metadata demo | awk '{ print $3 }')
-title=$(get_metadata title)
-mobile=$(get_metadata mobile)
 
-if [[ $(get_metadata demo | awk '{ print $3 }') == true ]]; then
+if [[ $demo == true ]]; then
+    title=$(get_metadata title)
+    mobile=$(get_metadata mobile)
     name=$(get_metadata name | awk '{ gsub(/"/, ""); print $3 }')
-    
+
     cargo build -p $name --release --target wasm32-unknown-unknown
+
     wasm-bindgen --no-typescript --out-name example --out-dir $out_dir/$name --target web $target_dir/wasm32-unknown-unknown/release/$name.wasm
 
     cp $path/preview.png $out_dir/$name/preview.png 2>/dev/null
@@ -26,5 +27,5 @@ if [[ $(get_metadata demo | awk '{ print $3 }') == true ]]; then
 '$title'
 '$mobile'
 template = "demo.html"
-+++' > $out_dir/$name/index.md
++++' >$out_dir/$name/index.md
 fi
