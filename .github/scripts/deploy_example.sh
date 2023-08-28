@@ -20,7 +20,8 @@ if [[ $(get_metadata demo | awk '{ print $3 }') == true ]]; then
     cargo build -p $name --release --target wasm32-unknown-unknown
     wasm-bindgen --no-typescript --out-name example --out-dir $out_dir/$name --target web $target_dir/wasm32-unknown-unknown/release/$name.wasm
 
-    cp $path/preview.png $out_dir/$name/preview.png
+    cp $path/preview.png $out_dir/$name/preview.png 2>/dev/null
+    cp -r $path/assets $out_dir/$name/assets 2>/dev/null
     echo '+++
 '$title'
 '$mobile'

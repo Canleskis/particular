@@ -23,11 +23,7 @@ jobs:
 
             - name: Build Examples
               run: |
-                  for subfolder in examples/*; do
-                      if [ -d $subfolder ]; then
-                          ./examples/deploy_example.sh $subfolder website/content/demos
-                      fi
-                  done
+                  ./scripts/deploy_showcase.sh
 
             - name: Deploy
               uses: shalzz/zola-deploy-action@v0.17.2
