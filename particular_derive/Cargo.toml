@@ -1,10 +1,11 @@
 [package]
 name = "particular_derive"
-version = "0.6.0"
-edition = "2021"
-authors = ["Canleskis"]
 description = "Derive macro for the particular crate."
-license = "MIT OR Apache-2.0"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
 
 [dependencies]
 syn = "2"

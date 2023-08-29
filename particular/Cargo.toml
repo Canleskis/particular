@@ -1,26 +1,26 @@
 [package]
 name = "particular"
-version = "0.7.0-dev"
-edition = "2021"
-authors = ["Canleskis"]
 description = "N-body simulation library written in Rust featuring BarnesHut and GPU accelerated algorithms."
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/Canleskis/particular"
 documentation = "https://docs.rs/particular"
-keywords = ["n-body", "gravity"]
-categories = ["simulation", "game-development"]
 exclude = [
     "particular-showcase.gif",
     "particular-comparison.png",
     "particular-comparison.svg",
 ]
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [features]
 parallel = ["dep:rayon"]
 gpu = ["dep:wgpu", "dep:bytemuck", "dep:pollster"]
 
 [dependencies]
-particular_derive = { version = "0.6.0", path = "../particular_derive" }
+particular_derive = { version = "0.7.0-dev", path = "../particular_derive" }
 
 ultraviolet = { version = "0", features = ["f64"] }
 wide = "0"
@@ -33,7 +33,7 @@ bytemuck = { version = "1", optional = true }
 pollster = { version = "0", optional = true }
 
 [dev-dependencies]
-criterion = { git = "https://github.com/bheisler/criterion.rs.git", branch="feature-wasi-proper", default-features = false }
+criterion = { git = "https://github.com/bheisler/criterion.rs.git", branch = "feature-wasi-proper", default-features = false }
 rand = "0"
 
 [package.metadata.docs.rs]

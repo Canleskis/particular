@@ -1,8 +1,9 @@
 [package]
 name = "pocket-solar-system"
-version = "0.1.0"
-edition = "2021"
 publish = false
+edition.workspace = true
+version.workspace = true
+license.workspace = true
 
 [dependencies]
 particular = { path = "../../particular" }
@@ -11,7 +12,7 @@ bevy_egui = "0.21"
 crossbeam-channel = "0"
 humantime = "2"
 
-[metadata]
+[package.metadata]
 demo = true
 title = "Pocket Solar System"
 mobile = false

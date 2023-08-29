@@ -2,3 +2,12 @@
 members = ["particular", "particular_derive", "examples/*"]
 default-members = ["particular", "particular_derive"]
 resolver = "2"
+
+[workspace.package]
+edition = "2021"
+version = "0.7.0-dev"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Canleskis/particular"
+authors = ["Canleskis"]
+keywords = ["n-body", "gravity"]
+categories = ["simulation", "game-development"]
