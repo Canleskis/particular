@@ -130,8 +130,8 @@ fn integrate_positions(
     mut query: Query<(&mut Acceleration, &mut Velocity, &mut Position)>,
 ) {
     for (mut acceleration, mut velocity, mut position) in &mut query {
-        **velocity += **acceleration * physics.delta_time;
-        **position += **velocity * physics.delta_time;
+        (**velocity, **position) =
+            sympletic_euler(**acceleration, **velocity, **position, physics.delta_time);
 
         **acceleration = Vec3::ZERO;
     }
@@ -160,4 +160,16 @@ fn update_transforms(
             transform.translation = new_position;
         }
     }
+}
+
+pub fn sympletic_euler(
+    acceleration: Vec3,
+    mut velocity: Vec3,
+    mut position: Vec3,
+    dt: f32,
+) -> (Vec3, Vec3) {
+    velocity += acceleration * dt;
+    position += velocity * dt;
+
+    (velocity, position)
 }

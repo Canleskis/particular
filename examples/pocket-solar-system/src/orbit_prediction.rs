@@ -193,8 +193,8 @@ fn compute_prediction(
                             .accelerations(COMPUTE_METHOD)
                             .zip(&mut mapped_query)
                             .map(|(acceleration, (entity, velocity, position, ..))| {
-                                *velocity += acceleration * dt;
-                                *position += *velocity * dt;
+                                (*velocity, *position) =
+                                    crate::sympletic_euler(acceleration, *velocity, *position, dt);
 
                                 (*entity, *velocity, *position)
                             })
