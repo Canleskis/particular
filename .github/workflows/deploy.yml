@@ -16,6 +16,8 @@ jobs:
               with:
                   target: wasm32-unknown-unknown
 
+            - uses: Swatinem/rust-cache@v2
+
             - name: Setup wasm-bindgen
               uses: jetli/wasm-bindgen-action@v0.2.0
               with:

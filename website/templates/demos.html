@@ -51,8 +51,8 @@
     <ul>
         {% for example in section.pages %}
         <li>
-            <a class="demo-card" href="{{ example.permalink | safe }}">
-                <img src="{{ get_url(path=example.path) }}/preview.png"" alt=" Preview" />
+            <a class="demo-card" href="{{ example.path }}">
+                <img src="{{ example.path }}/preview.png" alt=" Preview" />
                 <h1>{{ example.title }}</h1>
             </a>
         </li>
