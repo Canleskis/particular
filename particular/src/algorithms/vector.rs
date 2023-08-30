@@ -258,9 +258,6 @@ pub mod simd {
         /// Norm squared, defined by the dot product on itself.
         fn length_squared(self) -> Self::Scalar;
 
-        /// Norm squared, defined by the dot product on itself.
-        fn length(self) -> Self::Scalar;
-
         /// Returns itself with NaNs replaced with zeros.
         fn nan_to_zero(self) -> Self;
     }
@@ -314,11 +311,6 @@ pub mod simd {
                 #[inline]
                 fn length_squared(self) -> Self::Scalar {
                     self.mag_sq()
-                }
-
-                #[inline]
-                fn length(self) -> Self::Scalar {
-                    self.mag()
                 }
 
                 #[inline]

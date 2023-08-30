@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Trait methods of `IntoVectorElement`.
 - `Element` trait.
 - `PointMass::into_element` method.
+- `simd::Vector::length` method.
 
 ## [0.6.1] - 2023-19-07
 
