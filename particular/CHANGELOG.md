@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `ParticleSet` to `ParticleSetInternal`.
 - `MassiveAffected` no longer implements `Storage`. `MassiveAffectedInternal` and `MassiveAffectedArray` newtypes are used instead.
 - `BarnesHutTree` trait renamed to `BarnesHutAcceleration`.
+- `IntoPointMass::point_mass` takes ownership of `self`.
 
 ### Removed
 

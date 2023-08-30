@@ -84,7 +84,10 @@ pub type ParticlePointMass<P> = PointMass<<P as Particle>::Vector, <P as Particl
 pub trait IntoPointMass: Particle {
     /// Converts the particle to a [`PointMass`].
     #[inline]
-    fn point_mass(&self) -> ParticlePointMass<Self> {
+    fn point_mass(self) -> ParticlePointMass<Self>
+    where
+        Self: Sized,
+    {
         ParticlePointMass::<Self>::new(self.position(), self.mu())
     }
 }
@@ -137,7 +140,7 @@ where
         S: Storage<ParticlePointMass<Self::Item>>,
         C: ComputeMethod<S, <Self::Item as Particle>::Vector>,
     {
-        self.map(|item| item.point_mass()).compute(cm)
+        self.map(IntoPointMass::point_mass).compute(cm)
     }
 }
 
