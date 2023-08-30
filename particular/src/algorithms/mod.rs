@@ -49,13 +49,13 @@ pub(crate) mod tests {
         S: Storage<PointMass<Vec3A, f32>>,
         for<'a> &'a mut C: ComputeMethod<S, Vec3A>,
     {
-        let massive = vec![
+        let massive = [
             PointMass::new(Vec3A::splat(0.0), 20.0),
             PointMass::new(Vec3A::splat(1.0), 30.0),
             PointMass::new(Vec3A::splat(-3.0), 40.0),
         ];
 
-        let particles = vec![
+        let particles = [
             PointMass::new(Vec3A::splat(3.0), 0.0),
             massive[0],
             massive[1],
@@ -64,7 +64,7 @@ pub(crate) mod tests {
             PointMass::new(Vec3A::splat(-5.0), 0.0),
         ];
 
-        let storage = S::store(particles.clone().into_iter());
+        let storage = S::store(particles);
         let computed = cm.compute(&storage);
 
         for (&point_mass1, computed) in particles.iter().zip(computed) {
