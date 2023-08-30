@@ -74,13 +74,7 @@ impl Plugin for OrbitPredictionPlugin {
             })
             .add_systems(
                 PostUpdate,
-                (
-                    reset_prediction,
-                    compute_prediction,
-                    // compute_prediction_async,
-                    draw_prediction,
-                )
-                    .chain(),
+                (reset_prediction, compute_prediction, draw_prediction).chain(),
             );
     }
 }

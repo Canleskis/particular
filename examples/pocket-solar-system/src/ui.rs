@@ -227,7 +227,9 @@ fn update_labels_position(
     let (camera, camera_transform) = query_camera.single();
 
     for (entity, label, transform) in &query_labelled {
-        let Ok((mut style, node)) = query_labels.get_mut(**entity) else { continue };
+        let Ok((mut style, node)) = query_labels.get_mut(**entity) else {
+            continue;
+        };
 
         let rotation_matrix = Mat3::from_quat(camera_transform.to_scale_rotation_translation().1);
         let viewport_position = camera
@@ -271,84 +273,6 @@ fn update_labels_color(
         set_label_color(entity, Color::rgb(0.75, 0.0, 0.0));
     }
 }
-
-// fn draw_tree(
-//     mut gizmos: Gizmos,
-//     tree: Res<BarnesHutTree>,
-//     query_comet: Query<(&Transform, &crate::CanSelect)>,
-// ) {
-//     // for node in &tree.0.tree.nodes {
-//     //     if let TreeNode::Internal(SizedOrthant(_, bbox)) = node {
-//     //         for bbox in bbox.subdivide() {
-//     //             draw_bbox(&mut gizmos, bbox, Color::WHITE);
-//     //         }
-//     //     }
-//     // }
-
-//     let position = query_comet
-//         .iter()
-//         .find_map(|(transform, selectable)| {
-//             (selectable.radius == 0.1).then_some(transform.translation)
-//         })
-//         .unwrap_or(Vec3::new(0.0, 100.0, 0.0));
-
-//     line_com(
-//         &tree,
-//         tree.0.root,
-//         position,
-//         crate::COMPUTE_METHOD.theta,
-//         &mut gizmos,
-//     )
-// }
-
-// fn draw_bbox(gizmos: &mut Gizmos, bbox: BoundingBox<[f32; 3]>, color: Color) {
-//     let translation = bbox.center().into();
-//     let scale = bbox.size().into();
-//     gizmos.cuboid(
-//         Transform::from_translation(translation).with_scale(scale),
-//         color,
-//     )
-// }
-
-// fn line_com(
-//     barneshut_tree: &BarnesHutTree,
-//     node: Option<NodeID>,
-//     position: Vec3,
-//     theta: f32,
-//     gizmos: &mut Gizmos,
-//     // rng: &mut StdRng,
-// ) {
-//     let Some(id) = node else {
-//         return;
-//     };
-//     let id = id as usize;
-
-//     let tree = &barneshut_tree.0.tree;
-
-//     let p2 = tree.data[id];
-//     let p2_pos = Vec3::from(p2.position);
-//     let dir = p2_pos - position;
-//     let mag_2 = dir.length_squared();
-//     let mag = mag_2.sqrt();
-
-//     let node = tree.nodes[id];
-
-//     match node {
-//         TreeNode::Internal(SizedOrthant(orthant, bbox)) if theta < bbox.width() / mag => {
-//             orthant
-//                 .iter()
-//                 .for_each(|&node| line_com(barneshut_tree, node, position, theta, gizmos));
-//         }
-//         _ => {
-//             let mut color = Color::RED;
-//             if let TreeNode::Internal(SizedOrthant(_, bbox)) = node {
-//                 draw_bbox(gizmos, bbox, Color::GREEN);
-//                 color = Color::BLUE;
-//             }
-//             gizmos.line(position, p2_pos, color);
-//         }
-//     }
-// }
 
 trait DurationSlider<'a> {
     fn new_duration<Num: egui::emath::Numeric>(

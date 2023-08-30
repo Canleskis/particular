@@ -31,8 +31,12 @@ fn entity_picker(
         return;
     }
 
-    let Ok(window) = query_window.get_single() else { return };
-    let Ok((camera_transform, camera)) = query_camera.get_single() else { return };
+    let Ok(window) = query_window.get_single() else {
+        return;
+    };
+    let Ok((camera_transform, camera)) = query_camera.get_single() else {
+        return;
+    };
 
     let clicked_entity = window
         .cursor_position()
@@ -81,7 +85,9 @@ fn _show_pickable_zone(
     query_camera: Query<&GlobalTransform, With<Camera>>,
     query_can_select: Query<(&Transform, &CanSelect)>,
 ) {
-    let Ok(camera_transform) = query_camera.get_single() else { return };
+    let Ok(camera_transform) = query_camera.get_single() else {
+        return;
+    };
 
     for (transform, selectable) in &query_can_select {
         let distance = transform.translation - camera_transform.translation();

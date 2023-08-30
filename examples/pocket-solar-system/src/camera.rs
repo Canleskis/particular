@@ -37,8 +37,12 @@ pub fn camera_controls(
     mut motion_events: EventReader<MouseMotion>,
     mut query_camera: Query<(&mut Transform, &OrbitCamera, Ref<Parent>)>,
 ) {
-    let Ok((mut transform, orbit, parent)) = query_camera.get_single_mut() else { return };
-    let Ok(window) = query_windows.get_single() else { return };
+    let Ok((mut transform, orbit, parent)) = query_camera.get_single_mut() else {
+        return;
+    };
+    let Ok(window) = query_windows.get_single() else {
+        return;
+    };
 
     let window_size = Vec2::new(window.width(), window.height());
 
@@ -89,7 +93,9 @@ fn followed_save_transform(
 ) {
     if followed.is_changed() {
         let can_follow = previous_followed.and_then(|e| query_can_follow.get_mut(e).ok());
-        let Ok(&transform) = query_camera.get_single() else { return };
+        let Ok(&transform) = query_camera.get_single() else {
+            return;
+        };
 
         if let Some(mut can_follow) = can_follow {
             can_follow.saved_transform = transform;
@@ -109,8 +115,12 @@ fn followed_set_parent_camera(
     }
 
     let Some(followed) = **followed else { return };
-    let Ok((camera_entity, mut transform, mut orbit)) = query_camera.get_single_mut() else { return };
-    let Ok(selectable) = query_can_follow.get(followed) else { return };
+    let Ok((camera_entity, mut transform, mut orbit)) = query_camera.get_single_mut() else {
+        return;
+    };
+    let Ok(selectable) = query_can_follow.get(followed) else {
+        return;
+    };
 
     commands.entity(camera_entity).set_parent(followed);
     orbit.min_distance = selectable.min_camera_distance;
