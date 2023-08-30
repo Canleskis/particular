@@ -104,9 +104,9 @@ where
     fn store_particles<I>(input: I) -> Self
     where
         Self: Sized,
-        I: Iterator<Item = P>,
+        I: IntoIterator<Item = P>,
     {
-        Self::store(input.map(|p| p.point_mass()))
+        Self::store(input.into_iter().map(IntoPointMass::point_mass))
     }
 }
 

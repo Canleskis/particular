@@ -49,7 +49,7 @@ pub trait Storage<P> {
     /// Creates a new storage.
     fn store<I>(input: I) -> Self
     where
-        I: Iterator<Item = P>;
+        I: IntoIterator<Item = P>;
 }
 
 /// Trait to perform a computation from an iterator using a provided [`ComputeMethod`].

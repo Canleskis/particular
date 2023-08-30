@@ -110,7 +110,7 @@ impl<V, S> PointMass<V, S> {
     {
         let dir = particle.position - self.position;
         let mag_2 = dir.length_squared();
-        let grav_acc = dir * particle.mass * (mag_2.recip_sqrt() * mag_2.recip());
+        let grav_acc = dir * particle.mass * (mag_2.recip() * mag_2.recip_sqrt());
 
         grav_acc.nan_to_zero()
     }
@@ -208,9 +208,9 @@ where
     #[inline]
     fn store<I>(input: I) -> Self
     where
-        I: Iterator<Item = PointMass<V, S>>,
+        I: IntoIterator<Item = PointMass<V, S>>,
     {
-        Self(input.map(PointMass::into_internal).collect())
+        Self(input.into_iter().map(PointMass::into_internal).collect())
     }
 }
 
@@ -222,10 +222,10 @@ where
     #[inline]
     fn store<I>(input: I) -> Self
     where
-        I: Iterator<Item = PointMass<V, S>>,
+        I: IntoIterator<Item = PointMass<V, S>>,
     {
         Self(MassiveAffected::from_affected(
-            input.map(PointMass::into).collect(),
+            input.into_iter().map(PointMass::into).collect(),
         ))
     }
 }
@@ -238,10 +238,10 @@ where
     #[inline]
     fn store<I>(input: I) -> Self
     where
-        I: Iterator<Item = PointMass<V, S>>,
+        I: IntoIterator<Item = PointMass<V, S>>,
     {
         Self(MassiveAffected::from_affected(
-            input.map(PointMass::into_internal).collect(),
+            input.into_iter().map(PointMass::into_internal).collect(),
         ))
     }
 }
@@ -255,9 +255,9 @@ where
     #[inline]
     fn store<I>(input: I) -> Self
     where
-        I: Iterator<Item = PointMass<V, S>>,
+        I: IntoIterator<Item = PointMass<V, S>>,
     {
-        let affected = input.map(PointMass::into).collect();
+        let affected = input.into_iter().map(PointMass::into).collect();
         let MassiveAffected { massive, affected } = MassiveAffected::from_affected(affected);
 
         let massive = massive
@@ -286,9 +286,9 @@ where
     #[inline]
     fn store<I>(input: I) -> Self
     where
-        I: Iterator<Item = PointMass<V, S>>,
+        I: IntoIterator<Item = PointMass<V, S>>,
     {
-        let affected = input.map(PointMass::into_internal).collect();
+        let affected = input.into_iter().map(PointMass::into_internal).collect();
         let MassiveAffected { massive, affected } = MassiveAffected::from_affected(affected);
 
         let mut tree = BarnesHutTree::new();
