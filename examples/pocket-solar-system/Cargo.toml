@@ -12,7 +12,6 @@ bevy_egui = "0.21"
 crossbeam-channel = "0"
 humantime = "2"
 
-[package.metadata]
-demo = true
+[package.metadata.particular.rs]
 title = "Pocket Solar System"
 mobile = false

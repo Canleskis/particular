@@ -17,7 +17,6 @@ bevy_mouse_tracking_plugin = "0.5.0"
 bevy_egui = "0.18.0"
 particular = { path = "../../particular" }
 
-[package.metadata]
-demo = true
-title = "Physics Scenes"
+[package.metadata.particular.rs]
+title = "Pocket Solar System"
 mobile = false
