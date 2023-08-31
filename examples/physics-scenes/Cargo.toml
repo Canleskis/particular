@@ -18,5 +18,5 @@ bevy_egui = "0.18.0"
 particular = { path = "../../particular", features = ["parallel"] }
 
 [package.metadata.particular.rs]
-title = "Pocket Solar System"
+title = "Physics Scenes"
 mobile = false

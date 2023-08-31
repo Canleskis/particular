@@ -1,8 +1,9 @@
 [package]
 name = "simple"
-version = "0.1.0"
-edition = "2021"
 publish = false
+edition.workspace = true
+version.workspace = true
+license.workspace = true
 
 [dependencies]
 particular = { path = "../../particular" }
