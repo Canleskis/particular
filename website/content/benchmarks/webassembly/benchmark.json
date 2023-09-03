@@ -1,0 +1,4761 @@
+{
+  "name": "WebAssembly",
+  "benchmarks": {
+    "Particular/sequential::BarnesHut::0.2/1024": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/1024",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "1024",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/1024",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/1024"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 14940003.840000002,
+            "upper_bound": 15073334.613333335
+          },
+          "point_estimate": 15003333.119999995,
+          "standard_error": 33870.18278429754
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 14833365.333333334,
+            "upper_bound": 14999978.666666666
+          },
+          "point_estimate": 14916672.0,
+          "standard_error": 78485.42007344788
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 63.25759887879416,
+            "upper_bound": 247084.1812133789
+          },
+          "point_estimate": 123573.71940612885,
+          "standard_error": 116342.93219843128
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 159226.94202277172,
+            "upper_bound": 318743.9053118154
+          },
+          "point_estimate": 241616.0671768969,
+          "standard_error": 42273.79175350782
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/128": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/128",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "128",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/128",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/128"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 359059.7360011743,
+            "upper_bound": 363380.4922513072
+          },
+          "point_estimate": 361282.9562005157,
+          "standard_error": 1097.784304543297
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 361111.4666666667,
+            "upper_bound": 362572.350877193
+          },
+          "point_estimate": 361789.9603789837,
+          "standard_error": 443.61152798479145
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1372.6898956298858,
+            "upper_bound": 3660.506388346333
+          },
+          "point_estimate": 2540.760425463287,
+          "standard_error": 581.5730487929336
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 361442.94558707305,
+            "upper_bound": 362696.765055172
+          },
+          "point_estimate": 362081.1504510451,
+          "standard_error": 317.4787108917935
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3836.444172309444,
+            "upper_bound": 10841.789975340002
+          },
+          "point_estimate": 7861.527699377685,
+          "standard_error": 1741.9716948927853
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/16": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/16",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "16",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/16",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/16"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6866.144665281212,
+            "upper_bound": 7019.851643390318
+          },
+          "point_estimate": 6928.361843798376,
+          "standard_error": 40.438080952222464
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6856.3185995623635,
+            "upper_bound": 6924.283478226585
+          },
+          "point_estimate": 6891.618566972392,
+          "standard_error": 15.64861439045388
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 55.56386128050242,
+            "upper_bound": 108.22689423249692
+          },
+          "point_estimate": 79.39150410194915,
+          "standard_error": 13.32951841607268
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6872.65067601393,
+            "upper_bound": 6931.551430208754
+          },
+          "point_estimate": 6899.163554364962,
+          "standard_error": 15.202417897619716
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 90.52031113783757,
+            "upper_bound": 468.15190666620305
+          },
+          "point_estimate": 289.46880682709303,
+          "standard_error": 120.05355594080014
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/16384": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/16384",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "16384",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/16384",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/16384"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 973879982.08,
+            "upper_bound": 977419985.92
+          },
+          "point_estimate": 975619993.6,
+          "standard_error": 901038.6552974504
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 973999872.0,
+            "upper_bound": 978000128.0
+          },
+          "point_estimate": 976000000.0,
+          "standard_error": 1268708.8454190008
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4447515.26184082,
+            "upper_bound": 8895599.842071533
+          },
+          "point_estimate": 6671652.438354492,
+          "standard_error": 1239358.4970741468
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5001395.366940128,
+            "upper_bound": 7916844.702209131
+          },
+          "point_estimate": 6442506.061795645,
+          "standard_error": 758275.6296495199
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/2": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/2",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "2",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/2",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/2"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 434.67226331720224,
+            "upper_bound": 440.592275678413
+          },
+          "point_estimate": 437.3948797271929,
+          "standard_error": 1.5135731140134918
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 434.6935297647164,
+            "upper_bound": 439.2238999163527
+          },
+          "point_estimate": 436.1498933882136,
+          "standard_error": 1.1412377566189862
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3.9592243766913833,
+            "upper_bound": 7.930581833645845
+          },
+          "point_estimate": 6.017076901998162,
+          "standard_error": 1.0166766622639185
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 436.17903021258144,
+            "upper_bound": 438.6629511990478
+          },
+          "point_estimate": 437.3751580014226,
+          "standard_error": 0.6367368139385978
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6.182579150146653,
+            "upper_bound": 15.665948498256014
+          },
+          "point_estimate": 10.8035676530167,
+          "standard_error": 2.690682439006759
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/2048": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/2048",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "2048",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/2048",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/2048"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47070005.76,
+            "upper_bound": 47270000.64
+          },
+          "point_estimate": 47169999.36,
+          "standard_error": 50171.32966196573
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47000064.0,
+            "upper_bound": 47249984.0
+          },
+          "point_estimate": 47000064.0,
+          "standard_error": 67123.24696301894
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 189.77279663085935,
+            "upper_bound": 741062.7708435059
+          },
+          "point_estimate": 189.77279663085935,
+          "standard_error": 266445.28742085164
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 281394.8301218495,
+            "upper_bound": 423909.3601360688
+          },
+          "point_estimate": 358713.88880024466,
+          "standard_error": 36593.66051047736
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/256": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/256",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "256",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/256",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/256"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1281636.544538731,
+            "upper_bound": 1305394.6989744424
+          },
+          "point_estimate": 1296103.264885662,
+          "standard_error": 6359.090776054653
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1297269.437296946,
+            "upper_bound": 1304347.8260869563
+          },
+          "point_estimate": 1301333.3333333333,
+          "standard_error": 1876.187492201172
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 7090.708259299864,
+            "upper_bound": 14674.459135091653
+          },
+          "point_estimate": 10987.854000622454,
+          "standard_error": 1918.4145714325664
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1299444.20512384,
+            "upper_bound": 1305817.188852863
+          },
+          "point_estimate": 1302519.924892254,
+          "standard_error": 1626.3834138730638
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12239.556620332403,
+            "upper_bound": 74804.76240061781
+          },
+          "point_estimate": 45473.15706092478,
+          "standard_error": 20715.36305506078
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/32": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/32",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "32",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/32",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/32"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 31082.601428381873,
+            "upper_bound": 31487.146582945377
+          },
+          "point_estimate": 31274.45113835422,
+          "standard_error": 102.94431117413644
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 31158.942341292954,
+            "upper_bound": 31424.8540680155
+          },
+          "point_estimate": 31276.627243355913,
+          "standard_error": 67.72135034223408
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 205.34990448973787,
+            "upper_bound": 487.9051741762368
+          },
+          "point_estimate": 306.1558705318658,
+          "standard_error": 71.58714866574358
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 31228.58376145477,
+            "upper_bound": 31495.27044869855
+          },
+          "point_estimate": 31344.1007107723,
+          "standard_error": 68.9209812376532
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 419.6677500160719,
+            "upper_bound": 1032.4758730870856
+          },
+          "point_estimate": 733.3149979498584,
+          "standard_error": 163.2745053320785
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/4": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/4",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "4",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/4",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/4"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 803.9449646828538,
+            "upper_bound": 824.0409924046876
+          },
+          "point_estimate": 812.4104383154147,
+          "standard_error": 5.233123526211405
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 802.6602453847036,
+            "upper_bound": 810.8506560518945
+          },
+          "point_estimate": 806.589904046725,
+          "standard_error": 1.997555437593918
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 7.366140954450209,
+            "upper_bound": 14.260316272408463
+          },
+          "point_estimate": 10.918057752374056,
+          "standard_error": 1.7401816019425709
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 805.1313601833663,
+            "upper_bound": 817.0021627715109
+          },
+          "point_estimate": 810.1285871089385,
+          "standard_error": 3.0811256021689166
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11.437726276358685,
+            "upper_bound": 58.49389577234106
+          },
+          "point_estimate": 37.49199811938011,
+          "standard_error": 13.416840918683702
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/4096": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/4096",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "4096",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/4096",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/4096"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 136919992.32,
+            "upper_bound": 137680000.0
+          },
+          "point_estimate": 137280000.0,
+          "standard_error": 194276.5111668017
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 136999936.0,
+            "upper_bound": 137999872.0
+          },
+          "point_estimate": 136999936.0,
+          "standard_error": 319856.79410341976
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 741442.3164367676,
+            "upper_bound": 1482694.8600769043
+          },
+          "point_estimate": 1482505.0872802734,
+          "standard_error": 187197.9185016182
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 966591.7721294692,
+            "upper_bound": 1837941.254180187
+          },
+          "point_estimate": 1385655.733084712,
+          "standard_error": 235929.43882258257
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/512": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/512",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "512",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/512",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/512"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4347968.626926412,
+            "upper_bound": 4413612.24727418
+          },
+          "point_estimate": 4377823.032032078,
+          "standard_error": 16653.99898806485
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4351349.621621622,
+            "upper_bound": 4376391.022222223
+          },
+          "point_estimate": 4363636.363636363,
+          "standard_error": 7178.725454692089
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 24736.884040832243,
+            "upper_bound": 49474.463986913404
+          },
+          "point_estimate": 36113.53440792831,
+          "standard_error": 6638.503151887163
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4359602.559437519,
+            "upper_bound": 4383936.746440515
+          },
+          "point_estimate": 4371368.623040186,
+          "standard_error": 6214.855939652521
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 39400.481727654194,
+            "upper_bound": 180377.13422307267
+          },
+          "point_estimate": 118729.9542703154,
+          "standard_error": 36277.42532500164
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/64": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/64",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "64",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/64",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/64"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 96972.86694672256,
+            "upper_bound": 98352.74044960624
+          },
+          "point_estimate": 97654.9498463202,
+          "standard_error": 351.39417484069094
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 96875.2,
+            "upper_bound": 97828.01323877068
+          },
+          "point_estimate": 97324.40522875816,
+          "standard_error": 243.6487136139285
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 849.9648957796752,
+            "upper_bound": 2040.777683768954
+          },
+          "point_estimate": 1176.1725964502605,
+          "standard_error": 315.63895528559857
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 97407.64534091874,
+            "upper_bound": 98675.6278001067
+          },
+          "point_estimate": 97984.860104834,
+          "standard_error": 328.49165199924806
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1765.7502831986335,
+            "upper_bound": 3137.4598404377352
+          },
+          "point_estimate": 2508.9802762270306,
+          "standard_error": 349.73792900154007
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/8": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/8",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "8",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/8",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/8"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2527.795631944318,
+            "upper_bound": 2594.301383106389
+          },
+          "point_estimate": 2556.728900111117,
+          "standard_error": 17.035261930585797
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2537.684114839785,
+            "upper_bound": 2552.8052906919356
+          },
+          "point_estimate": 2544.7934853420193,
+          "standard_error": 3.8008229506320466
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13.686960141682896,
+            "upper_bound": 27.34651436315549
+          },
+          "point_estimate": 20.97203448989565,
+          "standard_error": 3.511150374384965
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2540.1012850562615,
+            "upper_bound": 2549.582606923852
+          },
+          "point_estimate": 2544.8333796353386,
+          "standard_error": 2.4183681978632157
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 40.510922142126304,
+            "upper_bound": 191.84256036528765
+          },
+          "point_estimate": 121.5508287288731,
+          "standard_error": 42.39968138838093
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.2/8192": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/8192",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.2",
+        "value_str": "8192",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.2/8192",
+        "directory_name": "Particular/sequential__BarnesHut__0.2/8192"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 382839997.44,
+            "upper_bound": 384200007.68
+          },
+          "point_estimate": 383500001.28,
+          "standard_error": 346921.6773738743
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 382499968.0,
+            "upper_bound": 384000000.0
+          },
+          "point_estimate": 383000064.0,
+          "standard_error": 348362.6058894611
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1482505.0872802734,
+            "upper_bound": 2965389.7201538086
+          },
+          "point_estimate": 2965010.174560547,
+          "standard_error": 657188.1312113107
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1829481.1756060529,
+            "upper_bound": 3018655.0381161207
+          },
+          "point_estimate": 2476446.5671488796,
+          "standard_error": 305087.1715695065
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/1024": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/1024",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "1024",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/1024",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/1024"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1573981.6472966047,
+            "upper_bound": 1592666.2320569153
+          },
+          "point_estimate": 1583372.452935366,
+          "standard_error": 4760.378652842833
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1571428.5714285714,
+            "upper_bound": 1583338.6666666667
+          },
+          "point_estimate": 1576920.6153846155,
+          "standard_error": 4189.395008404338
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11239.72518227339,
+            "upper_bound": 36117.65597416785
+          },
+          "point_estimate": 21382.96918960734,
+          "standard_error": 6569.72859535787
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1579432.9745275753,
+            "upper_bound": 1595910.585013631
+          },
+          "point_estimate": 1587489.758602213,
+          "standard_error": 4217.1418682517315
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 25605.146264413244,
+            "upper_bound": 41362.88276735322
+          },
+          "point_estimate": 34118.79752423066,
+          "standard_error": 4024.2876038836544
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/128": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/128",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "128",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/128",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/128"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 87473.45966146572,
+            "upper_bound": 88488.36630496246
+          },
+          "point_estimate": 87946.96072671973,
+          "standard_error": 257.8687092806218
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 87765.06505050504,
+            "upper_bound": 88112.80090451229
+          },
+          "point_estimate": 87962.81481481482,
+          "standard_error": 85.97516644428363
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 401.0593383343255,
+            "upper_bound": 1088.4742617187214
+          },
+          "point_estimate": 693.4907136140064,
+          "standard_error": 185.3026572452181
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 87697.23971837712,
+            "upper_bound": 88021.38720280421
+          },
+          "point_estimate": 87859.31960913738,
+          "standard_error": 82.47317291012268
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 892.9476030002265,
+            "upper_bound": 2715.8465407315666
+          },
+          "point_estimate": 1841.5958664334712,
+          "standard_error": 489.8810685003126
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/16": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/16",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "16",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/16",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/16"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4703.981634303084,
+            "upper_bound": 4763.970039065992
+          },
+          "point_estimate": 4733.05751629346,
+          "standard_error": 15.29641783623287
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4704.8850869689195,
+            "upper_bound": 4740.518962075848
+          },
+          "point_estimate": 4723.141409488715,
+          "standard_error": 8.804701132256259
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 28.45572135570354,
+            "upper_bound": 66.79637331845237
+          },
+          "point_estimate": 47.51502533575557,
+          "standard_error": 10.066763391740103
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4721.360544271416,
+            "upper_bound": 4764.933335089554
+          },
+          "point_estimate": 4740.478283595883,
+          "standard_error": 11.2067938710025
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 69.63032103156806,
+            "upper_bound": 142.73585195698752
+          },
+          "point_estimate": 109.37263347613782,
+          "standard_error": 18.734802360183902
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/16384": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/16384",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "16384",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/16384",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/16384"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 45349995.52,
+            "upper_bound": 45610007.04
+          },
+          "point_estimate": 45480000.0,
+          "standard_error": 67834.62722840413
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 45499904.0,
+            "upper_bound": 45500032.0
+          },
+          "point_estimate": 45500032.0,
+          "standard_error": 18064.082559960418
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 189.77279663085935,
+            "upper_bound": 741252.5436401367
+          },
+          "point_estimate": 741252.5436401367,
+          "standard_error": 275617.2213279531
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 385423.022404497,
+            "upper_bound": 566840.870090322
+          },
+          "point_estimate": 484025.3027732483,
+          "standard_error": 46157.89776872296
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/2": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/2",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "2",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/2",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/2"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 437.33507543832087,
+            "upper_bound": 441.8156462808247
+          },
+          "point_estimate": 439.49092083268914,
+          "standard_error": 1.1407103125593627
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 437.4214278472212,
+            "upper_bound": 440.8548964940627
+          },
+          "point_estimate": 439.1958130260538,
+          "standard_error": 1.0056040566297293
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3.338506418136872,
+            "upper_bound": 7.018397142860338
+          },
+          "point_estimate": 5.204359574983042,
+          "standard_error": 0.9506939757303108
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 437.8863802914296,
+            "upper_bound": 440.0033771624336
+          },
+          "point_estimate": 438.8693456434693,
+          "standard_error": 0.5400204569828072
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5.452400522795211,
+            "upper_bound": 10.874904142444526
+          },
+          "point_estimate": 8.145276927733297,
+          "standard_error": 1.4389743281326466
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/2048": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/2048",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "2048",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/2048",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/2048"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3713053.813485462,
+            "upper_bound": 3786321.132436578
+          },
+          "point_estimate": 3753887.6559743863,
+          "standard_error": 18818.628947615292
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3749998.8571428577,
+            "upper_bound": 3775243.95959596
+          },
+          "point_estimate": 3759306.6813793103,
+          "standard_error": 7366.156702230099
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 24713.68958791103,
+            "upper_bound": 53223.970501239586
+          },
+          "point_estimate": 36389.37861573539,
+          "standard_error": 7294.293351905365
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3751342.8885604087,
+            "upper_bound": 3768350.679618954
+          },
+          "point_estimate": 3759813.5658008154,
+          "standard_error": 4349.193746792232
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 55854.051868765935,
+            "upper_bound": 207845.52315601567
+          },
+          "point_estimate": 134624.7639216063,
+          "standard_error": 43196.04443852788
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/256": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/256",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "256",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/256",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/256"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 252442.6229050637,
+            "upper_bound": 257709.27193324012
+          },
+          "point_estimate": 254921.25666012673,
+          "standard_error": 1335.611216532585
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 253015.6890913964,
+            "upper_bound": 254945.05494505496
+          },
+          "point_estimate": 253845.6615384615,
+          "standard_error": 445.2434190549168
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1629.9606356778118,
+            "upper_bound": 3956.217032133161
+          },
+          "point_estimate": 2554.712284173318,
+          "standard_error": 608.9400242423683
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 253838.82460346865,
+            "upper_bound": 256360.08349352892
+          },
+          "point_estimate": 254943.77480578827,
+          "standard_error": 647.385709976254
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5045.24435011975,
+            "upper_bound": 13388.672395416746
+          },
+          "point_estimate": 9514.746815816943,
+          "standard_error": 2176.3891434214847
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/32": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/32",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "32",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/32",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/32"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13530.101899357443,
+            "upper_bound": 13684.538741103328
+          },
+          "point_estimate": 13605.941734435444,
+          "standard_error": 39.16166632586128
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13551.665725578769,
+            "upper_bound": 13664.388460024824
+          },
+          "point_estimate": 13624.46191688468,
+          "standard_error": 27.697695010277343
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 111.41530887534311,
+            "upper_bound": 234.5772598439268
+          },
+          "point_estimate": 158.3454879930081,
+          "standard_error": 33.30586837515347
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13603.523695023569,
+            "upper_bound": 13704.52340195001
+          },
+          "point_estimate": 13654.138613457984,
+          "standard_error": 25.8732670868138
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 179.23212086809963,
+            "upper_bound": 372.0349561215753
+          },
+          "point_estimate": 279.7252214118315,
+          "standard_error": 49.71304313520607
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/4": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/4",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "4",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/4",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/4"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 811.8229292125969,
+            "upper_bound": 822.3743475967174
+          },
+          "point_estimate": 816.5912729628945,
+          "standard_error": 2.6924807588104565
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 813.3773869222891,
+            "upper_bound": 819.3543479941254
+          },
+          "point_estimate": 815.7462533317018,
+          "standard_error": 1.4529105355380227
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6.256758916403531,
+            "upper_bound": 14.216606492369488
+          },
+          "point_estimate": 8.76803519992103,
+          "standard_error": 1.964525511896854
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 814.5002508791961,
+            "upper_bound": 818.2234889489298
+          },
+          "point_estimate": 816.3796957716642,
+          "standard_error": 0.948971321052196
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 10.19685176760052,
+            "upper_bound": 28.786801504139543
+          },
+          "point_estimate": 19.31818335440217,
+          "standard_error": 5.468559370148262
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/4096": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/4096",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "4096",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/4096",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/4096"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8707998.719999999,
+            "upper_bound": 8748003.327999998
+          },
+          "point_estimate": 8727999.999999996,
+          "standard_error": 10602.970093257209
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8700006.4,
+            "upper_bound": 8700006.4
+          },
+          "point_estimate": 8700006.4,
+          "standard_error": 9250.778756536089
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 0.0,
+            "upper_bound": 148250.5087280268
+          },
+          "point_estimate": 37.95455932561956,
+          "standard_error": 62357.8628688771
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 59796.2505166178,
+            "upper_bound": 88731.99462957961
+          },
+          "point_estimate": 75701.15332796227,
+          "standard_error": 7479.495185039919
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/512": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/512",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "512",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/512",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/512"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 632761.8730042195,
+            "upper_bound": 640203.2241615626
+          },
+          "point_estimate": 636640.9120473424,
+          "standard_error": 1895.39859009521
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 636364.8,
+            "upper_bound": 640000.64
+          },
+          "point_estimate": 638196.5876393111,
+          "standard_error": 1009.3046852862918
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3868.188419673754,
+            "upper_bound": 9077.631737889342
+          },
+          "point_estimate": 6588.727267165898,
+          "standard_error": 1313.3439707170169
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 637288.5892673295,
+            "upper_bound": 640074.4772885946
+          },
+          "point_estimate": 638681.4219778684,
+          "standard_error": 712.9710076854335
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8881.11653681421,
+            "upper_bound": 17134.3662330719
+          },
+          "point_estimate": 13543.838893061777,
+          "standard_error": 2102.721067919113
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/64": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/64",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "64",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/64",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/64"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 32303.099640204648,
+            "upper_bound": 32665.139105069065
+          },
+          "point_estimate": 32480.29617539092,
+          "standard_error": 92.12593004580468
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 32349.985048277063,
+            "upper_bound": 32513.827121332277
+          },
+          "point_estimate": 32418.667911922123,
+          "standard_error": 42.95517036746951
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 190.0043945269995,
+            "upper_bound": 385.3136225783566
+          },
+          "point_estimate": 318.4074500172389,
+          "standard_error": 51.83721725606651
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 32458.807799174945,
+            "upper_bound": 33004.391211976115
+          },
+          "point_estimate": 32705.329225152956,
+          "standard_error": 140.84301146499138
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 410.14343982767224,
+            "upper_bound": 851.0105144866443
+          },
+          "point_estimate": 655.4122850862175,
+          "standard_error": 112.30793723089056
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/8": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/8",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "8",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/8",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/8"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1996.834119531974,
+            "upper_bound": 2039.856169449712
+          },
+          "point_estimate": 2014.532768342364,
+          "standard_error": 11.215488209803064
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1998.6182275298552,
+            "upper_bound": 2011.313639220616
+          },
+          "point_estimate": 2005.904900044435,
+          "standard_error": 3.7646802345041217
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13.183658186664958,
+            "upper_bound": 31.05228455241998
+          },
+          "point_estimate": 20.533863812938737,
+          "standard_error": 4.681417307025461
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2001.2143198672063,
+            "upper_bound": 2019.8052578661895
+          },
+          "point_estimate": 2009.615152442741,
+          "standard_error": 4.807659911113507
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 25.77777559793186,
+            "upper_bound": 129.94764889953532
+          },
+          "point_estimate": 80.27124745149159,
+          "standard_error": 32.43966605679637
+        }
+      }
+    },
+    "Particular/sequential::BarnesHut::0.8/8192": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/8192",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BarnesHut::0.8",
+        "value_str": "8192",
+        "throughput": null,
+        "full_id": "Particular/sequential::BarnesHut::0.8/8192",
+        "directory_name": "Particular/sequential__BarnesHut__0.8/8192"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 20299998.72,
+            "upper_bound": 20404995.84
+          },
+          "point_estimate": 20350000.64,
+          "standard_error": 26424.89421253397
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 20249984.0,
+            "upper_bound": 20499968.0
+          },
+          "point_estimate": 20250048.0,
+          "standard_error": 77959.3505114038
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47.44319915771485,
+            "upper_bound": 370531.385421753
+          },
+          "point_estimate": 185313.13591003415,
+          "standard_error": 164732.3057703411
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 141151.484591474,
+            "upper_bound": 236902.04808175948
+          },
+          "point_estimate": 188983.62128423853,
+          "standard_error": 24731.776771823093
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/1024": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/1024",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "1024",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/1024",
+        "directory_name": "Particular/sequential__BruteForce/1024"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3027993.6759238015,
+            "upper_bound": 3072466.7971371524
+          },
+          "point_estimate": 3047648.464826991,
+          "standard_error": 11422.2115250085
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3031914.212765957,
+            "upper_bound": 3041664.0
+          },
+          "point_estimate": 3036810.8112014453,
+          "standard_error": 2508.7662452221134
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8829.706509907963,
+            "upper_bound": 26252.739390157287
+          },
+          "point_estimate": 18221.978102301597,
+          "standard_error": 4556.744605551354
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3034191.246403494,
+            "upper_bound": 3043338.3768791966
+          },
+          "point_estimate": 3038532.253744904,
+          "standard_error": 2341.680769095251
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 25590.45861407544,
+            "upper_bound": 126178.74718850855
+          },
+          "point_estimate": 81612.75597579188,
+          "standard_error": 26836.586789003464
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/128": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/128",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "128",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/128",
+        "directory_name": "Particular/sequential__BruteForce/128"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49299.24855940585,
+            "upper_bound": 50155.23696296242
+          },
+          "point_estimate": 49715.53570247406,
+          "standard_error": 218.54723825882616
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49345.6675,
+            "upper_bound": 49831.02702702703
+          },
+          "point_estimate": 49479.29166666667,
+          "standard_error": 132.6197765935433
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 440.77581690193574,
+            "upper_bound": 973.3857160522816
+          },
+          "point_estimate": 625.6349443316195,
+          "standard_error": 137.4600911062335
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 49450.91705841047,
+            "upper_bound": 50026.55231372909
+          },
+          "point_estimate": 49683.31312754805,
+          "standard_error": 149.37397265547813
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1055.9601863802948,
+            "upper_bound": 1984.7362881420752
+          },
+          "point_estimate": 1569.405049225822,
+          "standard_error": 236.93791251770756
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/16": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/16",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "16",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/16",
+        "directory_name": "Particular/sequential__BruteForce/16"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 985.67687728336,
+            "upper_bound": 999.0900524998968
+          },
+          "point_estimate": 991.884946502704,
+          "standard_error": 3.4172473929352183
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 987.6543209876544,
+            "upper_bound": 993.0799511599512
+          },
+          "point_estimate": 989.9511804721888,
+          "standard_error": 1.4589287460542275
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6.340874073830348,
+            "upper_bound": 17.625418310568023
+          },
+          "point_estimate": 12.223803996548282,
+          "standard_error": 2.9567387066613673
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 988.8123359346488,
+            "upper_bound": 999.3141411470324
+          },
+          "point_estimate": 993.271773617698,
+          "standard_error": 2.7431235905448785
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13.868201377737142,
+            "upper_bound": 35.10342254506495
+          },
+          "point_estimate": 24.39346179646337,
+          "standard_error": 5.865163731389102
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/16384": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/16384",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "16384",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/16384",
+        "directory_name": "Particular/sequential__BruteForce/16384"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 786899993.6,
+            "upper_bound": 789720002.56
+          },
+          "point_estimate": 788240000.0,
+          "standard_error": 721882.7781378607
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 784999936.0,
+            "upper_bound": 789000064.0
+          },
+          "point_estimate": 788499968.0,
+          "standard_error": 1157030.6818073215
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2965199.9473571777,
+            "upper_bound": 6671652.438354492
+          },
+          "point_estimate": 5189147.351074219,
+          "standard_error": 919720.1507868303
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3547086.0126663903,
+            "upper_bound": 6647080.238900341
+          },
+          "point_estimate": 5149044.406319785,
+          "standard_error": 809466.733745243
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/2": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/2",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "2",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/2",
+        "directory_name": "Particular/sequential__BruteForce/2"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 79.52805949812978,
+            "upper_bound": 80.99099146400899
+          },
+          "point_estimate": 80.22875548640758,
+          "standard_error": 0.37058516643471023
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 79.56250302905747,
+            "upper_bound": 80.1951476136799
+          },
+          "point_estimate": 79.8874997217844,
+          "standard_error": 0.1769106025028831
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 0.6061030762560939,
+            "upper_bound": 1.5912189521311773
+          },
+          "point_estimate": 1.0009426727835875,
+          "standard_error": 0.25732438876430797
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 79.70709604626722,
+            "upper_bound": 80.302616983768
+          },
+          "point_estimate": 79.94768146776258,
+          "standard_error": 0.15423885507653645
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.1773013519595694,
+            "upper_bound": 3.82892214798809
+          },
+          "point_estimate": 2.6535624269796045,
+          "standard_error": 0.6748987656245682
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/2048": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/2048",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "2048",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/2048",
+        "directory_name": "Particular/sequential__BruteForce/2048"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12062856.777142856,
+            "upper_bound": 12148567.77142857
+          },
+          "point_estimate": 12102857.142857146,
+          "standard_error": 21776.028848076425
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12000000.0,
+            "upper_bound": 12142848.0
+          },
+          "point_estimate": 12142848.0,
+          "standard_error": 65586.18359998094
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 54.220799036599374,
+            "upper_bound": 211786.44104003903
+          },
+          "point_estimate": 211786.44104003903,
+          "standard_error": 72776.13835989419
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 106471.26578496264,
+            "upper_bound": 202764.5154636992
+          },
+          "point_estimate": 155526.2950822384,
+          "standard_error": 25297.815617008688
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/256": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/256",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "256",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/256",
+        "directory_name": "Particular/sequential__BruteForce/256"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 191941.45437686905,
+            "upper_bound": 195297.1858710537
+          },
+          "point_estimate": 193436.51308034416,
+          "standard_error": 858.3307172011297
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 191721.1328976035,
+            "upper_bound": 193169.30661495368
+          },
+          "point_estimate": 192605.374147151,
+          "standard_error": 417.78567015993315
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1293.912249720148,
+            "upper_bound": 3011.026577888703
+          },
+          "point_estimate": 2119.19007294295,
+          "standard_error": 458.36672232770906
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 191903.68904544503,
+            "upper_bound": 192728.7052888284
+          },
+          "point_estimate": 192287.51144335195,
+          "standard_error": 209.70520154957893
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2355.28893548909,
+            "upper_bound": 9452.505595371633
+          },
+          "point_estimate": 6125.0307900097905,
+          "standard_error": 1922.1697528981767
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/32": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/32",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "32",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/32",
+        "directory_name": "Particular/sequential__BruteForce/32"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3547.735284760409,
+            "upper_bound": 3655.8842895998737
+          },
+          "point_estimate": 3612.35760421573,
+          "standard_error": 28.46340760617788
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3616.69328276976,
+            "upper_bound": 3641.793269799229
+          },
+          "point_estimate": 3629.729167259594,
+          "standard_error": 7.0727867028223
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 25.116315829246137,
+            "upper_bound": 59.76263398309271
+          },
+          "point_estimate": 38.78642456359583,
+          "standard_error": 9.247717349609594
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3624.173902860487,
+            "upper_bound": 3642.4956767212143
+          },
+          "point_estimate": 3633.1118228660166,
+          "standard_error": 4.659069399367599
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 45.24443188913624,
+            "upper_bound": 334.85388533596836
+          },
+          "point_estimate": 203.0575908705181,
+          "standard_error": 89.17084869282779
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/4": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/4",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "4",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/4",
+        "directory_name": "Particular/sequential__BruteForce/4"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 125.36225376243324,
+            "upper_bound": 126.51725411465164
+          },
+          "point_estimate": 125.95547392592482,
+          "standard_error": 0.2948939790931793
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 125.71580215090114,
+            "upper_bound": 126.53240527437237
+          },
+          "point_estimate": 126.02229213800172,
+          "standard_error": 0.21883409471958487
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 0.7443116110331164,
+            "upper_bound": 1.7587888315077551
+          },
+          "point_estimate": 1.0692469241948006,
+          "standard_error": 0.25540401350602676
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 126.02072652499734,
+            "upper_bound": 126.86721670076942
+          },
+          "point_estimate": 126.4423737742419,
+          "standard_error": 0.21585128428060477
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.4506795204124332,
+            "upper_bound": 2.6159898489790865
+          },
+          "point_estimate": 2.1036464777936157,
+          "standard_error": 0.2965741598898566
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/4096": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/4096",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "4096",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/4096",
+        "directory_name": "Particular/sequential__BruteForce/4096"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 48170001.92,
+            "upper_bound": 48410004.48
+          },
+          "point_estimate": 48290001.92,
+          "standard_error": 61620.21798609138
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 48000000.0,
+            "upper_bound": 48499968.0
+          },
+          "point_estimate": 48499968.0,
+          "standard_error": 212000.3012078627
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 189.77279663085935,
+            "upper_bound": 741252.5436401367
+          },
+          "point_estimate": 741252.5436401367,
+          "standard_error": 254265.00087033297
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 349939.05413792445,
+            "upper_bound": 523029.7799996452
+          },
+          "point_estimate": 441356.3615940113,
+          "standard_error": 44569.778448375495
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/512": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/512",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "512",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/512",
+        "directory_name": "Particular/sequential__BruteForce/512"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 749834.1111825423,
+            "upper_bound": 763926.7163216996
+          },
+          "point_estimate": 757962.6611524783,
+          "standard_error": 3643.798059540355
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 757145.6,
+            "upper_bound": 761507.2507936507
+          },
+          "point_estimate": 759999.744,
+          "standard_error": 878.220378216167
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4235.168539210633,
+            "upper_bound": 9389.415176550723
+          },
+          "point_estimate": 6334.5186321551855,
+          "standard_error": 1336.3131549338564
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 758471.6358431557,
+            "upper_bound": 761329.1071007149
+          },
+          "point_estimate": 759930.0987303436,
+          "standard_error": 729.5558853655343
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 9159.933370014489,
+            "upper_bound": 41673.14786051965
+          },
+          "point_estimate": 26100.812948099723,
+          "standard_error": 9868.063217926538
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/64": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/64",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "64",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/64",
+        "directory_name": "Particular/sequential__BruteForce/64"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12869.16801038536,
+            "upper_bound": 13002.55922346999
+          },
+          "point_estimate": 12936.799309488428,
+          "standard_error": 33.89056243067315
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12880.56206088993,
+            "upper_bound": 13001.695873374789
+          },
+          "point_estimate": 12957.896608401104,
+          "standard_error": 29.086571982572444
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 112.34258861891848,
+            "upper_bound": 211.99148242346385
+          },
+          "point_estimate": 172.55097478159277,
+          "standard_error": 26.194498992009898
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12920.959747798825,
+            "upper_bound": 13016.010559466124
+          },
+          "point_estimate": 12966.191826002272,
+          "standard_error": 24.199515343844777
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 165.2324556310179,
+            "upper_bound": 305.21155529120756
+          },
+          "point_estimate": 241.52173942065875,
+          "standard_error": 35.765575864266374
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/8": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/8",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "8",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/8",
+        "directory_name": "Particular/sequential__BruteForce/8"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 324.6859663077447,
+            "upper_bound": 327.5350266000689
+          },
+          "point_estimate": 326.13680283855285,
+          "standard_error": 0.7261723380992369
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 325.2017230256913,
+            "upper_bound": 327.1158015535303
+          },
+          "point_estimate": 326.48744604107407,
+          "standard_error": 0.5705164307132163
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2.153470992476912,
+            "upper_bound": 4.3734570473324546
+          },
+          "point_estimate": 3.2026665365484543,
+          "standard_error": 0.6123920001138441
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 325.47089480933977,
+            "upper_bound": 326.97807820308077
+          },
+          "point_estimate": 326.20143411156045,
+          "standard_error": 0.3841256771378591
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3.683699888354119,
+            "upper_bound": 6.394704956574488
+          },
+          "point_estimate": 5.176740707303372,
+          "standard_error": 0.6925894998858283
+        }
+      }
+    },
+    "Particular/sequential::BruteForce/8192": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForce/8192",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForce",
+        "value_str": "8192",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForce/8192",
+        "directory_name": "Particular/sequential__BruteForce/8192"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 193559992.32,
+            "upper_bound": 194299960.32
+          },
+          "point_estimate": 193899996.16,
+          "standard_error": 187425.6060945117
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 193000192.0,
+            "upper_bound": 194000128.0
+          },
+          "point_estimate": 193999872.0,
+          "standard_error": 311794.5982043325
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 741252.5436401367,
+            "upper_bound": 1482505.0872802734
+          },
+          "point_estimate": 1482505.0872802734,
+          "standard_error": 251173.1230608692
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 871568.3840802886,
+            "upper_bound": 1848170.0110847335
+          },
+          "point_estimate": 1343897.911592373,
+          "standard_error": 272174.600716589
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/1024": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/1024",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "1024",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/1024",
+        "directory_name": "Particular/sequential__BruteForcePairs/1024"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2877655.5745731904,
+            "upper_bound": 2912821.588137965
+          },
+          "point_estimate": 2897985.4371742858,
+          "standard_error": 9106.913442690087
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2894704.814449918,
+            "upper_bound": 2909090.909090909
+          },
+          "point_estimate": 2901088.3710144926,
+          "standard_error": 3581.2968006417564
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 13710.27769945102,
+            "upper_bound": 30973.064901511512
+          },
+          "point_estimate": 18926.943939590095,
+          "standard_error": 4368.071724842809
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2898024.52326547,
+            "upper_bound": 2910874.5405409867
+          },
+          "point_estimate": 2903832.2253232384,
+          "standard_error": 3280.62686078731
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 24097.799182847877,
+            "upper_bound": 104314.56598633408
+          },
+          "point_estimate": 65294.771983002385,
+          "standard_error": 24896.7245960032
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/128": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/128",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "128",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/128",
+        "directory_name": "Particular/sequential__BruteForcePairs/128"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47002.61018625443,
+            "upper_bound": 48464.96539296738
+          },
+          "point_estimate": 47868.98604143362,
+          "standard_error": 385.8445484961072
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47872.6453670834,
+            "upper_bound": 48293.04534062429
+          },
+          "point_estimate": 48023.336816440264,
+          "standard_error": 111.80517670420228
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 411.4377027188309,
+            "upper_bound": 936.0327542911832
+          },
+          "point_estimate": 636.4920643822469,
+          "standard_error": 140.10745758083115
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 47923.8344573426,
+            "upper_bound": 48219.16241787421
+          },
+          "point_estimate": 48072.57196307866,
+          "standard_error": 75.47626855054912
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 734.6886865976467,
+            "upper_bound": 4519.991673321422
+          },
+          "point_estimate": 2761.0819383717508,
+          "standard_error": 1187.767837387501
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/16": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/16",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "16",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/16",
+        "directory_name": "Particular/sequential__BruteForcePairs/16"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1148.8288458874483,
+            "upper_bound": 1170.8516397021383
+          },
+          "point_estimate": 1161.408750711737,
+          "standard_error": 5.662711603846039
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1159.8505076082624,
+            "upper_bound": 1166.356554741224
+          },
+          "point_estimate": 1163.9020011949174,
+          "standard_error": 1.8281617949916231
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6.95068285050524,
+            "upper_bound": 19.545695932286
+          },
+          "point_estimate": 10.93044892382772,
+          "standard_error": 3.0861964037833554
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1161.248622753346,
+            "upper_bound": 1169.381693903802
+          },
+          "point_estimate": 1164.9428668910855,
+          "standard_error": 2.082553700567812
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 15.298566175351135,
+            "upper_bound": 63.76370910478033
+          },
+          "point_estimate": 40.279880796120096,
+          "standard_error": 14.468123634589528
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/16384": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/16384",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "16384",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/16384",
+        "directory_name": "Particular/sequential__BruteForcePairs/16384"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 743099985.92,
+            "upper_bound": 746480005.12
+          },
+          "point_estimate": 744719994.88,
+          "standard_error": 866271.9392391228
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 742500096.0,
+            "upper_bound": 746999808.0
+          },
+          "point_estimate": 743500032.0,
+          "standard_error": 1303021.1242584577
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3706642.263793946,
+            "upper_bound": 8154157.525634766
+          },
+          "point_estimate": 6671652.438354492,
+          "standard_error": 994365.149088986
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4356975.79345422,
+            "upper_bound": 7961035.760697831
+          },
+          "point_estimate": 6194251.530564561,
+          "standard_error": 947188.091946647
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/2": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/2",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "2",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/2",
+        "directory_name": "Particular/sequential__BruteForcePairs/2"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 143.18523579545212,
+            "upper_bound": 146.55192042608516
+          },
+          "point_estimate": 144.57836013030922,
+          "standard_error": 0.8760713314965543
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 142.8996421230161,
+            "upper_bound": 144.20811309966552
+          },
+          "point_estimate": 143.3400082804347,
+          "standard_error": 0.3710891664420138
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.1432623201066636,
+            "upper_bound": 2.251277996372275
+          },
+          "point_estimate": 1.5439331633809654,
+          "standard_error": 0.2915294207199555
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 143.12403880998392,
+            "upper_bound": 144.69836407352076
+          },
+          "point_estimate": 143.7719435354759,
+          "standard_error": 0.4121331886825383
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2.122536995737704,
+            "upper_bound": 9.860554945564244
+          },
+          "point_estimate": 6.2357711474444475,
+          "standard_error": 2.3475944464670144
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/2048": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/2048",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "2048",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/2048",
+        "directory_name": "Particular/sequential__BruteForcePairs/2048"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11522854.03428571,
+            "upper_bound": 11585715.931428568
+          },
+          "point_estimate": 11554284.982857136,
+          "standard_error": 16527.687547223242
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11571419.42857143,
+            "upper_bound": 11571419.42857143
+          },
+          "point_estimate": 11571419.42857143,
+          "standard_error": 12983.786922722196
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 54.220799036599374,
+            "upper_bound": 211786.44104003903
+          },
+          "point_estimate": 211786.44104003903,
+          "standard_error": 79852.88537978765
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 95723.32844841322,
+            "upper_bound": 137082.52439734698
+          },
+          "point_estimate": 117733.08436716547,
+          "standard_error": 10612.408010053154
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/256": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/256",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "256",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/256",
+        "directory_name": "Particular/sequential__BruteForcePairs/256"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 184741.46398621044,
+            "upper_bound": 187114.09021835975
+          },
+          "point_estimate": 185856.2813689472,
+          "standard_error": 601.919973150135
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 185078.81779053083,
+            "upper_bound": 186274.3006535948
+          },
+          "point_estimate": 185710.08049535603,
+          "standard_error": 289.2165107042441
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1159.0062398697758,
+            "upper_bound": 2855.3629610718845
+          },
+          "point_estimate": 2012.7652015513424,
+          "standard_error": 433.5140712218485
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 185199.96929864265,
+            "upper_bound": 186201.54989146235
+          },
+          "point_estimate": 185704.2042522868,
+          "standard_error": 255.41828255462607
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2342.964068899366,
+            "upper_bound": 6104.731006899921
+          },
+          "point_estimate": 4294.6752458531855,
+          "standard_error": 992.4601813548524
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/32": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/32",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "32",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/32",
+        "directory_name": "Particular/sequential__BruteForcePairs/32"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3588.5596209715272,
+            "upper_bound": 3673.449934274201
+          },
+          "point_estimate": 3623.109126765007,
+          "standard_error": 22.084069431168892
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3589.02031433263,
+            "upper_bound": 3608.6624966586473
+          },
+          "point_estimate": 3598.2008995502247,
+          "standard_error": 5.52432753192836
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 23.739664495799424,
+            "upper_bound": 56.800961198477744
+          },
+          "point_estimate": 39.896205034983105,
+          "standard_error": 8.502647827773272
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3589.115703747138,
+            "upper_bound": 3616.4023267264106
+          },
+          "point_estimate": 3600.3185274503107,
+          "standard_error": 7.065032735455195
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 54.324996269371304,
+            "upper_bound": 252.4057935069591
+          },
+          "point_estimate": 157.66923932418862,
+          "standard_error": 62.40448375405089
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/4": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/4",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "4",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/4",
+        "directory_name": "Particular/sequential__BruteForcePairs/4"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 198.9557691116001,
+            "upper_bound": 203.55608456846895
+          },
+          "point_estimate": 200.83141176814132,
+          "standard_error": 1.20376846908226
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 198.91952246320807,
+            "upper_bound": 200.36840291704848
+          },
+          "point_estimate": 199.7452441724555,
+          "standard_error": 0.39439534394434383
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.3991836151149668,
+            "upper_bound": 2.8890663704988415
+          },
+          "point_estimate": 1.9463169897779755,
+          "standard_error": 0.3830634911578794
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 199.1915699733044,
+            "upper_bound": 200.0143150860468
+          },
+          "point_estimate": 199.58713002094473,
+          "standard_error": 0.2093496178046469
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2.9045682152477457,
+            "upper_bound": 13.817460122653229
+          },
+          "point_estimate": 8.603125962242213,
+          "standard_error": 3.457764251932127
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/4096": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/4096",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "4096",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/4096",
+        "directory_name": "Particular/sequential__BruteForcePairs/4096"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 46099993.6,
+            "upper_bound": 46390003.2
+          },
+          "point_estimate": 46230000.64,
+          "standard_error": 75167.00165575556
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 46000000.0,
+            "upper_bound": 46499968.0
+          },
+          "point_estimate": 46000000.0,
+          "standard_error": 156414.796406682
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 0.0,
+            "upper_bound": 741252.5436401367
+          },
+          "point_estimate": 741252.5436401367,
+          "standard_error": 332687.75642267795
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 306557.64636403543,
+            "upper_bound": 783061.032163248
+          },
+          "point_estimate": 536528.3977264662,
+          "standard_error": 140234.3683917543
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/512": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/512",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "512",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/512",
+        "directory_name": "Particular/sequential__BruteForcePairs/512"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 723302.9644117826,
+            "upper_bound": 735361.6212708239
+          },
+          "point_estimate": 730019.5314537524,
+          "standard_error": 3078.1676980587536
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 729150.3267973857,
+            "upper_bound": 733331.911111111
+          },
+          "point_estimate": 731143.2827586207,
+          "standard_error": 934.2604618806756
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2826.1085364931632,
+            "upper_bound": 6469.52715787019
+          },
+          "point_estimate": 4237.688248297039,
+          "standard_error": 961.8585978982856
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 729236.9574183915,
+            "upper_bound": 733424.4450863018
+          },
+          "point_estimate": 731028.5080302854,
+          "standard_error": 1076.058483961793
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5367.886050296405,
+            "upper_bound": 35572.223642500685
+          },
+          "point_estimate": 22029.65079348164,
+          "standard_error": 8427.91249568494
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/64": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/64",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "64",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/64",
+        "directory_name": "Particular/sequential__BruteForcePairs/64"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12658.324565656723,
+            "upper_bound": 12784.441046915368
+          },
+          "point_estimate": 12723.401287122351,
+          "standard_error": 32.18858239213314
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12704.183163478989,
+            "upper_bound": 12794.909786470696
+          },
+          "point_estimate": 12753.04939271255,
+          "standard_error": 24.748860527155017
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 88.51565612187832,
+            "upper_bound": 200.58321064510903
+          },
+          "point_estimate": 128.35024705537006,
+          "standard_error": 29.285584785509453
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12733.067455642582,
+            "upper_bound": 12820.781614882424
+          },
+          "point_estimate": 12775.507508954275,
+          "standard_error": 22.476780394424175
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 165.10080926900466,
+            "upper_bound": 280.88762037976653
+          },
+          "point_estimate": 229.79216845239824,
+          "standard_error": 29.725341068276713
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/8": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/8",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "8",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/8",
+        "directory_name": "Particular/sequential__BruteForcePairs/8"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 450.2428338728655,
+            "upper_bound": 453.93638848168143
+          },
+          "point_estimate": 452.1469341331826,
+          "standard_error": 0.9432581640423366
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 452.11203703703706,
+            "upper_bound": 454.1213991769547
+          },
+          "point_estimate": 453.190318388564,
+          "standard_error": 0.48695633594671667
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.8898133745687795,
+            "upper_bound": 4.582731067738074
+          },
+          "point_estimate": 3.077661367327755,
+          "standard_error": 0.7130227091298514
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 452.7466585142957,
+            "upper_bound": 454.5892271864749
+          },
+          "point_estimate": 453.6672956707435,
+          "standard_error": 0.46818079197393286
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4.419685449288695,
+            "upper_bound": 8.542103619041361
+          },
+          "point_estimate": 6.746666222722772,
+          "standard_error": 1.0452563812963636
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairs/8192": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/8192",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairs",
+        "value_str": "8192",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairs/8192",
+        "directory_name": "Particular/sequential__BruteForcePairs/8192"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 184499993.6,
+            "upper_bound": 185080002.56
+          },
+          "point_estimate": 184780001.28,
+          "standard_error": 150000.93031383763
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 184000000.0,
+            "upper_bound": 184999936.0
+          },
+          "point_estimate": 184999936.0,
+          "standard_error": 459433.6896523173
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 189.77279663085935,
+            "upper_bound": 1482505.0872802734
+          },
+          "point_estimate": 1482505.0872802734,
+          "standard_error": 485951.217065665
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 836881.3158912495,
+            "upper_bound": 1287914.324545255
+          },
+          "point_estimate": 1074557.380613744,
+          "standard_error": 115802.7874525899
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/1024": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/1024",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "1024",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/1024",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/1024"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2861742.7966432846,
+            "upper_bound": 2894777.3048221227
+          },
+          "point_estimate": 2881044.775024661,
+          "standard_error": 8602.180575928234
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2885166.9802197805,
+            "upper_bound": 2893940.363636364
+          },
+          "point_estimate": 2889566.0054200543,
+          "standard_error": 2465.199363375105
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 9790.572862945755,
+            "upper_bound": 23441.887452541527
+          },
+          "point_estimate": 15474.184409505722,
+          "standard_error": 3692.7991481799527
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2883494.8826165,
+            "upper_bound": 2897455.7030599136
+          },
+          "point_estimate": 2889749.4908794407,
+          "standard_error": 3586.540569862895
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 20070.80098415555,
+            "upper_bound": 99260.8179376449
+          },
+          "point_estimate": 61689.134732462146,
+          "standard_error": 24475.010052791647
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/128": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/128",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "128",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/128",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/128"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 45345.24987384635,
+            "upper_bound": 46189.284900530554
+          },
+          "point_estimate": 45770.93976592179,
+          "standard_error": 213.96597578847815
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 45625.67465535525,
+            "upper_bound": 45893.69772256729
+          },
+          "point_estimate": 45720.31730459556,
+          "standard_error": 71.30683156718545
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 275.51875399373694,
+            "upper_bound": 678.9062599899066
+          },
+          "point_estimate": 482.1933728365806,
+          "standard_error": 102.99857780738012
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 45650.00170856301,
+            "upper_bound": 45825.533528146494
+          },
+          "point_estimate": 45738.355420728774,
+          "standard_error": 44.52875844432275
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 903.3475134876344,
+            "upper_bound": 2056.603822228964
+          },
+          "point_estimate": 1523.588493012748,
+          "standard_error": 295.2343424691252
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/16": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/16",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "16",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/16",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/16"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 793.2898966378394,
+            "upper_bound": 803.6142034781577
+          },
+          "point_estimate": 798.0744106745176,
+          "standard_error": 2.634540624488393
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 795.3377483443709,
+            "upper_bound": 800.5239793319264
+          },
+          "point_estimate": 797.1820216787569,
+          "standard_error": 1.422855654625392
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5.151892436669782,
+            "upper_bound": 11.159206961283711
+          },
+          "point_estimate": 8.056181061469234,
+          "standard_error": 1.4903351140673262
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 795.9469522945045,
+            "upper_bound": 800.3930356198226
+          },
+          "point_estimate": 798.0724454475354,
+          "standard_error": 1.1366781401556152
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 10.395770349658369,
+            "upper_bound": 27.256069498173726
+          },
+          "point_estimate": 18.856933241230987,
+          "standard_error": 4.6587136275329115
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/16384": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/16384",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "16384",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/16384",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/16384"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 743580006.4,
+            "upper_bound": 745799987.2
+          },
+          "point_estimate": 744620001.28,
+          "standard_error": 563749.1838290266
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 742999808.0,
+            "upper_bound": 744000000.0
+          },
+          "point_estimate": 743999872.0,
+          "standard_error": 443147.2327204055
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1482505.0872802734,
+            "upper_bound": 2965389.7201538086
+          },
+          "point_estimate": 2964820.401763916,
+          "standard_error": 702184.4680751093
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2543049.7363682566,
+            "upper_bound": 5252402.919269715
+          },
+          "point_estimate": 4045141.08483318,
+          "standard_error": 691418.6705663194
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/2": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/2",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "2",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/2",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/2"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 72.3138619372926,
+            "upper_bound": 73.28501559757255
+          },
+          "point_estimate": 72.77479856927582,
+          "standard_error": 0.2468706578468147
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 72.41342488062327,
+            "upper_bound": 73.02023768786128
+          },
+          "point_estimate": 72.667257441705,
+          "standard_error": 0.14491812296247267
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 0.5898741921005056,
+            "upper_bound": 1.1426833159753544
+          },
+          "point_estimate": 0.8163690257487771,
+          "standard_error": 0.1426464691828361
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 72.61250056630743,
+            "upper_bound": 73.04695344763083
+          },
+          "point_estimate": 72.83519828279597,
+          "standard_error": 0.11055202923910248
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.021184620557629,
+            "upper_bound": 2.47970392571294
+          },
+          "point_estimate": 1.7580827808095452,
+          "standard_error": 0.39012560193034934
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/2048": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/2048",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "2048",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/2048",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/2048"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11622855.679999996,
+            "upper_bound": 11768570.88
+          },
+          "point_estimate": 11691428.571428563,
+          "standard_error": 37468.09258271134
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11571419.42857143,
+            "upper_bound": 11714285.714285716
+          },
+          "point_estimate": 11571456.0,
+          "standard_error": 53408.36221749367
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 105920.33091953782,
+            "upper_bound": 317706.7719595769
+          },
+          "point_estimate": 211786.44104003903,
+          "standard_error": 35089.14992631056
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 180449.1375255872,
+            "upper_bound": 340775.7933198673
+          },
+          "point_estimate": 268210.3650545571,
+          "standard_error": 41084.69065530321
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/256": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/256",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "256",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/256",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/256"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 180192.58612828335,
+            "upper_bound": 182600.3367390096
+          },
+          "point_estimate": 181425.12410048896,
+          "standard_error": 611.641168298959
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 180755.4031746032,
+            "upper_bound": 182319.40740740745
+          },
+          "point_estimate": 181642.413730804,
+          "standard_error": 395.87089510261507
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1435.969535482055,
+            "upper_bound": 2745.614078663009
+          },
+          "point_estimate": 2249.6400407202927,
+          "standard_error": 338.4108743159325
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 181337.25525393887,
+            "upper_bound": 182710.06678343564
+          },
+          "point_estimate": 181963.3719795509,
+          "standard_error": 348.43560504669125
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2570.637498570639,
+            "upper_bound": 5854.262480954072
+          },
+          "point_estimate": 4385.129312414433,
+          "standard_error": 840.653474430741
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/32": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/32",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "32",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/32",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/32"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2952.185364449658,
+            "upper_bound": 2991.5380735024755
+          },
+          "point_estimate": 2970.5645054750826,
+          "standard_error": 10.03351609226565
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2950.90462700661,
+            "upper_bound": 2978.131473814193
+          },
+          "point_estimate": 2962.367312866874,
+          "standard_error": 6.389657654464117
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 22.726205657135377,
+            "upper_bound": 49.05796158211315
+          },
+          "point_estimate": 38.88440819855262,
+          "standard_error": 6.892339899976298
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2959.5521906890103,
+            "upper_bound": 3001.3417957042766
+          },
+          "point_estimate": 2978.2935220807535,
+          "standard_error": 10.863720104458883
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 40.674495072139834,
+            "upper_bound": 101.13315394525068
+          },
+          "point_estimate": 71.67892000138175,
+          "standard_error": 16.219734159077223
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/4": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/4",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "4",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/4",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/4"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 109.5680450167864,
+            "upper_bound": 110.80681330401164
+          },
+          "point_estimate": 110.17588654749214,
+          "standard_error": 0.3151821853032759
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 109.65671174985316,
+            "upper_bound": 110.62768158681033
+          },
+          "point_estimate": 110.20763371676642,
+          "standard_error": 0.28332243646839034
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 0.937299998230674,
+            "upper_bound": 1.8441806746128635
+          },
+          "point_estimate": 1.2591894028025032,
+          "standard_error": 0.22735983321620928
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 109.96507146364074,
+            "upper_bound": 111.06154217018872
+          },
+          "point_estimate": 110.44360710932877,
+          "standard_error": 0.2830943112355322
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.5745272088803492,
+            "upper_bound": 2.83437118317777
+          },
+          "point_estimate": 2.2524707828476704,
+          "standard_error": 0.3223533448784701
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/4096": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/4096",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "4096",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/4096",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/4096"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 46049991.68,
+            "upper_bound": 46310008.32
+          },
+          "point_estimate": 46169999.36,
+          "standard_error": 68617.80212980899
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 46000000.0,
+            "upper_bound": 46000064.0
+          },
+          "point_estimate": 46000000.0,
+          "standard_error": 46944.61895322965
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 0.0,
+            "upper_bound": 741252.5436401367
+          },
+          "point_estimate": 0.0,
+          "standard_error": 311366.6568372111
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 303041.88722107006,
+            "upper_bound": 690750.1003243949
+          },
+          "point_estimate": 490831.2600655558,
+          "standard_error": 109246.98554543128
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/512": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/512",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "512",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/512",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/512"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 718671.9617462158,
+            "upper_bound": 725967.4575280661
+          },
+          "point_estimate": 721822.4857341726,
+          "standard_error": 1880.728348205923
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 718758.0053842814,
+            "upper_bound": 721980.5990338165
+          },
+          "point_estimate": 720000.8777142856,
+          "standard_error": 725.1597929821473
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3391.599575865496,
+            "upper_bound": 7477.630823034911
+          },
+          "point_estimate": 4946.46409138259,
+          "standard_error": 1074.3023326499404
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 719442.8512622274,
+            "upper_bound": 722287.2255588012
+          },
+          "point_estimate": 720787.3927827607,
+          "standard_error": 725.3495491764655
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5953.270065427706,
+            "upper_bound": 20950.908746461675
+          },
+          "point_estimate": 13489.689628455944,
+          "standard_error": 4562.720205679378
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/64": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/64",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "64",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/64",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/64"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11547.012147003165,
+            "upper_bound": 11708.942450475515
+          },
+          "point_estimate": 11622.12599511446,
+          "standard_error": 41.39074774775011
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11555.648087007186,
+            "upper_bound": 11616.809074757415
+          },
+          "point_estimate": 11591.960695835529,
+          "standard_error": 15.579606361766656
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 66.49076719073902,
+            "upper_bound": 151.99719484148676
+          },
+          "point_estimate": 93.39943078717673,
+          "standard_error": 22.444496015934423
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 11567.992938191384,
+            "upper_bound": 11618.88445802164
+          },
+          "point_estimate": 11592.00306240826,
+          "standard_error": 12.892425794572446
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 153.24317332299486,
+            "upper_bound": 411.47217447608534
+          },
+          "point_estimate": 294.9223108657726,
+          "standard_error": 67.01073576373747
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/8": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/8",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "8",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/8",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/8"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 244.04487530607713,
+            "upper_bound": 250.97880295795423
+          },
+          "point_estimate": 248.2554855152256,
+          "standard_error": 1.8520374005356712
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 249.1504157903252,
+            "upper_bound": 250.29351298579957
+          },
+          "point_estimate": 249.7654200584168,
+          "standard_error": 0.28485528847712666
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.0919892897865815,
+            "upper_bound": 2.5274360259950734
+          },
+          "point_estimate": 1.731411393841637,
+          "standard_error": 0.3570678849348572
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 249.48380067922056,
+            "upper_bound": 250.58048093324055
+          },
+          "point_estimate": 250.01749850769505,
+          "standard_error": 0.2795070790599204
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2.911432832436448,
+            "upper_bound": 21.972641873208815
+          },
+          "point_estimate": 13.258751583099142,
+          "standard_error": 6.110718558471604
+        }
+      }
+    },
+    "Particular/sequential::BruteForcePairsAlt/8192": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/8192",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForcePairsAlt",
+        "value_str": "8192",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForcePairsAlt/8192",
+        "directory_name": "Particular/sequential__BruteForcePairsAlt/8192"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 185339985.92,
+            "upper_bound": 186340019.2
+          },
+          "point_estimate": 185800002.56,
+          "standard_error": 257941.73694548575
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 184999936.0,
+            "upper_bound": 186000128.0
+          },
+          "point_estimate": 185999872.0,
+          "standard_error": 458978.13225621113
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 741252.5436401367,
+            "upper_bound": 1482694.8600769043
+          },
+          "point_estimate": 1482505.0872802734,
+          "standard_error": 306299.50631206925
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 945253.1299258312,
+            "upper_bound": 2481094.9306530696
+          },
+          "point_estimate": 1840600.0128248795,
+          "standard_error": 380634.8488570324
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/1024": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/1024",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "1024",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/1024",
+        "directory_name": "Particular/sequential__BruteForceSIMD/1024"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6826666.24,
+            "upper_bound": 6868333.653333333
+          },
+          "point_estimate": 6846666.666666668,
+          "standard_error": 10655.084211055317
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 6833322.666666667,
+            "upper_bound": 6833344.0
+          },
+          "point_estimate": 6833333.333333334,
+          "standard_error": 493.02374434129774
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 15.81439971969854,
+            "upper_bound": 123542.09060668944
+          },
+          "point_estimate": 15.81439971969854,
+          "standard_error": 46049.16499434461
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 55839.77187311202,
+            "upper_bound": 92585.44582997606
+          },
+          "point_estimate": 75967.6511558144,
+          "standard_error": 9322.687659935613
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/128": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/128",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "128",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/128",
+        "directory_name": "Particular/sequential__BruteForceSIMD/128"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 108479.89986151694,
+            "upper_bound": 111696.65912673628
+          },
+          "point_estimate": 110449.40353454708,
+          "standard_error": 874.7592719697365
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 110735.31100478469,
+            "upper_bound": 111259.68979591836
+          },
+          "point_estimate": 111072.6522605364,
+          "standard_error": 142.28802765151158
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 568.0580852406345,
+            "upper_bound": 1420.024029961947
+          },
+          "point_estimate": 1079.0728430035474,
+          "standard_error": 216.4304116992676
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 110617.86215675784,
+            "upper_bound": 111079.89739462484
+          },
+          "point_estimate": 110851.72866547506,
+          "standard_error": 117.76723433838882
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1048.7171948753678,
+            "upper_bound": 10467.904845548032
+          },
+          "point_estimate": 6257.27034587132,
+          "standard_error": 3051.8682894723834
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/16": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/16",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "16",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/16",
+        "directory_name": "Particular/sequential__BruteForceSIMD/16"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2134.2765538283584,
+            "upper_bound": 2167.44927441719
+          },
+          "point_estimate": 2149.265025834715,
+          "standard_error": 8.500171402171283
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2132.8961494404793,
+            "upper_bound": 2144.673664044446
+          },
+          "point_estimate": 2138.2239531627847,
+          "standard_error": 3.1217674180396817
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12.857205187109946,
+            "upper_bound": 32.172854188954844
+          },
+          "point_estimate": 23.96563634520197,
+          "standard_error": 4.973832339595485
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2133.785242557588,
+            "upper_bound": 2146.0404192258616
+          },
+          "point_estimate": 2139.3664459588467,
+          "standard_error": 3.1201920888211068
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 29.20017437437929,
+            "upper_bound": 84.37124639025514
+          },
+          "point_estimate": 60.74277925571422,
+          "standard_error": 13.953179024516578
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/16384": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/16384",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "16384",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/16384",
+        "directory_name": "Particular/sequential__BruteForceSIMD/16384"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1739860008.96,
+            "upper_bound": 1743179980.8
+          },
+          "point_estimate": 1741479997.44,
+          "standard_error": 848325.2626828308
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1738499840.0,
+            "upper_bound": 1741500160.0
+          },
+          "point_estimate": 1740000000.0,
+          "standard_error": 828278.82944762
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2965199.9473571777,
+            "upper_bound": 7413284.527587891
+          },
+          "point_estimate": 4447894.807434082,
+          "standard_error": 1221773.5895941523
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4867228.69305164,
+            "upper_bound": 6996306.2047463255
+          },
+          "point_estimate": 6065067.369943105,
+          "standard_error": 543140.2703666824
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/2": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/2",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "2",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/2",
+        "directory_name": "Particular/sequential__BruteForceSIMD/2"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 287.0193491453052,
+            "upper_bound": 290.5109397187419
+          },
+          "point_estimate": 288.56869371344914,
+          "standard_error": 0.8913571548811282
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 287.24647710614244,
+            "upper_bound": 288.54824782607875
+          },
+          "point_estimate": 287.75977613133944,
+          "standard_error": 0.3630187241288316
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1.3847307622527307,
+            "upper_bound": 3.525479762130594
+          },
+          "point_estimate": 2.316015645063473,
+          "standard_error": 0.5560989266388082
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 287.5861271886519,
+            "upper_bound": 288.79477583316816
+          },
+          "point_estimate": 288.1871903934299,
+          "standard_error": 0.30759606317772353
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 3.0391025013893245,
+            "upper_bound": 9.689050173886194
+          },
+          "point_estimate": 6.370416423185164,
+          "standard_error": 1.933032828532517
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/2048": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/2048",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "2048",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/2048",
+        "directory_name": "Particular/sequential__BruteForceSIMD/2048"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 27419992.74666667,
+            "upper_bound": 27693332.47999999
+          },
+          "point_estimate": 27553332.90666667,
+          "standard_error": 70201.94748126586
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 27333290.666666668,
+            "upper_bound": 27666688.0
+          },
+          "point_estimate": 27499989.333333336,
+          "standard_error": 159809.03983932405
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 494168.3624267578,
+            "upper_bound": 741315.80123901
+          },
+          "point_estimate": 741315.80123901,
+          "standard_error": 82973.4883412619
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 405699.14620940783,
+            "upper_bound": 591546.0778911182
+          },
+          "point_estimate": 502197.5222401444,
+          "standard_error": 47622.935763155176
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/256": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/256",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "256",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/256",
+        "directory_name": "Particular/sequential__BruteForceSIMD/256"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 429029.5398419666,
+            "upper_bound": 434844.0114582206
+          },
+          "point_estimate": 432245.3132615684,
+          "standard_error": 1492.6326116163905
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 431398.9142857143,
+            "upper_bound": 434782.60869565216
+          },
+          "point_estimate": 432562.06237006234,
+          "standard_error": 879.8490199111092
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2878.886987470484,
+            "upper_bound": 6548.6190321258055
+          },
+          "point_estimate": 4410.751360778706,
+          "standard_error": 919.8822585534762
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 431944.55467985384,
+            "upper_bound": 434387.0807476959
+          },
+          "point_estimate": 433130.44575422246,
+          "standard_error": 625.8840418036668
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4374.265115173277,
+            "upper_bound": 16205.91569145092
+          },
+          "point_estimate": 10679.032154366556,
+          "standard_error": 3210.4276460693086
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/32": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/32",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "32",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/32",
+        "directory_name": "Particular/sequential__BruteForceSIMD/32"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8056.742062380757,
+            "upper_bound": 8165.302023909599
+          },
+          "point_estimate": 8107.41399376044,
+          "standard_error": 27.74973395025243
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8062.6142159522515,
+            "upper_bound": 8100.174205764781
+          },
+          "point_estimate": 8083.403936269916,
+          "standard_error": 10.716617872857436
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 46.94319634931063,
+            "upper_bound": 104.55729416978176
+          },
+          "point_estimate": 73.75777528241093,
+          "standard_error": 15.036385115761108
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 8078.620055845297,
+            "upper_bound": 8166.821941160702
+          },
+          "point_estimate": 8117.971349212544,
+          "standard_error": 22.820063382792423
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 113.09460400283848,
+            "upper_bound": 278.4213406464131
+          },
+          "point_estimate": 198.32374242206237,
+          "standard_error": 43.95969301678501
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/4": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/4",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "4",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/4",
+        "directory_name": "Particular/sequential__BruteForceSIMD/4"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 427.455408442686,
+            "upper_bound": 431.6047316598947
+          },
+          "point_estimate": 429.42380653654504,
+          "standard_error": 1.0515457621732702
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 427.56128032341985,
+            "upper_bound": 429.76745639214573
+          },
+          "point_estimate": 428.7101072205507,
+          "standard_error": 0.5727604024997814
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 2.2799638855098405,
+            "upper_bound": 5.384517793580025
+          },
+          "point_estimate": 3.5053065800874847,
+          "standard_error": 0.8040343969382318
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 427.8987428958504,
+            "upper_bound": 429.7300280634799
+          },
+          "point_estimate": 428.7775001483773,
+          "standard_error": 0.46414776400150143
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 4.623140018559943,
+            "upper_bound": 10.077677752031269
+          },
+          "point_estimate": 7.494377806516596,
+          "standard_error": 1.4192609574667383
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/4096": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/4096",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "4096",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/4096",
+        "directory_name": "Particular/sequential__BruteForceSIMD/4096"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 108139996.16,
+            "upper_bound": 108580039.68
+          },
+          "point_estimate": 108360002.56,
+          "standard_error": 115523.53316766936
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 108000000.0,
+            "upper_bound": 108999936.0
+          },
+          "point_estimate": 108000128.0,
+          "standard_error": 187375.768373061
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 379.5455932617187,
+            "upper_bound": 1482505.0872802734
+          },
+          "point_estimate": 741442.3164367676,
+          "standard_error": 686909.0388692269
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 664237.6950438197,
+            "upper_bound": 957022.6105260408
+          },
+          "point_estimate": 827078.5177972156,
+          "standard_error": 75568.25134597154
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/512": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/512",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "512",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/512",
+        "directory_name": "Particular/sequential__BruteForceSIMD/512"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1714697.544367134,
+            "upper_bound": 1741302.431922258
+          },
+          "point_estimate": 1726543.0510064706,
+          "standard_error": 6780.048041510518
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1715837.8136645963,
+            "upper_bound": 1730766.7692307692
+          },
+          "point_estimate": 1722224.0,
+          "standard_error": 2981.953321076698
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 12415.363117382269,
+            "upper_bound": 26724.41929366868
+          },
+          "point_estimate": 16908.090310347612,
+          "standard_error": 3557.242242275862
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1717628.441950797,
+            "upper_bound": 1731173.989230612
+          },
+          "point_estimate": 1723634.283051835,
+          "standard_error": 3481.6064954668473
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 20409.457551474818,
+            "upper_bound": 75443.34900718414
+          },
+          "point_estimate": 48822.56927623677,
+          "standard_error": 15701.377075372826
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/64": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/64",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "64",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/64",
+        "directory_name": "Particular/sequential__BruteForceSIMD/64"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 28883.878804431137,
+            "upper_bound": 29310.028482805705
+          },
+          "point_estimate": 29126.875083027226,
+          "standard_error": 109.70067534734
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 29158.141015089164,
+            "upper_bound": 29388.057971014492
+          },
+          "point_estimate": 29302.993970714902,
+          "standard_error": 58.24720341714706
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 207.8590741997747,
+            "upper_bound": 457.6135029868494
+          },
+          "point_estimate": 280.1168881486223,
+          "standard_error": 66.44855020404462
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 29224.526376002148,
+            "upper_bound": 29377.281458768684
+          },
+          "point_estimate": 29304.55816907181,
+          "standard_error": 38.99384637523969
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 349.4291467021927,
+            "upper_bound": 1197.9513187179157
+          },
+          "point_estimate": 785.8722821966134,
+          "standard_error": 252.66633600454
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/8": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/8",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "8",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/8",
+        "directory_name": "Particular/sequential__BruteForceSIMD/8"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 704.9515815938446,
+            "upper_bound": 712.2272963357942
+          },
+          "point_estimate": 708.5533544427741,
+          "standard_error": 1.8548438721481344
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 705.4108652632472,
+            "upper_bound": 710.3323763577707
+          },
+          "point_estimate": 707.6980739198334,
+          "standard_error": 1.396128116560314
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 5.256664122695558,
+            "upper_bound": 12.130407017361524
+          },
+          "point_estimate": 8.084738798524722,
+          "standard_error": 1.8128767703510855
+        },
+        "slope": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 705.9965142015847,
+            "upper_bound": 709.5991032040711
+          },
+          "point_estimate": 707.684434920407,
+          "standard_error": 0.916291544737108
+        },
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 9.847404401555146,
+            "upper_bound": 16.04368568378842
+          },
+          "point_estimate": 13.24915761877932,
+          "standard_error": 1.578392464864543
+        }
+      }
+    },
+    "Particular/sequential::BruteForceSIMD/8192": {
+      "baseline": "WebAssembly",
+      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/8192",
+      "criterion_benchmark_v1": {
+        "group_id": "Particular",
+        "function_id": "sequential::BruteForceSIMD",
+        "value_str": "8192",
+        "throughput": null,
+        "full_id": "Particular/sequential::BruteForceSIMD/8192",
+        "directory_name": "Particular/sequential__BruteForceSIMD/8192"
+      },
+      "criterion_estimates_v1": {
+        "mean": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 434020024.192,
+            "upper_bound": 435140039.68
+          },
+          "point_estimate": 434560000.0,
+          "standard_error": 286557.0108386216
+        },
+        "median": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 433500032.0,
+            "upper_bound": 434999808.0
+          },
+          "point_estimate": 434000128.0,
+          "standard_error": 348474.48613605276
+        },
+        "median_abs_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 741442.3164367676,
+            "upper_bound": 2964630.628967285
+          },
+          "point_estimate": 1482505.0872802734,
+          "standard_error": 314578.152708734
+        },
+        "slope": null,
+        "std_dev": {
+          "confidence_interval": {
+            "confidence_level": 0.95,
+            "lower_bound": 1385629.011490089,
+            "upper_bound": 2563506.1520171533
+          },
+          "point_estimate": 2042015.4939857128,
+          "standard_error": 301560.9405100821
+        }
+      }
+    }
+  }
+}

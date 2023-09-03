@@ -2,30 +2,25 @@
 {% block content %}
 <style>
     .graph-container {
-        display: flex;
-        flex-direction: column;
-        max-width: var(--default-width);
+        width: var(--default-width);
+        height: 800px;
         margin: 0;
         border: 2px solid #5e5e5e;
         border-radius: var(--border-radius);
-        padding: 0 20px 20px;
-    }
-
-    .graph-container img {
-        width: 100%;
     }
 </style>
 
-{% for graph in section.pages %}
-<div class="padded-container">
-    <div class="graph-container">
-        <h1>{{ graph.title }}</h1>
-        {% if graph.extra.link %}
-        <img src="{{ graph.extra.link }}" alt="{{ graph.title }} benchmark graph" />
-        {% else %}
-        <h3>Coming soon...</h3>
-        {% endif %}
-    </div>
+<script src="/echarts.js"></script>
+{% for benchmark in section.pages %}
+<div class=" padded-container">
+    <script type="module">
+        import { drawChart } from "/utils.js";
+
+        fetch("{{ benchmark.path | safe }}/benchmark.json")
+            .then((response) => response.json())
+            .then((json) => drawChart(json, "chart-{{ benchmark.title }}", JSON.parse('{{ benchmark.extra.colours | safe }}')));
+    </script>
+    <div id="chart-{{ benchmark.title }}" class="graph-container"></div>
 </div>
 {% endfor %}
 {% endblock content %}
