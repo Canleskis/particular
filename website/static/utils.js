@@ -30,7 +30,10 @@ export function drawChart({ name, benchmarks }, elementId, color) {
         } = benchmark;
 
         rv[function_id] ??= [];
-        rv[function_id].push([+value_str, point_estimate]);
+        let index = rv[function_id].findIndex(([i]) => i > +value_str);
+        index = index === -1 ? rv[function_id].length : index;
+        rv[function_id].splice(index, 0, [+value_str, point_estimate]);
+
         return rv;
     }, {});
 
@@ -61,10 +64,10 @@ export function drawChart({ name, benchmarks }, elementId, color) {
 
     /** @type EChartsOption */
     const option = {
-        series: Object.entries(result).map(([label, data]) => {
+        series: Object.entries(result).map(([name, data]) => {
             return {
-                name: label,
-                data: [...data].sort(([c1], [c2]) => c1 - c2),
+                name,
+                data,
                 type: "line",
                 symbol: "circle",
                 symbolSize: 8,
@@ -151,13 +154,28 @@ export function drawChart({ name, benchmarks }, elementId, color) {
             borderWidth: 0,
             valueFormatter: timeFormatter,
             transitionDuration: 0,
-            position: "top",
+            position: (point, params) => {
+                if (Array.isArray(params)) {
+                    const offset = [10, 10];
+                    let min = [0, 0];
 
+                    params?.forEach(({ value}) => {
+                        if (value[1] > min[1]) {
+                            min = value;
+                        }
+                    })
+
+                    const converted = chart.convertToPixel({ seriesIndex: 0 }, min); 
+                    return [converted[0] + offset[0], converted[1] + offset[1]];
+                }
+
+                return "top";
+            },
             textStyle: {
                 ...textStyle,
                 fontSize: 12,
             },
-            order: "valueAsc",
+            order: "valueDesc",
         },
         toolbox: {
             top: "1%",
@@ -187,6 +205,4 @@ export function drawChart({ name, benchmarks }, elementId, color) {
     };
 
     chart.setOption(option);
-
-    console.log(chart.getOption().tooltip);
 }

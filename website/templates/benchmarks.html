@@ -18,7 +18,12 @@
 
         fetch("{{ benchmark.path | safe }}/benchmark.json")
             .then((response) => response.json())
-            .then((json) => drawChart(json, "chart-{{ benchmark.title }}", JSON.parse('{{ benchmark.extra.colours | safe }}')));
+            .then((json) =>
+                drawChart(
+                    json,
+                    "chart-{{ benchmark.title }}",
+                    JSON.parse('{{ benchmark.extra.colours | safe }}')
+                ));
     </script>
     <div id="chart-{{ benchmark.title }}" class="graph-container"></div>
 </div>
