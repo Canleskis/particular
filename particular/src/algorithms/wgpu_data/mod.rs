@@ -7,19 +7,19 @@ pub(crate) struct WgpuData {
     compute_pipeline: wgpu::ComputePipeline,
     size_buffer_particles: u64,
     pub particle_count: u64,
+    pub massive_count: u64,
     pub work_group_count: u32,
 }
 
 impl WgpuData {
     #[inline]
-    pub fn init(
-        particle_size: u64,
+    pub fn init<const SIZE: u64>(
         particle_count: u64,
         massive_count: u64,
         device: &wgpu::Device,
     ) -> Self {
-        let size_buffer_particles = particle_count * particle_size;
-        let size_buffer_massive = massive_count * particle_size;
+        let size_buffer_particles = particle_count * SIZE;
+        let size_buffer_massive = massive_count * SIZE;
 
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
@@ -135,6 +135,7 @@ impl WgpuData {
             compute_pipeline,
             size_buffer_particles,
             particle_count,
+            massive_count,
             work_group_count,
         }
     }

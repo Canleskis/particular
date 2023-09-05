@@ -37,13 +37,13 @@ where
         }
 
         if let Some(wgpu_data) = &self.wgpu_data {
-            if wgpu_data.particle_count != particles_len {
+            if wgpu_data.particle_count != particles_len || wgpu_data.massive_count != massive_len {
                 self.wgpu_data = None;
             }
         }
 
         let wgpu_data = self.wgpu_data.get_or_insert_with(|| {
-            WgpuData::init(PARTICLE_SIZE, particles_len, massive_len, &self.device)
+            WgpuData::init::<PARTICLE_SIZE>(particles_len, massive_len, &self.device)
         });
 
         wgpu_data.write_particle_data(&storage.affected, &storage.massive, &self.queue);
@@ -74,8 +74,7 @@ impl BruteForce {
     pub fn new_init(particle_count: usize, massive_count: usize) -> Self {
         let (device, queue) = pollster::block_on(setup_wgpu());
 
-        let wgpu_data = Some(WgpuData::init(
-            PARTICLE_SIZE,
+        let wgpu_data = Some(WgpuData::init::<PARTICLE_SIZE>(
             particle_count as u64,
             massive_count as u64,
             &device,
