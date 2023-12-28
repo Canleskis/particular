@@ -17,7 +17,7 @@ categories.workspace = true
 
 [features]
 parallel = ["dep:rayon"]
-gpu = ["dep:wgpu", "dep:bytemuck", "dep:pollster"]
+gpu = ["dep:wgpu", "dep:flume", "dep:bytemuck", "dep:pollster"]
 
 [dependencies]
 particular_derive = { version = "0.7.0-dev", path = "../particular_derive" }
@@ -28,6 +28,7 @@ wide = "0"
 rayon = { version = "1", optional = true }
 
 wgpu = { version = "0.17", optional = true }
+flume = { version = "0", optional = true }
 bytemuck = { version = "1", optional = true }
 pollster = { version = "0", optional = true }
 

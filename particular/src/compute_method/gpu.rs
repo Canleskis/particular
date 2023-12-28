@@ -112,7 +112,7 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForce<'_> {
             (affected_count as f32 / 256.0).ceil() as u32,
         );
 
-        gpu_data.read_accelerations(self.device)
+        pollster::block_on(gpu_data.read_accelerations(self.device))
     }
 }
 

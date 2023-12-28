@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `WgpuData` to `WgpuResources` and `wgpu_data` to `gpu_compute`.
 - `gpu_compute` (internals of `gpu::BruteForce`) is public.
 - `gpu::BruteForce` holds a reference to a `wgpu::Device`, `wgpu::Queue` and a mutable reference to a `GpuData`.
+- `write_particle_data` and `read_accelerations` not generic and use `ultraviolet::Vec3`.
+- `read_accelerations` is async.
+- Update `wgpu` to 0.17
 - Renamed `BruteForce` compute methods to `BruteForceScalar` for better differentiation with simd variant.
 - `BruteForceSIMD` generic over the lane count.
 - `build_node` takes `position` and `compute` functions instead of using traits and computes a square `BoundingBox`. Use `build_node_with` to provide a specific `BoundingBox`.

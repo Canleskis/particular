@@ -172,19 +172,23 @@ impl WgpuResources {
 
     /// Read the accelerations from the corresponding buffer.
     #[inline]
-    pub fn read_accelerations(&self, device: &wgpu::Device) -> Vec<Vec3> {
-        let buffer = self.buffer_staging.slice(..);
-        buffer.map_async(wgpu::MapMode::Read, |_| {});
-        device.poll(wgpu::Maintain::Wait);
+    pub async fn read_accelerations(&self, device: &wgpu::Device) -> Vec<Vec3> {
+        let (sender, receiver) = flume::bounded(1);
 
-        let data = buffer.get_mapped_range();
+        let buffer = self.buffer_staging.slice(..);
+        buffer.map_async(wgpu::MapMode::Read, move |r| sender.send(r).unwrap());
+
+        device.poll(wgpu::Maintain::Wait);
+        receiver.recv_async().await.unwrap().unwrap();
+
+        let view = buffer.get_mapped_range();
         // vec3<f32> is 16 byte aligned so we need to cast to a slice of `Vec4`.
-        let accelerations = bytemuck::cast_slice(&data)
+        let accelerations = bytemuck::cast_slice(&view)
             .iter()
             .map(Vec4::truncated)
             .collect();
 
-        drop(data);
+        drop(view);
         self.buffer_staging.unmap();
 
         accelerations
