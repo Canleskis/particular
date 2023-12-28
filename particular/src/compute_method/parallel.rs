@@ -1,10 +1,8 @@
-use crate::{
-    algorithms::{
-        math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
-        storage::{ParticleSliceSystem, ParticleTreeSystem},
-        point_mass::PointMass,
-    },
-    compute_method::ComputeMethod,
+use crate::compute_method::{
+    math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
+    point_mass::PointMass,
+    storage::{ParticleSliceSystem, ParticleTreeSystem},
+    ComputeMethod,
 };
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 

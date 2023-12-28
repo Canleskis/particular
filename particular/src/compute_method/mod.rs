@@ -1,6 +1,6 @@
 #[cfg(feature = "gpu")]
-mod gpu_data;
-
+/// Simple abstraction over `wgpu` types to compute gravitational forces between particles.
+pub mod gpu_compute;
 /// Trait abstractions for generic vectors and associated floating-point numbers.
 pub mod math;
 /// Representation of the position and mass of an object in N-dimensional space and the operations to compute gravitational forces.
@@ -19,23 +19,37 @@ pub mod parallel;
 /// Compute methods that use one CPU thread.
 pub mod sequential;
 
-/// Built-in [`ComputeMethods`](crate::compute_method::ComputeMethod).
-pub mod compute_methods {
-    #[cfg(feature = "gpu")]
-    pub use super::gpu;
+/// Trait to perform a computation of values of type `V` between objects contained in a storage of type `S`.
+///
+/// # Example
+///
+/// ```
+/// # use particular::prelude::*;
+/// # use ultraviolet::Vec3;
+/// use particular::algorithms::PointMass;
+///
+/// struct AccelerationCalculator;
+///
+/// impl ComputeMethod<&[PointMass<Vec3, f32>]> for AccelerationCalculator {
+///     type Output = Vec<Vec3>;
+///     
+///     fn compute(&mut self, storage: &[PointMass<Vec3, f32>]) -> Self::Output {
+///         // ...
+///         # Vec::new()
+///     }
+/// }
+/// ```
+pub trait ComputeMethod<Storage> {
+    /// IntoIterator that yields the computed values.
+    type Output: IntoIterator;
 
-    #[cfg(feature = "parallel")]
-    pub use super::parallel;
-
-    pub use super::sequential;
+    /// Performs the computation between objects contained in the storage.
+    fn compute(&mut self, storage: Storage) -> Self::Output;
 }
-
-pub use point_mass::*;
-pub use storage::*;
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use crate::{algorithms::PointMass, compute_method::ComputeMethod};
+    use crate::{compute_method::point_mass::PointMass, compute_method::ComputeMethod};
     use ultraviolet::Vec3;
 
     pub fn acceleration_error<C>(mut cm: C, epsilon: f32)

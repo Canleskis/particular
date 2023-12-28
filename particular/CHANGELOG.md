@@ -20,13 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Built-in compute methods implemented with the different provided storage structs.
 - `ComputeMethod` no longer generic over `V`.
-- Renamed `WgpuData` to `WgpuResources`.
+- Renamed `WgpuData` to `WgpuResources` and `wgpu_data` to `gpu_compute`.
 - `gpu::BruteForce` holds a reference to a `wgpu::Device`, `wgpu::Queue` and a mutable reference to a `GpuData`.
 - Renamed `BruteForce` compute methods to `BruteForceScalar` for better differentiation with simd variant.
 - `BruteForceSIMD` generic over the lane count.
 - `build_node` takes `position` and `compute` functions instead of using traits and computes a square `BoundingBox`. Use `build_node_with` to provide a specific `BoundingBox`.
 - `Particle` trait only has the `Array` associated type and `position` expects this array type.
 - `accelerations` returns an iterator of arrays.
+- Merge `algorithms` and `compute_method` modules in one with the name of the latter.
+- `SizedOrthant`'s size is no longer generic and is instead a `BoundingBox`
 
 ### Removed
 

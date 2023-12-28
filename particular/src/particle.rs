@@ -1,9 +1,8 @@
-use crate::{
-    algorithms::{
-        math::{Array, Float, FloatVector},
-        ParticleReordered, PointMass,
-    },
-    compute_method::ComputeMethod,
+use crate::compute_method::{
+    math::{Array, Float, FloatVector},
+    point_mass::PointMass,
+    storage::ParticleReordered,
+    ComputeMethod,
 };
 use std::vec::IntoIter;
 

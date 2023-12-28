@@ -144,9 +144,7 @@
 
 #![warn(missing_docs)]
 
-/// Algorithms to compute the acceleration of particles.
-pub mod algorithms;
-/// Traits to perform computation of values from iterators.
+/// Implementation of algorithms to compute the acceleration of particles.
 pub mod compute_method;
 /// Traits for particle representation of objects and computing their acceleration.
 pub mod particle;
@@ -155,12 +153,13 @@ pub mod particular_derive {
     pub use particular_derive::Particle;
 }
 
+pub use compute_method::*;
+
 /// Most commonly used re-exported types.
 pub mod prelude {
     #[doc(hidden)]
     pub use crate::{
-        algorithms::compute_methods::*,
-        compute_method::ComputeMethod,
+        compute_method::*,
         particle::{Accelerations, IntoPointMass, Particle},
         particular_derive::Particle,
     };

@@ -1,14 +1,14 @@
 /// Bounding box related traits and types.
-pub mod bbox;
-pub use bbox::*;
+pub mod partition;
 
-use crate::algorithms::math::Float;
+use crate::compute_method::math::Float;
+use partition::{BoundingBox, SizedOrthant, SubDivide};
 
 /// Index of a [`Node`] in a [`Tree`].
 pub type NodeID = u32;
 
 /// Generic tree that can partition space into smaller regions.
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 pub struct Tree<Node, Data> {
     /// Vector of `Node` objects that define the structure of the tree.
     pub nodes: Vec<Node>,
@@ -43,20 +43,8 @@ impl<Node, Data> Default for Tree<Node, Data> {
     }
 }
 
-/// Division in N regions of the Euclidean space.
-pub type Orthant<const X: usize> = [Option<NodeID>; X];
-
-/// An [`Orthant`] and its size representation.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SizedOrthant<const X: usize, S> {
-    /// Stored orthant.
-    pub orthant: Orthant<X>,
-    /// Size of the stored orthant.
-    pub size: S,
-}
-
-/// Node of a [`Tree`].
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Node for trees that can either be internal and containing data or external and containing no data.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Node<N> {
     /// Node with child nodes.
     Internal(N),
@@ -66,7 +54,7 @@ pub enum Node<N> {
 
 /// N-dimensional generalisation of quadtrees/octrees.
 pub type Orthtree<const X: usize, const D: usize, S, Data> =
-    Tree<Node<SizedOrthant<X, BoundingBox<[S; D]>>>, Data>;
+    Tree<Node<SizedOrthant<X, D, NodeID, S>>, Data>;
 
 impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data> {
     /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and functions until the created square bounding box stops subdividing.
@@ -124,7 +112,7 @@ impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data> {
 
             self.nodes[id] = Node::Internal(SizedOrthant {
                 orthant: result.map(|(data, bbox)| self.build_node_with(bbox, &data, pos, compute)),
-                size: bbox,
+                bbox,
             });
         }
 

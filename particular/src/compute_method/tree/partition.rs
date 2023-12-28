@@ -1,4 +1,4 @@
-use crate::algorithms::math::Float;
+use crate::compute_method::math::Float;
 
 /// An axis-aligned bounding box using arrays.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -137,6 +137,18 @@ where
 
         result
     }
+}
+
+/// Division in `X` regions of the Euclidean space.
+pub type Orthant<const X: usize, N> = [Option<N>; X];
+
+/// An [`Orthant`] and its size as a [`BoundingBox`].
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SizedOrthant<const X: usize, const D: usize, N, S> {
+    /// Stored orthant.
+    pub orthant: Orthant<X, N>,
+    /// Size of the stored orthant.
+    pub bbox: BoundingBox<[S; D]>,
 }
 
 /// Marker trait for the division of a [`BoundingBox`] into multiple bounding boxes.

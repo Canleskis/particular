@@ -1,10 +1,8 @@
-use crate::{
-    algorithms::{
-        math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
-        point_mass::PointMass,
-        storage::{ParticleOrdered, ParticleReordered, ParticleSliceSystem, ParticleTreeSystem},
-    },
-    compute_method::ComputeMethod,
+use crate::compute_method::{
+    math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
+    point_mass::PointMass,
+    storage::{ParticleOrdered, ParticleReordered, ParticleSliceSystem, ParticleTreeSystem},
+    ComputeMethod,
 };
 
 /// Brute-force [`ComputeMethod`] using the CPU and scalar vectors.

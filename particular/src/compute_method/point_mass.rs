@@ -1,6 +1,6 @@
-use crate::algorithms::{
-    math::*,
-    tree::{Node, NodeID, Orthtree, SizedOrthant},
+use crate::compute_method::{
+    math::{AsPrimitive, Float, FloatVector, FromPrimitive, InfToZero, Sum, Zero, SIMD},
+    tree::{partition::SizedOrthant, Node, NodeID, Orthtree},
 };
 
 /// Point-mass representation of an object in space.
@@ -237,7 +237,7 @@ impl<V, S> PointMass<V, S> {
         }
 
         match tree.nodes[id] {
-            Node::Internal(SizedOrthant { orthant, size }) if theta < size.width() / mag.sqrt() => {
+            Node::Internal(SizedOrthant { orthant, bbox }) if theta < bbox.width() / mag.sqrt() => {
                 orthant
                     .map(|node| self.acceleration_tree(tree, node, theta))
                     .into_iter()

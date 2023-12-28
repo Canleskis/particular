@@ -1,10 +1,11 @@
-use crate::{
-    algorithms::{
-        math::*,
-        tree::{BoundingBox, NodeID, SubDivide},
-        BarnesHutTree, PointMass,
+use crate::compute_method::{
+    math::{Float, FloatVector, FromPrimitive, Sum, Zero},
+    point_mass::{BarnesHutTree, PointMass},
+    tree::{
+        partition::{BoundingBox, SubDivide},
+        NodeID,
     },
-    compute_method::ComputeMethod,
+    ComputeMethod,
 };
 
 /// Flexible, copyable storage with references to affected particles and a generic massive storage.

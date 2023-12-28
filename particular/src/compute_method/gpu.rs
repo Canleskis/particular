@@ -1,6 +1,5 @@
-use crate::{
-    algorithms::{gpu_data, math::Zero, point_mass::PointMass, storage::ParticleSliceSystem},
-    compute_method::ComputeMethod,
+use crate::compute_method::{
+    gpu_compute, math::Zero, point_mass::PointMass, storage::ParticleSliceSystem, ComputeMethod,
 };
 
 type Vec3 = <[f32; 3] as crate::particle::ScalarArray>::Vector;
@@ -11,7 +10,7 @@ const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass<Vec3, f32>>() as u64;
 pub struct GpuData {
     affected_count: u64,
     massive_count: u64,
-    resources: Option<gpu_data::WgpuResources>,
+    resources: Option<gpu_compute::WgpuResources>,
 }
 
 impl GpuData {
@@ -32,7 +31,7 @@ impl GpuData {
         Self {
             affected_count,
             massive_count,
-            resources: Some(gpu_data::WgpuResources::init(
+            resources: Some(gpu_compute::WgpuResources::init(
                 affected_count * PARTICLE_SIZE,
                 massive_count * PARTICLE_SIZE,
                 device,
@@ -41,9 +40,9 @@ impl GpuData {
     }
 
     #[inline]
-    fn get_or_init(&mut self, device: &wgpu::Device) -> &mut gpu_data::WgpuResources {
+    fn get_or_init(&mut self, device: &wgpu::Device) -> &mut gpu_compute::WgpuResources {
         self.resources.get_or_insert_with(|| {
-            gpu_data::WgpuResources::init(
+            gpu_compute::WgpuResources::init(
                 self.affected_count * PARTICLE_SIZE,
                 self.massive_count * PARTICLE_SIZE,
                 device,
