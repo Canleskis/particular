@@ -1,9 +1,7 @@
-use std::ops::{Index, IndexMut};
-
-use crate::algorithms::{internal, tree::NodeID};
+use crate::algorithms::math::Float;
 
 /// An axis-aligned bounding box using arrays.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct BoundingBox<A> {
     /// Minimum corner of the box.
     pub min: A,
@@ -11,17 +9,29 @@ pub struct BoundingBox<A> {
     pub max: A,
 }
 
+impl<A> BoundingBox<A> {
+    /// Creates a new [`BoundingBox`] with the given min and max values.
+    #[inline]
+    pub const fn new(min: A, max: A) -> Self {
+        Self { min, max }
+    }
+}
+
+impl<const D: usize, S> Default for BoundingBox<[S; D]>
+where
+    S: Copy + Float,
+{
+    #[inline]
+    fn default() -> Self {
+        Self::new([S::infinity(); D], [-S::infinity(); D])
+    }
+}
+
 #[allow(clippy::needless_range_loop)]
 impl<const D: usize, S> BoundingBox<[S; D]>
 where
-    S: internal::Scalar,
+    S: Copy + Float,
 {
-    /// Creates a new [`BoundingBox`] with the given min and max values.
-    #[inline]
-    pub fn new(min: [S; D], max: [S; D]) -> Self {
-        Self { min, max }
-    }
-
     /// Extends the [`BoundingBox`] so that it contains the given position.
     #[inline]
     pub fn extend(&mut self, position: [S; D]) {
@@ -33,17 +43,23 @@ where
 
     /// Creates a new [`BoundingBox`] that contains the given positions.
     #[inline]
-    pub fn with(positions: impl Iterator<Item = [S; D]>) -> Self {
+    pub fn with<I>(positions: I) -> Self
+    where
+        I: Iterator<Item = [S; D]>,
+    {
         let mut result = Self::default();
         for position in positions {
-            result.extend(position)
+            result.extend(position);
         }
         result
     }
 
     /// Creates a new square [`BoundingBox`] that contains the given positions.
     #[inline]
-    pub fn square_with(positions: impl Iterator<Item = [S; D]>) -> Self {
+    pub fn square_with<I>(positions: I) -> Self
+    where
+        I: Iterator<Item = [S; D]>,
+    {
         let mut result = Self::with(positions);
 
         let center = result.center();
@@ -51,7 +67,7 @@ where
             .size()
             .into_iter()
             .fold(S::ZERO, S::max)
-            .midpoint(S::ZERO);
+            .mean(S::ZERO);
 
         for i in 0..D {
             result.min[i] = center[i] - half_length;
@@ -66,7 +82,7 @@ where
     pub fn center(&self) -> [S; D] {
         let mut r = [S::ZERO; D];
         for i in 0..D {
-            r[i] = self.min[i].midpoint(self.max[i])
+            r[i] = self.min[i].mean(self.max[i]);
         }
         r
     }
@@ -76,7 +92,7 @@ where
     pub fn size(&self) -> [S; D] {
         let mut r = [S::ZERO; D];
         for i in 0..D {
-            r[i] = self.max[i] - self.min[i]
+            r[i] = self.max[i] - self.min[i];
         }
         r
     }
@@ -88,47 +104,26 @@ where
     }
 }
 
-impl<const D: usize, S> Default for BoundingBox<[S; D]>
+#[allow(clippy::needless_range_loop)]
+impl<const X: usize, const D: usize, S> BoundingBox<[S; D]>
 where
-    S: internal::Scalar,
-{
-    #[inline]
-    fn default() -> Self {
-        Self {
-            min: [S::INFINITY; D],
-            max: [-S::INFINITY; D],
-        }
-    }
-}
-
-/// Marker type for the division of a [`BoundingBox`] into multiple bounding boxes.
-pub trait SubDivide {
-    /// The number of divisions.
-    const N: usize;
-
-    /// The bounding boxes [`BoundingBox`] divides into.
-    type Divison: Default + Index<usize, Output = Self> + IndexMut<usize, Output = Self>;
-}
-
-impl<const D: usize, S> BoundingBox<[S; D]>
-where
-    Self: SubDivide,
-    S: internal::Scalar,
+    Self: SubDivide<Division = [Self; X]>,
+    S: Copy + Float,
 {
     /// Subdivides this [`BoundingBox`] into mutliple bounding boxes defined by [`SubDivide`] implementation.
     #[inline]
-    pub fn subdivide(&self) -> <Self as SubDivide>::Divison {
+    pub fn subdivide(&self) -> [Self; X] {
         let bbox_min = self.min;
         let bbox_max = self.max;
         let bbox_center = self.center();
 
-        let mut result = <Self as SubDivide>::Divison::default();
-        for i in 0..Self::N {
+        let mut result = [Self::default(); X];
+        for i in 0..X {
             let mut corner_min = [S::ZERO; D];
             let mut corner_max = [S::ZERO; D];
 
             for j in 0..D {
-                if (i & (1 << j)) == 0 {
+                if i & (1 << j) == 0 {
                     corner_min[j] = bbox_center[j];
                     corner_max[j] = bbox_max[j];
                 } else {
@@ -144,33 +139,18 @@ where
     }
 }
 
-/// Division in N regions of the Euclidean space.
-pub type Orthant<const N: usize> = [Option<NodeID>; N];
-
-/// An [`Orthant`] and a type representing its size.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SizedOrthant<const N: usize, S>(pub Orthant<N>, pub S);
-
-/// A trait for types that can be located in space.
-pub trait Positionable {
-    /// The type of vector used to represent the position.
-    type Vector;
-
-    /// Returns the position of the object.
-    fn position(&self) -> Self::Vector;
+/// Marker trait for the division of a [`BoundingBox`] into multiple bounding boxes.
+pub trait SubDivide {
+    /// The type the implementer divides into.
+    type Division;
 }
 
 macro_rules! impl_subdivide {
-    ($(($dim: literal|$n: literal)),*,) => {$(
-        impl<S> SubDivide for BoundingBox<[S; $dim]>
-        where
-            Self: Default,
-        {
-            const N: usize = $n;
-
-            type Divison = [Self; $n];
+    ($($dim: literal),*) => {$(
+        impl<S> SubDivide for BoundingBox<[S; $dim]> {
+            type Division = [Self; 2usize.pow($dim)];
         }
     )*};
 }
 
-impl_subdivide!((1 | 2), (2 | 4), (3 | 8), (4 | 16), (5 | 32),);
+impl_subdivide!(1, 2, 3, 4, 5, 6, 7, 8, 9);

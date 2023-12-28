@@ -1,91 +1,90 @@
 use crate::{
     algorithms::{
-        internal, simd, tree::BarnesHutAcceleration, MassiveAffectedInternal, MassiveAffectedSIMD,
-        PointMass, TreeAffectedInternal,
+        math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
+        storage::{ParticleSliceSystem, ParticleTreeSystem},
+        point_mass::PointMass,
     },
     compute_method::ComputeMethod,
 };
-
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
-/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon).
-#[derive(Default, Clone, Copy)]
-pub struct BruteForce;
+/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and scalar vectors.
+#[derive(Clone, Copy, Default)]
+pub struct BruteForceScalar;
 
-impl<const D: usize, S, V> ComputeMethod<MassiveAffectedInternal<D, S, V>, V> for BruteForce
+impl<V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for BruteForceScalar
 where
-    S: internal::Scalar,
-    V: internal::ConvertInternal<D, S> + Send,
+    V: FloatVector<Float = S> + Copy + Send + Sync,
+    S: Float + Copy + Sync,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &MassiveAffectedInternal<D, S, V>) -> Self::Output {
-        let MassiveAffectedInternal(storage) = storage;
-
-        storage
+    fn compute(&mut self, system: ParticleSliceSystem<'_, V, S>) -> Self::Output {
+        system
             .affected
             .par_iter()
-            .map(|p| V::from_internal(p.total_acceleration_internal(&storage.massive)))
-            .collect()
-    }
-}
-
-/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and explicit SIMD instructions using [ultraviolet](https://github.com/fu5ha/ultraviolet).
-#[derive(Default, Clone, Copy)]
-pub struct BruteForceSIMD;
-
-impl<const L: usize, const D: usize, S, V> ComputeMethod<MassiveAffectedSIMD<L, D, S, V>, V>
-    for BruteForceSIMD
-where
-    S: Copy + Sync,
-    V: simd::ConvertSIMD<L, D, S> + Send,
-{
-    type Output = Vec<V>;
-
-    #[inline]
-    fn compute(self, storage: &MassiveAffectedSIMD<L, D, S, V>) -> Self::Output {
-        let MassiveAffectedSIMD(storage) = storage;
-
-        storage
-            .affected
-            .par_iter()
-            .map(|p| {
-                V::from(simd::ReduceAdd::reduce_add(
-                    PointMass::new(simd::SIMD::splat(p.position), simd::SIMD::splat(p.mass))
-                        .total_acceleration_simd(&storage.massive),
-                ))
+            .map(|p1| {
+                system.massive.iter().fold(V::ZERO, |acceleration, p2| {
+                    acceleration + p1.acceleration_scalar::<true>(p2)
+                })
             })
             .collect()
     }
 }
 
-/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) for the force computation.
-#[derive(Default, Clone, Copy)]
-pub struct BarnesHut<S> {
-    /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as [`BruteForce`].
-    pub theta: S,
-}
+/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and simd vectors.
+#[derive(Clone, Copy, Default)]
+pub struct BruteForceSIMD<const L: usize>;
 
-impl<const N: usize, const D: usize, S, V> ComputeMethod<TreeAffectedInternal<N, D, S, V>, V>
-    for BarnesHut<S>
+impl<const L: usize, V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for BruteForceSIMD<L>
 where
-    S: internal::Scalar,
-    V: internal::ConvertInternal<D, S> + Send,
+    V: SIMDElement<L> + Copy + Zero + Send + Sync,
+    S: SIMDElement<L> + Copy + Zero + Sync,
+    V::SIMD: FloatVector<Float = S::SIMD> + ReduceAdd + Copy + Send + Sync,
+    S::SIMD: Float + InfToZero + Copy + Sync,
 {
     type Output = Vec<V>;
 
     #[inline]
-    fn compute(self, storage: &TreeAffectedInternal<N, D, S, V>) -> Self::Output {
-        let TreeAffectedInternal {
-            tree,
-            root,
-            affected,
-        } = storage;
-
-        affected
+    fn compute(&mut self, system: ParticleSliceSystem<'_, V, S>) -> Self::Output {
+        let simd: Vec<_> = PointMass::slice_to_lanes(system.massive).collect();
+        system
+            .affected
             .par_iter()
-            .map(|p| V::from_internal(tree.acceleration_at(*root, p.position, self.theta)))
+            .map(|p1| {
+                let p1 = PointMass::splat_lane(p1.position, p1.mass);
+                simd.iter().fold(V::SIMD::ZERO, |acceleration, p2| {
+                    acceleration + p1.acceleration_simd::<true>(p2)
+                })
+            })
+            .map(ReduceAdd::reduce_add)
+            .collect()
+    }
+}
+
+/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) for the force computation and scalar vectors.
+#[derive(Clone, Copy, Default)]
+pub struct BarnesHut<S> {
+    /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as [`BruteForceScalar`].
+    pub theta: S,
+}
+
+impl<const X: usize, const D: usize, V, S> ComputeMethod<ParticleTreeSystem<'_, X, D, V, S>>
+    for BarnesHut<S>
+where
+    V: Copy + FloatVector<Float = S> + Send + Sync,
+    S: Copy + Float + PartialOrd + Sync,
+{
+    type Output = Vec<V>;
+
+    #[inline]
+    fn compute(&mut self, system: ParticleTreeSystem<'_, X, D, V, S>) -> Self::Output {
+        let storage = system.massive;
+        system
+            .affected
+            .par_iter()
+            .map(|p| p.acceleration_tree(storage.tree(), storage.root(), self.theta))
             .collect()
     }
 }
@@ -96,20 +95,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn brute_force() {
-        tests::acceleration_computation(BruteForce, 1e-2);
-        tests::circular_orbit_stability(BruteForce, 1_000, 1e-2);
+    fn brute_force_scalar() {
+        tests::acceleration_error(BruteForceScalar, 1e-2);
+        tests::circular_orbit_stability(BruteForceScalar, 1_000, 1e-2);
     }
 
     #[test]
     fn brute_force_simd() {
-        tests::acceleration_computation(BruteForceSIMD, 1e-2);
-        tests::circular_orbit_stability(BruteForceSIMD, 1_000, 1e-2);
+        tests::acceleration_error(BruteForceSIMD::<8>, 1e-2);
+        tests::circular_orbit_stability(BruteForceSIMD::<8>, 1_000, 1e-2);
     }
 
     #[test]
     fn barnes_hut() {
-        tests::acceleration_computation(BarnesHut { theta: 0.0 }, 1e-2);
+        tests::acceleration_error(BarnesHut { theta: 0.0 }, 1e-2);
         tests::circular_orbit_stability(BarnesHut { theta: 0.0 }, 1_000, 1e-2);
+    }
+
+    #[test]
+    fn barnes_hut_05() {
+        tests::acceleration_error(BarnesHut { theta: 0.5 }, 1e-1);
+        tests::circular_orbit_stability(BarnesHut { theta: 0.5 }, 1_000, 1e-1);
     }
 }

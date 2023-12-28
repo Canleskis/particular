@@ -22,9 +22,8 @@ gpu = ["dep:wgpu", "dep:bytemuck", "dep:pollster"]
 [dependencies]
 particular_derive = { version = "0.7.0-dev", path = "../particular_derive" }
 
-ultraviolet = { version = "0", features = ["f64"] }
+ultraviolet = { version = "0", features = ["f64", "bytemuck"] }
 wide = "0"
-glam = "0"
 
 rayon = { version = "1", optional = true }
 

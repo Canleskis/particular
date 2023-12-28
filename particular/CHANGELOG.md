@@ -5,34 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-19-08
+## Unreleased - 2023-27-12
 
 ### Added
 
-- `ParticleStorage` trait blanket implemented for storages of `ParticlePointMass`.
-- `TreeAffected` storage.
-- `MassiveAffectedInternal` and `MassiveAffectedArray`, newtypes around `MassiveAffected`.
-- `BarnesHutTree` alias.
-- `Zero` trait for types that have an identity value.
+- `GpuData` struct used for `gpu::BruteForce`.
+- `ParticleSystem`, `ParticleTree`, `ParticleOrdered` and `ParticleReordered` structs used for storages in built-in compute methods.
+- `Array`, `Zero`, `One`, `Infinty`, `FloatOps`, `Float`, `IntoArray`, `FloatVectorOps`, `FloatVector`, `SIMD`, `SIMDElement`, `ReduceAdd`, `InfToZero`, `FromPrimitive` and `AsPrimitive` traits for math operation abstractions.
+- `force_mul_mass_scalar`, `force_mul_mass_simd` `acceleration_tree`, `force_scalar` and `force_simd` methods for `PointMass` and various `new` methods.
+- `ScalarArray` trait to bind a `FloatVector` and an array for `Particle` to `PointMass` conversion.
+- Marker `ReorderedCompute` trait.
 
 ### Changed
 
-- `BarnesHut` compute methods use `TreeAffected` instead of `MassiveAffected`. This gives potential access to the tree built to compute the accelerations.
-- `ComputeMethod::compute` takes the storage by reference.
-- Use the `Zero` trait in place of the `Default` trait when applicable.
-- `IntoVectorArray` is now `ConvertInternal` and `IntoVectorElement` is now `ConvertSIMD`.
-- Renamed `ParticleSet` to `ParticleSetInternal`.
-- `MassiveAffected` no longer implements `Storage`. `MassiveAffectedInternal` and `MassiveAffectedArray` newtypes are used instead.
-- `BarnesHutTree` trait renamed to `BarnesHutAcceleration`.
-- `IntoPointMass::point_mass` takes ownership of `self`.
-- `Storage::store` and `ParticleStorage::store_particles` parameter `I` bound to `IntoIterator<Item = P>`.
+- Built-in compute methods implemented with the different provided storage structs.
+- `ComputeMethod` no longer generic over `V`.
+- Renamed `WgpuData` to `WgpuResources`.
+- `gpu::BruteForce` holds a reference to a `wgpu::Device`, `wgpu::Queue` and a mutable reference to a `GpuData`.
+- Renamed `BruteForce` compute methods to `BruteForceScalar` for better differentiation with simd variant.
+- `BruteForceSIMD` generic over the lane count.
+- `build_node` takes `position` and `compute` functions instead of using traits and computes a square `BoundingBox`. Use `build_node_with` to provide a specific `BoundingBox`.
+- `Particle` trait only has the `Array` associated type and `position` expects this array type.
+- `accelerations` returns an iterator of arrays.
 
 ### Removed
 
-- Trait methods of `IntoVectorElement`.
-- `Element` trait.
-- `PointMass::into_element` method.
-- `simd::Vector::length` method.
+- `glam` dependency.
+- `BruteForcePairsAlt` and `BruteForcePairsCore` compute methods.
+- `MassiveAffected`, `MassiveAffectedSIMD` and `ParticleSet` structs.
+- `Storage`, `Compute`, `TreeData`, `Positionable` and `BarnesHutTree` traits.
+- `total_acceleration_scalar` and `total_acceleration_simd` `PointMass` methods.
+- `vector` module and its members.
 
 ## [0.6.1] - 2023-19-07
 

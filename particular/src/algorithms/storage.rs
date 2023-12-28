@@ -1,306 +1,276 @@
 use crate::{
     algorithms::{
-        internal, simd,
-        tree::{BarnesHutTree, BoundingBox, NodeID, SubDivide},
-        vector, Zero,
+        math::*,
+        tree::{BoundingBox, NodeID, SubDivide},
+        BarnesHutTree, PointMass,
     },
-    compute_method::Storage,
+    compute_method::ComputeMethod,
 };
 
-/// Point-mass representation of an object in space.
-#[derive(Debug, Default, Clone, Copy)]
-#[repr(C)]
-pub struct PointMass<V, S> {
-    /// Position of the object.
-    pub position: V,
-    /// Mass of the object.
-    pub mass: S,
-}
-
-impl<V: Zero, S: Zero> PointMass<V, S> {
-    const ZERO: Self = PointMass::new(V::ZERO, S::ZERO);
-}
-
-impl<V, S> PointMass<V, S> {
-    /// Creates a new [`PointMass`] with the given position and mass.
-    pub const fn new(position: V, mass: S) -> Self {
-        Self { position, mass }
-    }
-
-    /// Returns true if the mass is zero.
-    #[inline]
-    pub fn is_massless(&self) -> bool
-    where
-        S: Zero + PartialEq,
-    {
-        self.mass == S::ZERO
-    }
-
-    /// Returns false if the mass is zero.
-    #[inline]
-    pub fn is_massive(&self) -> bool
-    where
-        S: Zero + PartialEq,
-    {
-        self.mass != S::ZERO
-    }
-}
-
-impl<V, S> PointMass<V, S> {
-    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<T, S>`]
-    /// provided `V` implements [`Into<T>`].
-    #[inline]
-    pub fn into<T>(self) -> PointMass<T, S>
-    where
-        V: Into<T>,
-    {
-        PointMass::new(self.position.into(), self.mass)
-    }
-
-    /// Converts from a [`PointMass<V, S>`] to a [`PointMass<V::Internal, S>`]
-    /// provided `V` implements [`internal::IntoVectorArray`].
-    #[inline]
-    pub fn into_internal<const D: usize>(self) -> PointMass<V::Vector, S>
-    where
-        V: internal::ConvertInternal<D, S>,
-    {
-        PointMass::new(self.position.into_internal(), self.mass)
-    }
-}
-
-impl<V, S> PointMass<V, S> {
-    /// Computes the gravitational acceleration exerted on this particle by the provided particle
-    /// provided `S` and `V` implement [`internal::Scalar`] and [`internal::Vector`] respectively.
-    #[inline]
-    pub fn acceleration_internal(&self, particle: &Self) -> V
-    where
-        S: internal::Scalar,
-        V: internal::Vector<Scalar = S>,
-    {
-        let dir = particle.position - self.position;
-        let mag_2 = dir.length_squared();
-
-        if mag_2 != S::ZERO {
-            dir * particle.mass / (mag_2 * mag_2.sqrt())
-        } else {
-            dir
-        }
-    }
-
-    /// Computes the total gravitational acceleration exerted on this particle by the provided slice of particles
-    /// provided `S` and `V` implement [`internal::Scalar`] and [`internal::Vector`] respectively.
-    #[inline]
-    pub fn total_acceleration_internal(&self, particles: &[Self]) -> V
-    where
-        S: internal::Scalar,
-        V: internal::Vector<Scalar = S>,
-    {
-        particles.iter().fold(V::ZERO, |acceleration, p2| {
-            acceleration + self.acceleration_internal(p2)
-        })
-    }
-
-    /// Computes the gravitational acceleration exerted on this particle by the provided particle
-    /// provided `S` and `V` implement [`simd::Scalar`] and [`simd::Vector`] respectively.
-    #[inline]
-    pub fn acceleration_simd<const L: usize>(&self, particle: &Self) -> V
-    where
-        S: simd::Scalar<L>,
-        V: simd::Vector<L, Scalar = S>,
-    {
-        let dir = particle.position - self.position;
-        let mag_2 = dir.length_squared();
-        let grav_acc = dir * particle.mass * (mag_2.recip() * mag_2.recip_sqrt());
-
-        grav_acc.nan_to_zero()
-    }
-
-    /// Computes the total gravitational acceleration exerted on this particle by the provided slice of particles
-    /// provided `S` and `V` implement [`simd::Scalar`] and [`simd::Vector`] respectively.
-    #[inline]
-    pub fn total_acceleration_simd<const L: usize>(&self, particles: &[Self]) -> V
-    where
-        S: simd::Scalar<L>,
-        V: simd::Vector<L, Scalar = S>,
-    {
-        particles.iter().fold(V::ZERO, |acceleration, p2| {
-            acceleration + self.acceleration_simd(p2)
-        })
-    }
-}
-
-/// Simple storage for particles using a vector.
-#[derive(Debug, Default, Clone)]
-pub struct ParticleSetInternal<const D: usize, S, V>(pub Vec<PointMass<V::Vector, S>>)
-where
-    V: internal::ConvertInternal<D, S>;
-
-/// Storage for particles with massive and affected particles in two separate vectors.
-#[derive(Debug, Default, Clone)]
-pub struct MassiveAffected<T, S, TM = T, SM = S> {
-    /// Particles used to compute the acceleration of the `affected` particles.
-    pub massive: Vec<PointMass<TM, SM>>,
+/// Flexible, copyable storage with references to affected particles and a generic massive storage.
+#[derive(Debug)]
+pub struct ParticleSystem<'p, V, S, T: ?Sized> {
     /// Particles for which the acceleration is computed.
-    ///
-    /// This vector and the `massive` vector can share particles.
-    pub affected: Vec<PointMass<T, S>>,
+    pub affected: &'p [PointMass<V, S>],
+    /// Particle storage responsible for the acceleration exerted on the `affected` particles.
+    pub massive: &'p T,
 }
 
-impl<T, S> MassiveAffected<T, S> {
-    /// Creates a new [`MassiveAffected`] from the given vector of particles.
-    ///
-    /// This method populates the `affected` vector with the given particles and copies the ones with mass to the `massive` vector.
-    pub fn from_affected(affected: Vec<PointMass<T, S>>) -> Self
-    where
-        S: Copy + Zero + PartialEq,
-        T: Copy,
-    {
-        let massive = affected
+impl<V, S, T: ?Sized> Clone for ParticleSystem<'_, V, S, T> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl<V, S, T: ?Sized> Copy for ParticleSystem<'_, V, S, T> {}
+
+impl<'p, V, S, T: ?Sized> ParticleSystem<'p, V, S, T> {
+    /// Creates a new [`ParticleSystem`] with the given slice of particles and massive storage.
+    #[inline]
+    pub const fn with(affected: &'p [PointMass<V, S>], massive: &'p T) -> Self {
+        Self { affected, massive }
+    }
+}
+
+/// [`ParticleSystem`] with a slice of particles for the massive storage.
+pub type ParticleSliceSystem<'p, V, S> = ParticleSystem<'p, V, S, [PointMass<V, S>]>;
+
+/// Storage with particles in a [`BarnesHutTree`].
+#[derive(Clone, Debug)]
+pub struct ParticleTree<const X: usize, const D: usize, V, S> {
+    root: Option<NodeID>,
+    tree: BarnesHutTree<X, D, V, S>,
+}
+
+impl<const X: usize, const D: usize, V, S> ParticleTree<X, D, V, S> {
+    /// Returns the root of the [`BarnesHutTree`].
+    #[inline]
+    pub const fn root(&self) -> Option<NodeID> {
+        self.root
+    }
+
+    /// Returns a reference to the [`BarnesHutTree`].
+    #[inline]
+    pub const fn tree(&self) -> &BarnesHutTree<X, D, V, S> {
+        &self.tree
+    }
+}
+
+impl<const X: usize, const D: usize, V, S> From<&[PointMass<V, S>]> for ParticleTree<X, D, V, S>
+where
+    V: Copy + FloatVector<Float = S, Array = [S; D]>,
+    S: Copy + Float + Sum + PartialOrd + FromPrimitive<usize>,
+    BoundingBox<[S; D]>: SubDivide<Division = [BoundingBox<[S; D]>; X]>,
+{
+    #[inline]
+    fn from(slice: &[PointMass<V, S>]) -> Self {
+        let mut tree = BarnesHutTree::with_capacity(slice.len());
+        let root = tree.build_node(slice, |p| p.position.into(), PointMass::new_com);
+
+        Self { root, tree }
+    }
+}
+
+/// [`ParticleSystem`] with a [`ParticleTree`] for the massive storage.
+pub type ParticleTreeSystem<'p, const X: usize, const D: usize, V, S> =
+    ParticleSystem<'p, V, S, ParticleTree<X, D, V, S>>;
+
+/// Storage inside of which the massive particles are placed before the massless ones.
+///
+/// Allows for easy optimisation of the computation of forces between massive and massless particles.
+#[derive(Clone, Debug)]
+pub struct ParticleOrdered<V, S> {
+    massive_len: usize,
+    particles: Vec<PointMass<V, S>>,
+}
+
+impl<V, S> ParticleOrdered<V, S> {
+    /// Returns the number of stored massive particles.
+    #[inline]
+    pub const fn massive_len(&self) -> usize {
+        self.massive_len
+    }
+
+    /// Returns a reference to the massive particles.
+    #[inline]
+    pub fn massive(&self) -> &[PointMass<V, S>] {
+        &self.particles[..self.massive_len]
+    }
+
+    /// Returns a reference to the massless particles.
+    #[inline]
+    pub fn massless(&self) -> &[PointMass<V, S>] {
+        &self.particles[self.massive_len..]
+    }
+
+    /// Returns a reference to the particles.
+    #[inline]
+    pub fn particles(&self) -> &[PointMass<V, S>] {
+        &self.particles
+    }
+
+    /// Returns a mutable reference to the massive particles.
+    #[inline]
+    pub fn massive_mut(&mut self) -> &mut [PointMass<V, S>] {
+        &mut self.particles[..self.massive_len]
+    }
+
+    /// Returns a mutable reference to the massless particles.
+    #[inline]
+    pub fn massless_mut(&mut self) -> &mut [PointMass<V, S>] {
+        &mut self.particles[self.massive_len..]
+    }
+
+    /// Returns a mutable reference to the stored ordered particles.
+    #[inline]
+    pub fn particles_mut(&mut self) -> &mut [PointMass<V, S>] {
+        &mut self.particles
+    }
+}
+
+impl<V, S> From<&[PointMass<V, S>]> for ParticleOrdered<V, S>
+where
+    V: Clone,
+    S: Clone + PartialEq + Zero,
+{
+    #[inline]
+    fn from(particles: &[PointMass<V, S>]) -> Self {
+        let particles: Vec<_> = particles
             .iter()
             .filter(|p| p.is_massive())
-            .copied()
+            .chain(particles.iter().filter(|p| p.is_massless()))
+            .cloned()
             .collect();
 
-        Self { massive, affected }
-    }
-}
-
-/// Storage for particles with massive and affected particles in two separate vectors using arrays for the position.
-#[derive(Debug, Default, Clone)]
-pub struct MassiveAffectedArray<const D: usize, S, V>(pub MassiveAffected<V::Array, S>)
-where
-    V: vector::ConvertArray<D, S>;
-
-/// Storage for particles with massive and affected particles in two separate vectors using [`internal::Vector`]s for the position.
-#[derive(Debug, Default, Clone)]
-pub struct MassiveAffectedInternal<const D: usize, S, V>(pub MassiveAffected<V::Vector, S>)
-where
-    V: internal::ConvertInternal<D, S>;
-
-/// Storage for particles with massive and affected particles in two separate vectors.
-///
-/// Particles are stored using [`simd::Vector`] and [`simd::Scalar`] for the massive ones and arrays for the affected ones.
-#[derive(Clone)]
-pub struct MassiveAffectedSIMD<const L: usize, const D: usize, S, V>(
-    pub MassiveAffected<V::Array, S, V::Vector, V::Scalar>,
-)
-where
-    V: simd::ConvertSIMD<L, D, S>;
-
-/// Storage with a [`BarnesHutTree`] built from the massive particles and with affected particles in another vector.
-#[derive(Debug, Default, Clone)]
-pub struct TreeAffectedInternal<const N: usize, const D: usize, S, V>
-where
-    V: internal::ConvertInternal<D, S>,
-{
-    /// [`BarnesHutTree`] built from the massive particles.
-    pub tree: BarnesHutTree<N, D, V::Vector, S>,
-    /// Root of the `tree`.
-    pub root: Option<NodeID>,
-    /// Particles for which the acceleration is computed.
-    pub affected: Vec<PointMass<V::Vector, S>>,
-}
-
-impl<const D: usize, S, V> Storage<PointMass<V, S>> for ParticleSetInternal<D, S, V>
-where
-    V: internal::ConvertInternal<D, S>,
-{
-    #[inline]
-    fn store<I>(input: I) -> Self
-    where
-        I: IntoIterator<Item = PointMass<V, S>>,
-    {
-        Self(input.into_iter().map(PointMass::into_internal).collect())
-    }
-}
-
-impl<const D: usize, S, V> Storage<PointMass<V, S>> for MassiveAffectedArray<D, S, V>
-where
-    S: Copy + Zero + PartialEq,
-    V: vector::ConvertArray<D, S, Array = [S; D]>,
-{
-    #[inline]
-    fn store<I>(input: I) -> Self
-    where
-        I: IntoIterator<Item = PointMass<V, S>>,
-    {
-        Self(MassiveAffected::from_affected(
-            input.into_iter().map(PointMass::into).collect(),
-        ))
-    }
-}
-
-impl<const D: usize, S, V> Storage<PointMass<V, S>> for MassiveAffectedInternal<D, S, V>
-where
-    S: Copy + Zero + PartialEq,
-    V: internal::ConvertInternal<D, S>,
-{
-    #[inline]
-    fn store<I>(input: I) -> Self
-    where
-        I: IntoIterator<Item = PointMass<V, S>>,
-    {
-        Self(MassiveAffected::from_affected(
-            input.into_iter().map(PointMass::into_internal).collect(),
-        ))
-    }
-}
-
-impl<const L: usize, const D: usize, S, V> Storage<PointMass<V, S>>
-    for MassiveAffectedSIMD<L, D, S, V>
-where
-    S: Copy + Zero + PartialEq,
-    V: simd::ConvertSIMD<L, D, S>,
-{
-    #[inline]
-    fn store<I>(input: I) -> Self
-    where
-        I: IntoIterator<Item = PointMass<V, S>>,
-    {
-        let affected = input.into_iter().map(PointMass::into).collect();
-        let MassiveAffected { massive, affected } = MassiveAffected::from_affected(affected);
-
-        let massive = massive
-            .chunks(L)
-            .map(|slice| {
-                let mut body_8 = [PointMass::ZERO; L];
-                body_8[..slice.len()].copy_from_slice(slice);
-                PointMass::new(
-                    simd::SIMD::from_lanes(body_8.map(|p| p.position)),
-                    simd::SIMD::from_lanes(body_8.map(|p| p.mass)),
-                )
-            })
-            .collect();
-
-        Self(MassiveAffected { massive, affected })
-    }
-}
-
-impl<const N: usize, const D: usize, S, V> Storage<PointMass<V, S>>
-    for TreeAffectedInternal<N, D, S, V>
-where
-    S: internal::Scalar,
-    V: internal::ConvertInternal<D, S>,
-    BoundingBox<V::Array>: SubDivide<Divison = [BoundingBox<V::Array>; N]>,
-{
-    #[inline]
-    fn store<I>(input: I) -> Self
-    where
-        I: IntoIterator<Item = PointMass<V, S>>,
-    {
-        let affected = input.into_iter().map(PointMass::into_internal).collect();
-        let MassiveAffected { massive, affected } = MassiveAffected::from_affected(affected);
-
-        let mut tree = BarnesHutTree::new();
-        let root = tree.build_node(
-            &massive,
-            BoundingBox::square_with(massive.iter().map(|p| p.position.into())),
-        );
+        let massive_len = particles
+            .iter()
+            .position(PointMass::is_massless)
+            .unwrap_or(particles.len());
 
         Self {
-            tree,
-            root,
-            affected,
+            massive_len,
+            particles,
         }
+    }
+}
+
+/// Storage for particles which has a copy of the stored particles inside a [`ParticleOrdered`].
+#[derive(Clone, Debug)]
+pub struct ParticleReordered<'p, V, S> {
+    /// Original, unordered particles.
+    pub unordered: &'p [PointMass<V, S>],
+    ordered: ParticleOrdered<V, S>,
+}
+
+impl<V, S> ParticleReordered<'_, V, S> {
+    /// Returns a reference to the [`ParticleOrdered`].
+    #[inline]
+    pub const fn ordered(&self) -> &ParticleOrdered<V, S> {
+        &self.ordered
+    }
+
+    /// Returns the number of stored massive particles.
+    #[inline]
+    pub const fn massive_len(&self) -> usize {
+        self.ordered.massive_len()
+    }
+
+    /// Returns a reference to the massive particles.
+    #[inline]
+    pub fn massive(&self) -> &[PointMass<V, S>] {
+        self.ordered.massive()
+    }
+
+    /// Returns a reference to the massless particles.
+    #[inline]
+    pub fn massless(&self) -> &[PointMass<V, S>] {
+        self.ordered.massless()
+    }
+
+    /// Returns a reference to the stored ordered particles.
+    #[inline]
+    pub fn reordered(&self) -> &[PointMass<V, S>] {
+        self.ordered.particles()
+    }
+}
+
+impl<'p, V, S> From<&'p [PointMass<V, S>]> for ParticleReordered<'p, V, S>
+where
+    V: Clone,
+    S: Clone + Zero + PartialEq,
+{
+    #[inline]
+    fn from(affected: &'p [PointMass<V, S>]) -> Self {
+        Self {
+            unordered: affected,
+            ordered: ParticleOrdered::from(affected),
+        }
+    }
+}
+
+impl<const X: usize, const D: usize, V, S, C, O> ComputeMethod<ParticleSliceSystem<'_, V, S>> for C
+where
+    O: IntoIterator,
+    for<'a> C: ComputeMethod<ParticleTreeSystem<'a, X, D, V, S>, Output = O>,
+    V: Copy + FloatVector<Float = S, Array = [S; D]>,
+    S: Copy + Float + Sum + PartialOrd + FromPrimitive<usize>,
+    BoundingBox<[S; D]>: SubDivide<Division = [BoundingBox<[S; D]>; X]>,
+{
+    type Output = O;
+
+    #[inline]
+    fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
+        self.compute(ParticleTreeSystem {
+            affected: system.affected,
+            massive: &ParticleTree::from(system.massive),
+        })
+    }
+}
+
+impl<V, S, C, O> ComputeMethod<&[PointMass<V, S>]> for C
+where
+    O: IntoIterator,
+    for<'a> C: ComputeMethod<ParticleSliceSystem<'a, V, S>, Output = O>,
+{
+    type Output = O;
+
+    #[inline]
+    fn compute(&mut self, slice: &[PointMass<V, S>]) -> Self::Output {
+        self.compute(ParticleSliceSystem {
+            affected: slice,
+            massive: slice,
+        })
+    }
+}
+
+impl<V, S, C, O> ComputeMethod<&ParticleOrdered<V, S>> for C
+where
+    O: IntoIterator,
+    for<'a> C: ComputeMethod<ParticleSliceSystem<'a, V, S>, Output = O>,
+{
+    type Output = O;
+
+    #[inline]
+    fn compute(&mut self, ordered: &ParticleOrdered<V, S>) -> Self::Output {
+        self.compute(ParticleSliceSystem {
+            affected: ordered.particles(),
+            massive: ordered.massive(),
+        })
+    }
+}
+
+impl<V, S, C, O> ComputeMethod<ParticleReordered<'_, V, S>> for C
+where
+    O: IntoIterator,
+    for<'a> C: ComputeMethod<ParticleSliceSystem<'a, V, S>, Output = O>,
+{
+    type Output = O;
+
+    #[inline]
+    fn compute(&mut self, reordered: ParticleReordered<V, S>) -> Self::Output {
+        self.compute(ParticleSliceSystem {
+            affected: reordered.unordered,
+            massive: reordered.massive(),
+        })
     }
 }

@@ -25,30 +25,31 @@
 //!
 //! When possible, it can be useful to implement [`Particle`](particle::Particle) on a type.
 //!
-//! #### Deriving
+//! #### Deriving:
 //!
 //! Used when the type has fields named `position` and `mu`:
 //!
 //! ```
 //! # use particular::prelude::*;
-//! # use glam::Vec3;
+//! # use ultraviolet::Vec3;
 //! #
 //! #[derive(Particle)]
+//! #[dim(3)]
 //! struct Body {
 //!     position: Vec3,
 //!     mu: f32,
 //! //  ...
 //! }
 //! ```
-//! #### Manual implementation
+//! #### Manual implementation:
 //!
-//! Used when the type does not directly provide a position and a gravitational parameter.
+//! Used when the type cannot directly provide a position and a gravitational parameter.
 //!
 //! ```
 //! # const G: f32 = 1.0;
 //! #
 //! # use particular::prelude::*;
-//! # use glam::Vec3;
+//! # use ultraviolet::Vec3;
 //! #
 //! struct Body {
 //!     position: Vec3,
@@ -57,12 +58,10 @@
 //! }
 //!
 //! impl Particle for Body {
-//!     type Scalar = f32;
+//!     type Array = [f32; 3];
 //!
-//!     type Vector = Vec3;
-//!
-//!     fn position(&self) -> Vec3 {
-//!         self.position
+//!     fn position(&self) -> [f32; 3] {
+//!         self.position.into()
 //!     }
 //!     
 //!     fn mu(&self) -> f32 {
@@ -71,67 +70,67 @@
 //! }
 //! ```
 //!
-//! If you can't implement [`Particle`](particle::Particle) on a type, you can almost certainly use the fact that it is implemented for tuples of a vector and its scalar type.
+//! If you can't implement [`Particle`] on a type, you can use the fact that it is implemented for tuples of an array and its scalar type instead of creating an intermediate type.
 //!
 //! ```
 //! # use particular::prelude::*;
-//! # use glam::Vec3;
-//! let particle = (Vec3::ONE, 5.0);
+//! let particle = ([1.0, 1.0, 0.0], 5.0);
 //!
-//! assert_eq!(particle.position(), Vec3::ONE);
+//! assert_eq!(particle.position(), [1.0, 1.0, 0.0]);
 //! assert_eq!(particle.mu(), 5.0);
 //! ```
 //!
 //! ### Computing and using the gravitational acceleration
 //!
 //! In order to compute the accelerations of your particles, you can use the [accelerations](particle::Accelerations::accelerations) method on iterators,
-//! passing in a [`ComputeMethod`](compute_method::ComputeMethod) of your choice.
+//! passing in a mutable reference to a [`ComputeMethod`](compute_method::ComputeMethod) of your choice.
 //!
 //! ### Examples
 //!
 //! #### When the iterated type doesn't implement [`Particle`](particle::Particle)
 //! ```
 //! # use particular::prelude::*;
-//! # use glam::Vec3;
+//! # use ultraviolet::Vec3;
 //! #
 //! # const DT: f32 = 1.0 / 60.0;
 //! # const G: f32 = 1.0;
-//! # let mut cm = sequential::BruteForce;
+//! # let mut cm = sequential::BruteForceScalar;
 //! #
 //! # let mut items = vec![
-//! #     (Vec3::ZERO, Vec3::NEG_ONE, 5.0),
-//! #     (Vec3::ZERO, Vec3::ZERO, 3.0),
-//! #     (Vec3::ZERO, Vec3::ONE, 10.0),
+//! #     (Vec3::zero(), -Vec3::one(), 5.0),
+//! #     (Vec3::zero(), Vec3::zero(), 3.0),
+//! #     (Vec3::zero(), Vec3::one(), 10.0),
 //! # ];
 //! // Items are a tuple of a velocity, a position and a mass.
-//! // We map them to a tuple of the position and the mu, since this implements `Particle`.
+//! // We map them to a tuple of the positions as an array and the mu, since this implements `Particle`.
 //! let accelerations = items
 //!     .iter()
-//!     .map(|(_, position, mass)| (*position, *mass * G))
-//!     .accelerations(cm);
+//!     .map(|(_, position, mass)| (*position.as_array(), *mass * G))
+//!     .accelerations(&mut cm);
 //!
 //! for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
-//!     *velocity += acceleration * DT;
+//!     *velocity += Vec3::from(acceleration) * DT;
 //!     *position += *velocity * DT;
 //! }
 //! ```
 //! #### When the iterated type implements [`Particle`](particle::Particle)
 //! ```
 //! # use particular::prelude::*;
-//! # use glam::Vec3;
+//! # use ultraviolet::Vec3;
 //! #
 //! # const DT: f32 = 1.0 / 60.0;
-//! # let mut cm = sequential::BruteForce;
+//! # let mut cm = sequential::BruteForceScalar;
 //! #
 //! # #[derive(Particle)]
+//! #[dim(3)]
 //! # struct Body {
 //! #     position: Vec3,
 //! #     velocity: Vec3,
 //! #     mu: f32,
 //! # }
 //! # let mut bodies = Vec::<Body>::new();
-//! for (acceleration, body) in bodies.iter().accelerations(cm).zip(&mut bodies) {
-//!     body.velocity += acceleration * DT;
+//! for (acceleration, body) in bodies.iter().accelerations(&mut cm).zip(&mut bodies) {
+//!     body.velocity += Vec3::from(acceleration) * DT;
 //!     body.position += body.velocity * DT;
 //! }
 //! ```
@@ -145,15 +144,12 @@
 
 #![warn(missing_docs)]
 
-/// Traits to perform computation of values from iterators.
-pub mod compute_method;
-
-/// Traits for particle representation of objects and computing their acceleration.
-pub mod particle;
-
 /// Algorithms to compute the acceleration of particles.
 pub mod algorithms;
-
+/// Traits to perform computation of values from iterators.
+pub mod compute_method;
+/// Traits for particle representation of objects and computing their acceleration.
+pub mod particle;
 /// Derive macro for the [`Particle`](crate::particle::Particle) trait.
 pub mod particular_derive {
     pub use particular_derive::Particle;
@@ -164,8 +160,8 @@ pub mod prelude {
     #[doc(hidden)]
     pub use crate::{
         algorithms::compute_methods::*,
-        compute_method::{ComputeMethod, Storage},
-        particle::{Accelerations, IntoPointMass, Particle, ParticlePointMass, ParticleStorage},
+        compute_method::ComputeMethod,
+        particle::{Accelerations, IntoPointMass, Particle},
         particular_derive::Particle,
     };
 }
