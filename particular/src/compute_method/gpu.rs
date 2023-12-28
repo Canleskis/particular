@@ -1,15 +1,12 @@
 use crate::compute_method::{
     gpu_compute, math::Zero, point_mass::PointMass, storage::ParticleSliceSystem, ComputeMethod,
 };
-
-type Vec3 = <[f32; 3] as crate::particle::ScalarArray>::Vector;
-
-const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass<Vec3, f32>>() as u64;
+use ultraviolet::Vec3;
 
 /// Initialized data used by `wgpu` for computing on the GPU.
 pub struct GpuData {
-    affected_count: u64,
-    massive_count: u64,
+    affected_count: usize,
+    massive_count: usize,
     resources: Option<gpu_compute::WgpuResources>,
 }
 
@@ -26,15 +23,14 @@ impl GpuData {
 
     /// Creates a new [`BruteForce`] instance with initialized buffers and pipeline.
     #[inline]
-    pub fn new_init(affected_count: usize, massive_count: usize, device: &wgpu::Device) -> Self {
-        let (affected_count, massive_count) = (affected_count as u64, massive_count as u64);
+    pub fn new_init(device: &wgpu::Device, affected_count: usize, massive_count: usize) -> Self {
         Self {
             affected_count,
             massive_count,
             resources: Some(gpu_compute::WgpuResources::init(
-                affected_count * PARTICLE_SIZE,
-                massive_count * PARTICLE_SIZE,
                 device,
+                affected_count,
+                massive_count,
             )),
         }
     }
@@ -42,16 +38,12 @@ impl GpuData {
     #[inline]
     fn get_or_init(&mut self, device: &wgpu::Device) -> &mut gpu_compute::WgpuResources {
         self.resources.get_or_insert_with(|| {
-            gpu_compute::WgpuResources::init(
-                self.affected_count * PARTICLE_SIZE,
-                self.massive_count * PARTICLE_SIZE,
-                device,
-            )
+            gpu_compute::WgpuResources::init(device, self.affected_count, self.massive_count)
         })
     }
 
     #[inline]
-    fn update(&mut self, affected_count: u64, massive_count: u64) {
+    fn update(&mut self, affected_count: usize, massive_count: usize) {
         if self.affected_count != affected_count || self.massive_count != massive_count {
             self.affected_count = affected_count;
             self.massive_count = massive_count;
@@ -101,8 +93,8 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForce<'_> {
 
     #[inline]
     fn compute(&mut self, system: ParticleSliceSystem<'_, Vec3, f32>) -> Self::Output {
-        let affected_count = system.affected.len() as u64;
-        let massive_count = system.massive.len() as u64;
+        let affected_count = system.affected.len();
+        let massive_count = system.massive.len();
 
         if massive_count == 0 {
             return system.affected.iter().map(|_| Vec3::ZERO).collect();
@@ -120,12 +112,7 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForce<'_> {
             (affected_count as f32 / 256.0).ceil() as u32,
         );
 
-        gpu_data
-            // vec3<f32> is 16 byte aligned.
-            .read_accelerations::<ultraviolet::Vec4>(self.device)
-            .iter()
-            .map(|a| a.truncated())
-            .collect()
+        gpu_data.read_accelerations(self.device)
     }
 }
 

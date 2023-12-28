@@ -1,3 +1,8 @@
+use ultraviolet::{Vec3, Vec4};
+
+type PointMass = crate::point_mass::PointMass<Vec3, f32>;
+
+/// All the `wgpu` resources needed to perform the computation on the GPU.
 pub struct WgpuResources {
     bind_group: wgpu::BindGroup,
     buffer_affected: wgpu::Buffer,
@@ -8,8 +13,12 @@ pub struct WgpuResources {
 }
 
 impl WgpuResources {
+    /// Creates a new [`WgpuResources`] with the given [`wgpu::Device`] and size in bytes of affected and massive particles.
     #[inline]
-    pub fn init(affected_size: u64, massive_size: u64, device: &wgpu::Device) -> Self {
+    pub fn init(device: &wgpu::Device, affected_count: usize, massive_count: usize) -> Self {
+        let affected_size = (std::mem::size_of::<PointMass>() * affected_count) as u64;
+        let massive_size = (std::mem::size_of::<PointMass>() * massive_count) as u64;
+
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(include_str!("compute.wgsl").into()),
@@ -121,6 +130,7 @@ impl WgpuResources {
         }
     }
 
+    /// Performs the computation on the GPU.
     #[inline]
     pub fn compute_pass(&self, device: &wgpu::Device, queue: &wgpu::Queue, work_group_count: u32) {
         let encoder_descriptor = wgpu::CommandEncoderDescriptor { label: None };
@@ -145,33 +155,38 @@ impl WgpuResources {
             self.buffer_accelerations.size(),
         );
 
-        queue.submit(Some(encoder.finish()));
+        queue.submit([encoder.finish()]);
     }
 
+    /// Write the given affected and massive particles to GPU buffers.
     #[inline]
-    pub fn write_particle_data<T>(&self, affected: &[T], massive: &[T], queue: &wgpu::Queue)
-    where
-        T: bytemuck::NoUninit,
-    {
+    pub fn write_particle_data(
+        &self,
+        affected: &[PointMass],
+        massive: &[PointMass],
+        queue: &wgpu::Queue,
+    ) {
         queue.write_buffer(&self.buffer_affected, 0, bytemuck::cast_slice(affected));
         queue.write_buffer(&self.buffer_massive, 0, bytemuck::cast_slice(massive));
     }
 
+    /// Read the accelerations from the corresponding buffer.
     #[inline]
-    pub fn read_accelerations<T>(&self, device: &wgpu::Device) -> Vec<T>
-    where
-        T: bytemuck::AnyBitPattern,
-    {
+    pub fn read_accelerations(&self, device: &wgpu::Device) -> Vec<Vec3> {
         let buffer = self.buffer_staging.slice(..);
         buffer.map_async(wgpu::MapMode::Read, |_| {});
         device.poll(wgpu::Maintain::Wait);
 
         let data = buffer.get_mapped_range();
-        let result = bytemuck::cast_slice(&data).to_vec();
+        // vec3<f32> is 16 byte aligned so we need to cast to a slice of `Vec4`.
+        let accelerations = bytemuck::cast_slice(&data)
+            .iter()
+            .map(Vec4::truncated)
+            .collect();
 
         drop(data);
         self.buffer_staging.unmap();
 
-        result
+        accelerations
     }
 }
