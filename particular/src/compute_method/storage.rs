@@ -212,7 +212,7 @@ impl<V, S> PointMass<V, S> {
         self.force_mul_mass_simd::<CHECK_ZERO>(point_mass.position, point_mass.mass)
     }
 
-    /// Computes the gravitational acceleration exerted on the current point-mass by the specified node of the given [`BarnesHutTree`] following the
+    /// Computes the gravitational acceleration exerted on the current point-mass by the specified node of the given [`Orthtree`] following the
     /// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) approximation with the given `theta` parameter,
     /// provided `V` and `S` are scalar types.
     #[inline]
@@ -280,7 +280,7 @@ impl<'p, V, S, T: ?Sized> ParticleSystem<'p, V, S, T> {
 /// [`ParticleSystem`] with a slice of particles for the massive storage.
 pub type ParticleSliceSystem<'p, V, S> = ParticleSystem<'p, V, S, [PointMass<V, S>]>;
 
-/// Storage with particles in a [`BarnesHutTree`].
+/// Storage with particles in a [`Orthtree`].
 #[derive(Clone, Debug)]
 pub struct ParticleTree<const X: usize, const D: usize, V, S> {
     root: Option<NodeID>,
@@ -288,13 +288,13 @@ pub struct ParticleTree<const X: usize, const D: usize, V, S> {
 }
 
 impl<const X: usize, const D: usize, V, S> ParticleTree<X, D, V, S> {
-    /// Returns the root of the [`BarnesHutTree`].
+    /// Returns the root of the [`Orthtree`].
     #[inline]
     pub const fn root(&self) -> Option<NodeID> {
         self.root
     }
 
-    /// Returns a reference to the [`BarnesHutTree`].
+    /// Returns a reference to the [`Orthtree`].
     #[inline]
     pub const fn tree(&self) -> &Orthtree<X, D, S, PointMass<V, S>> {
         &self.tree

@@ -5,7 +5,7 @@ use rand::prelude::*;
 
 type Scalar = f32;
 type Vector = ultraviolet::Vec3;
-type PointMass = particular::point_mass::PointMass<Vector, Scalar>;
+type PointMass = particular::storage::PointMass<Vector, Scalar>;
 
 fn gen_range_vector<const N: usize, V>(rng: &mut StdRng, range: std::ops::Range<Scalar>) -> V
 where

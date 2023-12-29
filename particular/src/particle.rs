@@ -139,7 +139,7 @@ where
 {
 }
 
-/// Trait to perform the computation of accelerations using a provided [`ComputeMethod`] from an iterator of [`Particle`] objects.
+/// Trait to compute accelerations from an iterator of [`Particle`] objects.
 pub trait Accelerations: Iterator + Sized
 where
     Self::Item: Particle,
@@ -158,9 +158,9 @@ where
     #[inline]
     fn accelerations<C>(self, cm: &mut C) -> IntoIter<ParticleArray<Self::Item>>
     where
-        ParticleArray<Self::Item>: ScalarArray,
-        ParticleScalar<Self::Item>: Float,
         C: ReorderedCompute<Self::Item>,
+        ParticleScalar<Self::Item>: Float,
+        ParticleArray<Self::Item>: ScalarArray,
     {
         #[inline]
         fn scalar_to_array<A>(vec: Vec<A::Vector>) -> Vec<A>

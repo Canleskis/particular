@@ -21,11 +21,11 @@
 //!
 //! ## Using Particular
 //!
-//! ### Implementing the [`Particle`](particle::Particle) trait
+//! ### Implementing the [`Particle`] trait
 //!
-//! When possible, it can be useful to implement [`Particle`](particle::Particle) on a type.
+//! When possible, it can be useful to implement [`Particle`] on a type.
 //!
-//! #### Deriving:
+//! #### Deriving
 //!
 //! Used when the type has fields named `position` and `mu`:
 //!
@@ -41,9 +41,9 @@
 //! //  ...
 //! }
 //! ```
-//! #### Manual implementation:
+//! #### Manual implementation
 //!
-//! Used when the type cannot directly provide a position and a gravitational parameter.
+//! Used when the type does not directly provide a position and a gravitational parameter.
 //!
 //! ```
 //! # const G: f32 = 1.0;
@@ -82,12 +82,10 @@
 //!
 //! ### Computing and using the gravitational acceleration
 //!
-//! In order to compute the accelerations of your particles, you can use the [accelerations](particle::Accelerations::accelerations) method on iterators,
-//! passing in a mutable reference to a [`ComputeMethod`](compute_method::ComputeMethod) of your choice.
+//! In order to compute the accelerations of your particles, you can use the [`accelerations`] method on iterators,
+//! passing in a mutable reference to a [`ComputeMethod`] of your choice.
 //!
-//! ### Examples
-//!
-//! #### When the iterated type doesn't implement [`Particle`](particle::Particle)
+//! #### When the iterated type doesn't implement [`Particle`]
 //! ```
 //! # use particular::prelude::*;
 //! # use ultraviolet::Vec3;
@@ -113,7 +111,7 @@
 //!     *position += *velocity * DT;
 //! }
 //! ```
-//! #### When the iterated type implements [`Particle`](particle::Particle)
+//! #### When the iterated type implements [`Particle`]
 //! ```
 //! # use particular::prelude::*;
 //! # use ultraviolet::Vec3;
@@ -141,6 +139,10 @@
 //!
 //! Depending on your needs and platform, you may opt for one compute method or another.
 //! You can also implement the trait on your own type to use other algorithms or combine multiple compute methods and switch between them depending on certain conditions (e.g. the particle count).
+//!
+//! [`Particle`]: particle::Particle
+//! [`ComputeMethod`]: compute_method::ComputeMethod
+//! [`accelerations`]: particle::Accelerations::accelerations
 
 #![warn(missing_docs)]
 

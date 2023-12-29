@@ -23,7 +23,7 @@ fn impl_particle(input: syn::Result<syn::DeriveInput>) -> syn::Result<proc_macro
             syn::Error::new_spanned(
                 &input.generics,
                 "no `#[dim]` attribute\n\
-                add `#[dim(arg)]` with the dimension of the particle's position as the argument",
+                add `#[dim(arg)]` with the dimension of the particle as the argument",
             )
         })?
         .parse_args::<syn::LitInt>()?

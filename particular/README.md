@@ -39,6 +39,7 @@ Used when the type has fields named `position` and `mu`:
 
 ```rust
 #[derive(Particle)]
+#[dim(3)]
 struct Body {
     position: Vec3,
     mu: f32,
@@ -58,12 +59,10 @@ struct Body {
 }
 
 impl Particle for Body {
-    type Scalar = f32;
+    type Array = [f32; 3];
 
-    type Vector = Vec3;
-    
-    fn position(&self) -> Vec3 {
-        self.position
+    fn position(&self) -> [f32; 3] {
+        self.position.into()
     }
     
     fn mu(&self) -> f32 {
@@ -72,33 +71,31 @@ impl Particle for Body {
 }
 ```
 
-If you can't implement [`Particle`] on a type, you can almost certainly use the fact that it is implemented for tuples of a vector and its scalar type.
+If you can't implement [`Particle`] on a type, you can use the fact that it is implemented for tuples of an array and its scalar type instead of creating an intermediate type.
 
 ```rust
-let particle = (Vec3::ONE, 5.0);
+let particle = ([1.0, 1.0, 0.0], 5.0);
 
-assert_eq!(particle.position(), Vec3::ONE);
+assert_eq!(particle.position(), [1.0, 1.0, 0.0]);
 assert_eq!(particle.mu(), 5.0);
 ```
 
 ### Computing and using the gravitational acceleration
 
-In order to compute the accelerations of your particles, you can use the [accelerations] method on iterators, passing in a [`ComputeMethod`] of your choice.
-
-### Examples
+In order to compute the accelerations of your particles, you can use the [`accelerations`] method on iterators, passing in a mutable reference to a [`ComputeMethod`] of your choice.
 
 #### When the iterated type doesn't implement [`Particle`]
 
 ```rust
 // Items are a tuple of a velocity, a position and a mass.
-// We map them to a tuple of the position and the mu, since this implements `Particle`.
+// We map them to a tuple of the positions as an array and the mu, since this implements `Particle`.
 let accelerations = items
     .iter()
-    .map(|(_, position, mass)| (*position, *mass * G))
-    .accelerations(cm);
+    .map(|(_, position, mass)| (*position.as_array(), *mass * G))
+    .accelerations(&mut cm);
 
 for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
-    *velocity += acceleration * DT;
+    *velocity += Vec3::from(acceleration) * DT;
     *position += *velocity * DT;
 }
 ```
@@ -106,8 +103,8 @@ for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
 #### When the iterated type implements [`Particle`]
 
 ```rust
-for (acceleration, body) in bodies.iter().accelerations(cm).zip(&mut bodies) {
-    body.velocity += acceleration * DT;
+for (acceleration, body) in bodies.iter().accelerations(&mut cm).zip(&mut bodies) {
+    body.velocity += Vec3::from(acceleration) * DT;
     body.position += body.velocity * DT;
 }
 ```
@@ -132,5 +129,5 @@ This project is licensed under either of [Apache License, Version 2.0](https://g
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project by you, as defined in the Apache 2.0 license, shall be dual licensed as above, without any additional terms or conditions.
 
 [`Particle`]: https://docs.rs/particular/latest/particular/particle/trait.Particle.html
-[accelerations]: https://docs.rs/particular/latest/particular/particle/trait.Accelerations.html#method.accelerations
 [`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
+[`accelerations`]: https://docs.rs/particular/latest/particular/particle/trait.Accelerations.html#method.accelerations
