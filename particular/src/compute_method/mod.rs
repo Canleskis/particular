@@ -3,9 +3,8 @@
 pub mod gpu_compute;
 /// Trait abstractions for generic vectors and associated floating-point numbers.
 pub mod math;
-/// Representation of the position and mass of an object in N-dimensional space and the operations to compute gravitational forces.
-pub mod point_mass;
-/// Storages used by built-in [`ComputeMethods`](crate::compute_method::ComputeMethod).
+/// Representation of the position and mass of an object in N-dimensional space, operations to compute
+/// gravitational forces and the storages used by built-in [`ComputeMethods`](crate::compute_method::ComputeMethod).
 pub mod storage;
 /// Tree, bounding box and BarnesHut implementation details.
 pub mod tree;
@@ -49,7 +48,7 @@ pub trait ComputeMethod<Storage> {
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use crate::{compute_method::point_mass::PointMass, compute_method::ComputeMethod};
+    use crate::{compute_method::storage::PointMass, compute_method::ComputeMethod};
     use ultraviolet::Vec3;
 
     pub fn acceleration_error<C>(mut cm: C, epsilon: f32)

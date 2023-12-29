@@ -1,5 +1,8 @@
 use crate::compute_method::{
-    gpu_compute, math::Zero, point_mass::PointMass, storage::ParticleSliceSystem, ComputeMethod,
+    gpu_compute,
+    math::Zero,
+    storage::{ParticleSliceSystem, PointMass},
+    ComputeMethod,
 };
 use ultraviolet::Vec3;
 

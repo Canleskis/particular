@@ -1,7 +1,6 @@
 use crate::compute_method::{
     math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
-    point_mass::PointMass,
-    storage::{ParticleSliceSystem, ParticleTreeSystem},
+    storage::{ParticleSliceSystem, ParticleTreeSystem, PointMass},
     ComputeMethod,
 };
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};

@@ -1,6 +1,6 @@
 use ultraviolet::{Vec3, Vec4};
 
-type PointMass = crate::point_mass::PointMass<Vec3, f32>;
+type PointMass = crate::compute_method::storage::PointMass<Vec3, f32>;
 
 /// All the `wgpu` resources needed to perform the computation on the GPU.
 pub struct WgpuResources {

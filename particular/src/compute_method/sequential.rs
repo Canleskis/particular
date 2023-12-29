@@ -1,7 +1,8 @@
 use crate::compute_method::{
     math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
-    point_mass::PointMass,
-    storage::{ParticleOrdered, ParticleReordered, ParticleSliceSystem, ParticleTreeSystem},
+    storage::{
+        ParticleOrdered, ParticleReordered, ParticleSliceSystem, ParticleTreeSystem, PointMass,
+    },
     ComputeMethod,
 };
 

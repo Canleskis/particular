@@ -1,7 +1,6 @@
 use crate::compute_method::{
     math::{Array, Float, FloatVector},
-    point_mass::PointMass,
-    storage::ParticleReordered,
+    storage::{ParticleReordered, PointMass},
     ComputeMethod,
 };
 use std::vec::IntoIter;
