@@ -4,6 +4,7 @@ use particular::prelude::*;
 const DT: f32 = 1.0 / 50.0;
 
 #[derive(Debug, Particle)]
+#[dim(2)]
 struct Body {
     velocity: Vec2,
     position: Vec2,
@@ -39,13 +40,13 @@ fn main() {
         bodies
             .iter()
             // Calling accelerations returns an iterator over the acceleration of each body.
-            .accelerations(sequential::BruteForce)
+            .accelerations(&mut sequential::BruteForceScalar)
             // Zipping the accelerations with a mutable reference to the bodies
             // to change the state of each body using their computed acceleration.
             .zip(&mut bodies)
             .for_each(|(acceleration, body)| {
                 // Integrating using the semi-implicit Euler method https://en.wikipedia.org/wiki/Semi-implicit_Euler_method.
-                body.velocity += acceleration * DT;
+                body.velocity += Vec2::from(acceleration) * DT;
                 body.position += body.velocity * DT;
             });
 

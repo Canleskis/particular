@@ -5,9 +5,9 @@ use bevy_rapier2d::prelude::Velocity;
 use particular::prelude::*;
 
 #[cfg(target_arch = "wasm32")]
-const COMPUTE_METHOD: sequential::BruteForcePairs = sequential::BruteForcePairs;
+const COMPUTE_METHOD: sequential::BruteForceSIMD<4> = sequential::BruteForceSIMD;
 #[cfg(not(target_arch = "wasm32"))]
-const COMPUTE_METHOD: parallel::BruteForceSIMD = parallel::BruteForceSIMD;
+const COMPUTE_METHOD: parallel::BruteForceSIMD<8> = parallel::BruteForceSIMD;
 
 pub struct ParticularPlugin;
 
@@ -40,10 +40,15 @@ impl PointMass {
 fn accelerate_rigidbodies(mut query: Query<(&mut Velocity, &GlobalTransform, &PointMass)>) {
     query
         .iter()
-        .map(|(.., transform, mass)| (transform.translation().truncate(), mass.mass() * G))
-        .accelerations(COMPUTE_METHOD)
+        .map(|(.., transform, mass)| {
+            (
+                transform.translation().truncate().to_array(),
+                mass.mass() * G,
+            )
+        })
+        .accelerations(&mut COMPUTE_METHOD.clone())
         .zip(&mut query)
         .for_each(|(acceleration, (mut velocity, ..))| {
-            velocity.linvel += acceleration * DT;
+            velocity.linvel += Vec2::from(acceleration) * DT;
         })
 }

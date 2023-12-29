@@ -127,8 +127,9 @@ fn compute_prediction(
         for _ in 0..steps_per_frame {
             mapped_query
                 .iter()
-                .map(|&(.., position, mass, _)| (position, mass))
-                .accelerations(COMPUTE_METHOD)
+                .map(|&(.., position, mass, _)| (position.to_array(), mass))
+                .accelerations(&mut COMPUTE_METHOD.clone())
+                .map(Vec3::from)
                 .zip(&mut mapped_query)
                 .for_each(|(acceleration, (velocity, position, .., state))| {
                     *velocity += acceleration * dt;
@@ -156,11 +157,6 @@ fn compute_prediction(
     let dt = physics.delta_time;
 
     if let Some(&ComputePredictionEvent { steps }) = event {
-        let thread_pool = bevy::tasks::AsyncComputeTaskPool::get();
-
-        let (tx, rx) = crossbeam_channel::unbounded();
-        *receiver = Some(rx);
-
         for (.., mut prediction) in &mut query {
             prediction.positions.reserve(steps);
         }
@@ -177,27 +173,29 @@ fn compute_prediction(
             })
             .collect();
 
-        thread_pool
-            .spawn(async move {
-                for _ in 0..steps {
-                    tx.send(
-                        mapped_query
-                            .iter()
-                            .map(|&(.., position, mass)| (position, mass))
-                            .accelerations(COMPUTE_METHOD)
-                            .zip(&mut mapped_query)
-                            .map(|(acceleration, (entity, velocity, position, ..))| {
-                                (*velocity, *position) =
-                                    crate::sympletic_euler(acceleration, *velocity, *position, dt);
+        let (tx, rx) = crossbeam_channel::bounded(steps);
+        *receiver = Some(rx);
 
-                                (*entity, *velocity, *position)
-                            })
-                            .collect::<Vec<_>>(),
-                    )
-                    .unwrap();
-                }
-            })
-            .detach();
+        std::thread::spawn(move || {
+            for _ in 0..steps {
+                tx.send(
+                    mapped_query
+                        .iter()
+                        .map(|&(.., position, mass)| (position.to_array(), mass))
+                        .accelerations(&mut COMPUTE_METHOD.clone())
+                        .map(Vec3::from)
+                        .zip(&mut mapped_query)
+                        .map(|(acceleration, (entity, velocity, position, ..))| {
+                            (*velocity, *position) =
+                                crate::sympletic_euler(acceleration, *velocity, *position, dt);
+
+                            (*entity, *velocity, *position)
+                        })
+                        .collect::<Vec<_>>(),
+                )
+                .unwrap();
+            }
+        });
     }
 
     if let Some(receiver) = &*receiver {
