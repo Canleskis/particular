@@ -25,14 +25,13 @@ pub mod sequential;
 /// ```
 /// # use particular::prelude::*;
 /// # use ultraviolet::Vec3;
-/// use particular::algorithms::PointMass;
 ///
 /// struct AccelerationCalculator;
 ///
-/// impl ComputeMethod<&[PointMass<Vec3, f32>]> for AccelerationCalculator {
+/// impl ComputeMethod<&[storage::PointMass<Vec3, f32>]> for AccelerationCalculator {
 ///     type Output = Vec<Vec3>;
 ///     
-///     fn compute(&mut self, storage: &[PointMass<Vec3, f32>]) -> Self::Output {
+///     fn compute(&mut self, storage: &[storage::PointMass<Vec3, f32>]) -> Self::Output {
 ///         // ...
 ///         # Vec::new()
 ///     }
