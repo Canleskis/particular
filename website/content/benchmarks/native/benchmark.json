@@ -1,9 +1,9 @@
 ﻿{
-    "name": "Native",
+    "name": "native",
     "benchmarks": {
         "Particular/parallel::BarnesHut::0.2/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -61,8 +61,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/128",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -120,8 +120,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/16",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -179,8 +179,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -230,8 +230,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/2",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -289,8 +289,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -348,8 +348,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/256",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -407,8 +407,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/32",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -466,8 +466,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -517,8 +517,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/4",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -576,8 +576,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -627,8 +627,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/512",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -686,8 +686,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/64",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -745,8 +745,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/8",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -804,8 +804,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -855,8 +855,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -914,8 +914,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/128",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -973,8 +973,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/16",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1032,8 +1032,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1083,8 +1083,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/2",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1142,8 +1142,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1201,8 +1201,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/256",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1260,8 +1260,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/32",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1319,8 +1319,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1370,8 +1370,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/4",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1429,8 +1429,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1488,8 +1488,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/512",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1547,8 +1547,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/64",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1606,8 +1606,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/8",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1665,8 +1665,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -1724,8 +1724,8 @@
             }
         },
         "Particular/parallel::BruteForce/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -1783,8 +1783,8 @@
             }
         },
         "Particular/parallel::BruteForce/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/128",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -1842,8 +1842,8 @@
             }
         },
         "Particular/parallel::BruteForce/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/16",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -1859,8 +1859,8 @@
             }
         },
         "Particular/parallel::BruteForce/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -1910,8 +1910,8 @@
             }
         },
         "Particular/parallel::BruteForce/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/2",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -1969,8 +1969,8 @@
             }
         },
         "Particular/parallel::BruteForce/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2028,8 +2028,8 @@
             }
         },
         "Particular/parallel::BruteForce/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/256",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2087,8 +2087,8 @@
             }
         },
         "Particular/parallel::BruteForce/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/32",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2146,8 +2146,8 @@
             }
         },
         "Particular/parallel::BruteForce/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2197,8 +2197,8 @@
             }
         },
         "Particular/parallel::BruteForce/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/4",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2256,8 +2256,8 @@
             }
         },
         "Particular/parallel::BruteForce/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2315,8 +2315,8 @@
             }
         },
         "Particular/parallel::BruteForce/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/512",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2374,8 +2374,8 @@
             }
         },
         "Particular/parallel::BruteForce/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/64",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2433,8 +2433,8 @@
             }
         },
         "Particular/parallel::BruteForce/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/8",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2492,8 +2492,8 @@
             }
         },
         "Particular/parallel::BruteForce/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -2543,8 +2543,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2602,8 +2602,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/128",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2661,8 +2661,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/16",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2678,8 +2678,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2729,8 +2729,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/2",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2788,8 +2788,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2847,8 +2847,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/256",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2906,8 +2906,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/32",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -2965,8 +2965,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -3016,8 +3016,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/4",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -3033,8 +3033,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -3092,8 +3092,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/512",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -3151,8 +3151,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/64",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -3210,8 +3210,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/8",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -3269,8 +3269,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -3328,8 +3328,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3379,8 +3379,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/128",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3438,8 +3438,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/16",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3497,8 +3497,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3548,8 +3548,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/2",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3607,8 +3607,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3658,8 +3658,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/256",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3717,8 +3717,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/32",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3776,8 +3776,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3827,8 +3827,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/4",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3886,8 +3886,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3937,8 +3937,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/512",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -3996,8 +3996,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/64",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -4055,8 +4055,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/8",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -4072,8 +4072,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -4123,8 +4123,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4182,8 +4182,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/128",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4241,8 +4241,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/16",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4300,8 +4300,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4351,8 +4351,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/2",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4410,8 +4410,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4469,8 +4469,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/256",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4528,8 +4528,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/32",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4587,8 +4587,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4638,8 +4638,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/4",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4697,8 +4697,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4748,8 +4748,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/512",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4807,8 +4807,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/64",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4866,8 +4866,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/8",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4883,8 +4883,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -4934,8 +4934,8 @@
             }
         },
         "Particular/sequential::BruteForce/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -4993,8 +4993,8 @@
             }
         },
         "Particular/sequential::BruteForce/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/128",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5052,8 +5052,8 @@
             }
         },
         "Particular/sequential::BruteForce/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/16",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5069,8 +5069,8 @@
             }
         },
         "Particular/sequential::BruteForce/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5120,8 +5120,8 @@
             }
         },
         "Particular/sequential::BruteForce/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/2",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5179,8 +5179,8 @@
             }
         },
         "Particular/sequential::BruteForce/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5230,8 +5230,8 @@
             }
         },
         "Particular/sequential::BruteForce/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/256",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5289,8 +5289,8 @@
             }
         },
         "Particular/sequential::BruteForce/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/32",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5348,8 +5348,8 @@
             }
         },
         "Particular/sequential::BruteForce/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5399,8 +5399,8 @@
             }
         },
         "Particular/sequential::BruteForce/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/4",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5458,8 +5458,8 @@
             }
         },
         "Particular/sequential::BruteForce/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5509,8 +5509,8 @@
             }
         },
         "Particular/sequential::BruteForce/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/512",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5568,8 +5568,8 @@
             }
         },
         "Particular/sequential::BruteForce/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/64",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5627,8 +5627,8 @@
             }
         },
         "Particular/sequential::BruteForce/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/8",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5686,8 +5686,8 @@
             }
         },
         "Particular/sequential::BruteForce/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -5737,8 +5737,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -5796,8 +5796,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/128",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -5855,8 +5855,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/16",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -5872,8 +5872,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -5923,8 +5923,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/2",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -5982,8 +5982,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6041,8 +6041,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/256",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6100,8 +6100,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/32",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6159,8 +6159,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6210,8 +6210,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/4",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6269,8 +6269,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6320,8 +6320,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/512",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6379,8 +6379,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/64",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6438,8 +6438,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/8",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6455,8 +6455,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -6506,8 +6506,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6565,8 +6565,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/128",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6624,8 +6624,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/16",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6641,8 +6641,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6692,8 +6692,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/2",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6751,8 +6751,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6810,8 +6810,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/256",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6869,8 +6869,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/32",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6928,8 +6928,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -6979,8 +6979,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/4",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -7038,8 +7038,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -7089,8 +7089,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/512",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -7148,8 +7148,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/64",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -7207,8 +7207,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/8",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -7266,8 +7266,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -7317,8 +7317,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7376,8 +7376,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/128",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7435,8 +7435,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/16",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7452,8 +7452,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7503,8 +7503,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/2",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7562,8 +7562,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7621,8 +7621,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/256",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7680,8 +7680,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/32",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7739,8 +7739,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7790,8 +7790,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/4",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7849,8 +7849,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7900,8 +7900,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/512",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -7959,8 +7959,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/64",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -8018,8 +8018,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/8",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -8077,8 +8077,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",
@@ -8128,8 +8128,8 @@
             }
         },
         "Particular/gpu::BruteForce/1024": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/1024",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/1024",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8187,8 +8187,8 @@
             }
         },
         "Particular/gpu::BruteForce/128": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/128",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/128",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8246,8 +8246,8 @@
             }
         },
         "Particular/gpu::BruteForce/16": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/16",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/16",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8305,8 +8305,8 @@
             }
         },
         "Particular/gpu::BruteForce/16384": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/16384",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/16384",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8364,8 +8364,8 @@
             }
         },
         "Particular/gpu::BruteForce/2": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/2",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/2",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8423,8 +8423,8 @@
             }
         },
         "Particular/gpu::BruteForce/2048": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/2048",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/2048",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8482,8 +8482,8 @@
             }
         },
         "Particular/gpu::BruteForce/256": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/256",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/256",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8541,8 +8541,8 @@
             }
         },
         "Particular/gpu::BruteForce/32": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/32",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/32",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8600,8 +8600,8 @@
             }
         },
         "Particular/gpu::BruteForce/32768": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/32768",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/32768",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8659,8 +8659,8 @@
             }
         },
         "Particular/gpu::BruteForce/4": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/4",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/4",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8718,8 +8718,8 @@
             }
         },
         "Particular/gpu::BruteForce/4096": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/4096",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/4096",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8777,8 +8777,8 @@
             }
         },
         "Particular/gpu::BruteForce/512": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/512",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/512",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8836,8 +8836,8 @@
             }
         },
         "Particular/gpu::BruteForce/64": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/64",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/64",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8895,8 +8895,8 @@
             }
         },
         "Particular/gpu::BruteForce/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -8946,8 +8946,8 @@
             }
         },
         "Particular/gpu::BruteForce/8": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/8",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/8",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -9005,8 +9005,8 @@
             }
         },
         "Particular/gpu::BruteForce/8192": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/gpu::BruteForce/8192",
+            "baseline": "native",
+            "fullname": "native/Particular/gpu::BruteForce/8192",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "gpu::BruteForce",
@@ -9064,8 +9064,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.2/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.2/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.2/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.2",
@@ -9115,8 +9115,8 @@
             }
         },
         "Particular/parallel::BarnesHut::0.8/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BarnesHut::0.8/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BarnesHut::0.8/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BarnesHut::0.8",
@@ -9166,8 +9166,8 @@
             }
         },
         "Particular/parallel::BruteForce/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForce/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForce/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForce",
@@ -9217,8 +9217,8 @@
             }
         },
         "Particular/parallel::BruteForceSIMD/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/parallel::BruteForceSIMD/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/parallel::BruteForceSIMD/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "parallel::BruteForceSIMD",
@@ -9268,8 +9268,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.2/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.2/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.2/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.2",
@@ -9319,8 +9319,8 @@
             }
         },
         "Particular/sequential::BarnesHut::0.8/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BarnesHut::0.8/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BarnesHut::0.8/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BarnesHut::0.8",
@@ -9370,8 +9370,8 @@
             }
         },
         "Particular/sequential::BruteForce/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForce/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForce/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForce",
@@ -9421,8 +9421,8 @@
             }
         },
         "Particular/sequential::BruteForcePairs/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairs/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairs/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairs",
@@ -9472,8 +9472,8 @@
             }
         },
         "Particular/sequential::BruteForcePairsAlt/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForcePairsAlt/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForcePairsAlt/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForcePairsAlt",
@@ -9523,8 +9523,8 @@
             }
         },
         "Particular/sequential::BruteForceSIMD/65536": {
-            "baseline": "Native",
-            "fullname": "Native/Particular/sequential::BruteForceSIMD/65536",
+            "baseline": "native",
+            "fullname": "native/Particular/sequential::BruteForceSIMD/65536",
             "criterion_benchmark_v1": {
                 "group_id": "Particular",
                 "function_id": "sequential::BruteForceSIMD",

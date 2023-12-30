@@ -20,7 +20,7 @@ export function timeFormatter(number, current = "ns") {
     return `${number.toFixed(1)}${units[currentIndex]}`;
 }
 
-export function drawChart({ name, benchmarks }, elementId, color) {
+export function drawChart({ benchmarks }, elementId, color) {
     const result = Object.values(benchmarks).reduce((rv, benchmark) => {
         const {
             criterion_benchmark_v1: { function_id, value_str },
@@ -73,15 +73,6 @@ export function drawChart({ name, benchmarks }, elementId, color) {
                 symbolSize: 8,
             };
         }),
-        title: {
-            text: name,
-            textStyle: {
-                ...textStyle,
-                fontSize: "24",
-            },
-            top: "1%",
-            left: "1%",
-        },
         xAxis: {
             min: "dataMin",
             type: "log",
@@ -156,7 +147,7 @@ export function drawChart({ name, benchmarks }, elementId, color) {
             transitionDuration: 0,
             position: (point, params) => {
                 if (Array.isArray(params)) {
-                    const offset = [10, 10];
+                    const offset = [10, -30];
                     let min = [0, 0];
 
                     params?.forEach(({ value}) => {

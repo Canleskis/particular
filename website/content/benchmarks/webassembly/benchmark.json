@@ -1,9 +1,9 @@
 {
-  "name": "WebAssembly",
+  "name": "wasm",
   "benchmarks": {
     "Particular/sequential::BarnesHut::0.2/1024": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/1024",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/1024",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -53,8 +53,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/128": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/128",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/128",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -112,8 +112,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/16": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/16",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/16",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -171,8 +171,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/16384": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/16384",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/16384",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -222,8 +222,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/2": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/2",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/2",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -281,8 +281,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/2048": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/2048",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/2048",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -332,8 +332,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/256": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/256",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/256",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -391,8 +391,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/32": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/32",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/32",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -450,8 +450,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/4": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/4",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/4",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -509,8 +509,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/4096": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/4096",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/4096",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -560,8 +560,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/512": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/512",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/512",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -619,8 +619,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/64": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/64",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/64",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -678,8 +678,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/8": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/8",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/8",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -737,8 +737,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.2/8192": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.2/8192",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.2/8192",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.2",
@@ -788,8 +788,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/1024": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/1024",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/1024",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -847,8 +847,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/128": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/128",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/128",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -906,8 +906,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/16": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/16",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/16",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -965,8 +965,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/16384": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/16384",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/16384",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1016,8 +1016,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/2": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/2",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/2",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1075,8 +1075,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/2048": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/2048",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/2048",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1134,8 +1134,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/256": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/256",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/256",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1193,8 +1193,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/32": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/32",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/32",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1252,8 +1252,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/4": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/4",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/4",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1311,8 +1311,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/4096": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/4096",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/4096",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1362,8 +1362,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/512": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/512",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/512",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1421,8 +1421,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/64": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/64",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/64",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1480,8 +1480,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/8": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/8",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/8",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1539,8 +1539,8 @@
       }
     },
     "Particular/sequential::BarnesHut::0.8/8192": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BarnesHut::0.8/8192",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BarnesHut::0.8/8192",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BarnesHut::0.8",
@@ -1590,8 +1590,8 @@
       }
     },
     "Particular/sequential::BruteForce/1024": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/1024",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/1024",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -1649,8 +1649,8 @@
       }
     },
     "Particular/sequential::BruteForce/128": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/128",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/128",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -1708,8 +1708,8 @@
       }
     },
     "Particular/sequential::BruteForce/16": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/16",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/16",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -1767,8 +1767,8 @@
       }
     },
     "Particular/sequential::BruteForce/16384": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/16384",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/16384",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -1818,8 +1818,8 @@
       }
     },
     "Particular/sequential::BruteForce/2": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/2",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/2",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -1877,8 +1877,8 @@
       }
     },
     "Particular/sequential::BruteForce/2048": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/2048",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/2048",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -1928,8 +1928,8 @@
       }
     },
     "Particular/sequential::BruteForce/256": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/256",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/256",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -1987,8 +1987,8 @@
       }
     },
     "Particular/sequential::BruteForce/32": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/32",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/32",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -2046,8 +2046,8 @@
       }
     },
     "Particular/sequential::BruteForce/4": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/4",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/4",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -2105,8 +2105,8 @@
       }
     },
     "Particular/sequential::BruteForce/4096": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/4096",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/4096",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -2156,8 +2156,8 @@
       }
     },
     "Particular/sequential::BruteForce/512": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/512",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/512",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -2215,8 +2215,8 @@
       }
     },
     "Particular/sequential::BruteForce/64": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/64",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/64",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -2274,8 +2274,8 @@
       }
     },
     "Particular/sequential::BruteForce/8": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/8",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/8",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -2333,8 +2333,8 @@
       }
     },
     "Particular/sequential::BruteForce/8192": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForce/8192",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForce/8192",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForce",
@@ -2384,8 +2384,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/1024": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/1024",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/1024",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2443,8 +2443,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/128": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/128",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/128",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2502,8 +2502,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/16": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/16",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/16",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2561,8 +2561,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/16384": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/16384",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/16384",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2612,8 +2612,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/2": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/2",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/2",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2671,8 +2671,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/2048": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/2048",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/2048",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2722,8 +2722,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/256": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/256",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/256",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2781,8 +2781,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/32": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/32",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/32",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2840,8 +2840,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/4": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/4",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/4",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2899,8 +2899,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/4096": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/4096",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/4096",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -2950,8 +2950,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/512": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/512",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/512",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -3009,8 +3009,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/64": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/64",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/64",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -3068,8 +3068,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/8": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/8",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/8",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -3127,8 +3127,8 @@
       }
     },
     "Particular/sequential::BruteForcePairs/8192": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairs/8192",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairs/8192",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairs",
@@ -3178,8 +3178,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/1024": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/1024",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/1024",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3237,8 +3237,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/128": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/128",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/128",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3296,8 +3296,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/16": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/16",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/16",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3355,8 +3355,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/16384": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/16384",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/16384",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3406,8 +3406,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/2": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/2",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/2",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3465,8 +3465,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/2048": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/2048",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/2048",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3516,8 +3516,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/256": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/256",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/256",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3575,8 +3575,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/32": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/32",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/32",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3634,8 +3634,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/4": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/4",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/4",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3693,8 +3693,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/4096": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/4096",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/4096",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3744,8 +3744,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/512": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/512",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/512",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3803,8 +3803,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/64": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/64",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/64",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3862,8 +3862,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/8": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/8",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/8",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3921,8 +3921,8 @@
       }
     },
     "Particular/sequential::BruteForcePairsAlt/8192": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForcePairsAlt/8192",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForcePairsAlt/8192",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForcePairsAlt",
@@ -3972,8 +3972,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/1024": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/1024",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/1024",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4023,8 +4023,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/128": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/128",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/128",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4082,8 +4082,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/16": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/16",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/16",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4141,8 +4141,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/16384": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/16384",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/16384",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4192,8 +4192,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/2": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/2",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/2",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4251,8 +4251,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/2048": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/2048",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/2048",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4302,8 +4302,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/256": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/256",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/256",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4361,8 +4361,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/32": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/32",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/32",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4420,8 +4420,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/4": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/4",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/4",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4479,8 +4479,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/4096": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/4096",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/4096",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4530,8 +4530,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/512": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/512",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/512",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4589,8 +4589,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/64": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/64",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/64",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4648,8 +4648,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/8": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/8",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/8",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",
@@ -4707,8 +4707,8 @@
       }
     },
     "Particular/sequential::BruteForceSIMD/8192": {
-      "baseline": "WebAssembly",
-      "fullname": "WebAssembly/Particular/sequential::BruteForceSIMD/8192",
+      "baseline": "wasm",
+      "fullname": "wasm/Particular/sequential::BruteForceSIMD/8192",
       "criterion_benchmark_v1": {
         "group_id": "Particular",
         "function_id": "sequential::BruteForceSIMD",

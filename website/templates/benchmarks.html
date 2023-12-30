@@ -1,31 +1,94 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    .graph-container {
-        width: var(--default-width);
-        height: 800px;
-        margin: 0;
+    .padded-container ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    [id^="chart-"] {
+        width: inherit;
+    }
+
+    .padded-container li {
         border: 2px solid #5e5e5e;
         border-radius: var(--border-radius);
+        display: flex;
+        width: var(--default-width);
+        height: 800px;
+    }
+
+    .benchmark-info {
+        display: flex;
+        position: absolute;
+        margin: 10px 0 0 20px;
+        gap: 5px;
+        z-index: 10;
+    }
+
+    .benchmark-info h1 {
+        font-size: 24px;
+        font-weight: 100;
+        margin: 0;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 150px;
+        background-color: #0a0a0a9c;
+        text-align: center;
+        border-radius: 4px;
+        padding: 5px 0;
+
+        position: absolute;
+        z-index: 10;
+        top: 2px;
+        left: 105%;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+
+    .tooltip::after {
+        content: "\24D8";
+        font-size: 20px;
     }
 </style>
 
 <script src="/echarts.js"></script>
-{% for benchmark in section.pages %}
 <div class=" padded-container">
-    <script type="module">
-        import { drawChart } from "/utils.js";
+    <ul>
+        {% for benchmark in section.pages %}
+        <script type="module">
+            import { drawChart } from "/utils.js";
 
-        fetch("{{ benchmark.path | safe }}/benchmark.json")
-            .then((response) => response.json())
-            .then((json) =>
-                drawChart(
-                    json,
-                    "chart-{{ benchmark.title }}",
-                    JSON.parse('{{ benchmark.extra.colours | safe }}')
-                ));
-    </script>
-    <div id="chart-{{ benchmark.title }}" class="graph-container"></div>
+            fetch("{{ benchmark.path | safe }}/benchmark.json")
+                .then((response) => response.json())
+                .then((json) =>
+                    drawChart(
+                        json,
+                        "chart-{{ benchmark.title }}",
+                        JSON.parse('{{ benchmark.extra.colours | safe }}')
+                    ));
+        </script>
+        <li>
+            <div class="benchmark-info">
+                <h1>{{ benchmark.title }}</h1>
+                <span class="tooltip">
+                    <span class="tooltiptext">
+                        {% for key, value in benchmark.extra.info %}
+                            <div>{{ key }}: {{ value }}</div>
+                        {% endfor %}
+                    </span>
+                </span>
+            </div>
+            <div id="chart-{{ benchmark.title }}" class="chart"></div>
+        </li>
+        {% endfor %}
+    </ul>
 </div>
-{% endfor %}
 {% endblock content %}
