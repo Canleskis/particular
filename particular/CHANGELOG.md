@@ -26,13 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `write_particle_data` and `read_accelerations` not generic and use `ultraviolet::Vec3`.
 - `read_accelerations` is async.
 - Update `wgpu` to 0.17
-- Renamed `BruteForce` compute methods to `BruteForceScalar` for better differentiation with simd variant.
+- Renamed `BruteForce` compute methods to `BruteForceScalar` for better differentiation with simd variants.
 - `BruteForceSIMD` generic over the lane count.
 - `build_node` takes `position` and `compute` functions instead of using traits and computes a square `BoundingBox`. Use `build_node_with` to provide a specific `BoundingBox`.
 - `Particle` trait only has the `Array` associated type and `position` expects this array type.
 - `accelerations` returns an iterator of arrays.
-- Merge `algorithms` and `compute_method` modules in one with the name of the latter.
+- Merge `algorithms` and `compute_method` in one module with the name of the latter.
 - `SizedOrthant`'s size is no longer generic and is instead a `BoundingBox`
+- 3D f32 vectors now fully scalar unlike `glam::Vec3A`, use `BruteForceSIMD` compute methods for simd benefits.
 
 ### Removed
 
