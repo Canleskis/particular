@@ -1,0 +1,18 @@
+[package]
+name = "ring-formation"
+publish = false
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+particular = { path = "../../particular", features = ["parallel"]}
+bevy = "0.11.2"
+bevy_rapier3d = { version = "0", features = ["simd-stable"] }
+bevy_egui = "0.21"
+rand = "0"
+humantime = "2"
+
+[package.metadata.particular.rs]
+title = "Ring Formation"
+mobile = false
