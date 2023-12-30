@@ -13,7 +13,7 @@ pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, camera_controls);
+        app.add_systems(PostUpdate, camera_controls);
     }
 }
 
@@ -37,7 +37,7 @@ pub fn camera_controls(
     let window_size = Vec2::new(window.width(), window.height());
 
     let scroll = scroll_events
-        .iter()
+        .read()
         .map(|ev| match ev.unit {
             bevy::input::mouse::MouseScrollUnit::Pixel => ev.y * 0.005,
             bevy::input::mouse::MouseScrollUnit::Line => ev.y * 1.0,
@@ -45,10 +45,11 @@ pub fn camera_controls(
         .sum::<f32>();
 
     *radius -= *radius * scroll * 0.2;
+    *radius = radius.clamp(orbit.min_distance, 10000.0);
 
     let delta = input_mouse
         .pressed(MouseButton::Right)
-        .then(|| motion_events.iter().map(|ev| ev.delta).sum::<Vec2>())
+        .then(|| motion_events.read().map(|ev| ev.delta).sum::<Vec2>())
         .unwrap_or_default()
         / window_size
         * std::f32::consts::PI;
@@ -67,7 +68,7 @@ pub fn camera_controls(
         + Mat3::from_quat(rotation).mul_vec3(Vec3::new(
             0.0,
             0.0,
-            radius.clamp(orbit.min_distance, 10000.0),
+            *radius,
         ));
 
     *transform = Transform {

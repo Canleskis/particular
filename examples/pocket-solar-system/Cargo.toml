@@ -7,8 +7,8 @@ license.workspace = true
 
 [dependencies]
 particular = { path = "../../particular" }
-bevy = "0.11.2"
-bevy_egui = "0.21"
+bevy = "0.12.1"
+bevy_egui = "0.24"
 crossbeam-channel = "0"
 humantime = "2"
 

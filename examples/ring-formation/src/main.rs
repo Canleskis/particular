@@ -88,11 +88,9 @@ fn setup_scene(mut commands: Commands) {
 
     let main = commands
         .spawn(BodyBundle {
-            name: Name::new("Main"),
             can_select: Clickable { radius: 100.0 },
             can_follow: CanFollow {
-                min_camera_distance: 100.0,
-                saved_transform: Transform::from_xyz(0.0, 0.0, 500.0),
+                min_camera_distance: 200.0,
             },
             body_material: BodyMaterial {
                 mesh: shape::UVSphere {
@@ -128,11 +126,9 @@ fn setup_scene(mut commands: Commands) {
             distance.cross(Vec3::Z).normalize() * ((main_mu + minor_mu) / distance.length()).sqrt();
 
         commands.spawn(BodyBundle {
-            name: Name::new("Second"),
             can_select: Clickable { radius },
             can_follow: CanFollow {
-                min_camera_distance: 10.0,
-                saved_transform: Transform::from_xyz(0.0, 0.0, 5.0),
+                min_camera_distance: 5.0,
             },
             body_material: BodyMaterial {
                 mesh: shape::UVSphere {
@@ -186,8 +182,7 @@ fn add_materials(
         cmds.insert((
             meshes.add(mesh),
             materials.add(material),
-            Visibility::default(),
-            ComputedVisibility::default(),
+            VisibilityBundle::default(),
         ));
     }
 }
@@ -205,7 +200,6 @@ pub struct ParticleBundle {
 
 #[derive(Bundle, Default)]
 pub struct BodyBundle {
-    pub name: Name,
     pub can_select: Clickable,
     pub can_follow: CanFollow,
     pub body_material: BodyMaterial,

@@ -265,7 +265,7 @@ fn update_labels_color(
         }
     };
 
-    for entity in deselected.iter() {
+    for entity in deselected.read() {
         set_label_color(entity, Color::GRAY);
     }
 

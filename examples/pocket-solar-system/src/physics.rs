@@ -85,7 +85,7 @@ impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Acceleration>()
             .register_type::<Velocity>()
-            .add_schedule(PhysicsSchedule, Schedule::new())
+            .add_schedule(Schedule::new(PhysicsSchedule))
             .configure_sets(
                 PhysicsSchedule,
                 (PhysicsSet::First, PhysicsSet::Main, PhysicsSet::Last).chain(),

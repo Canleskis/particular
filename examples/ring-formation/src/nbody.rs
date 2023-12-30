@@ -17,7 +17,7 @@ impl Plugin for ParticularPlugin {
 fn accelerate_particles(mut query: Query<(&mut Velocity, &Transform, &ReadMassProperties)>) {
     query
         .iter()
-        .map(|(.., transform, mass)| (transform.translation.to_array(), mass.0.mass))
+        .map(|(.., transform, mass)| (transform.translation.to_array(), mass.get().mass))
         .accelerations(&mut COMPUTE_METHOD.clone())
         .map(Vec3::from)
         .zip(&mut query)

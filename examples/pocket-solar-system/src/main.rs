@@ -257,7 +257,6 @@ impl BodyBundle {
             },
             can_follow: CanFollow {
                 min_camera_distance: setting.radius * 3.0,
-                saved_transform: Transform::from_xyz(0.0, 0.0, setting.radius * 20.0),
             },
             particle_bundle: ParticleBundle {
                 mass: Mass(setting.mu),

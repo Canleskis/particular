@@ -7,9 +7,9 @@ license.workspace = true
 
 [dependencies]
 particular = { path = "../../particular", features = ["parallel"]}
-bevy = "0.11.2"
-bevy_rapier3d = { version = "0", features = ["simd-stable"] }
-bevy_egui = "0.21"
+bevy = "0.12.1"
+bevy_rapier3d = { version = "0.23", features = ["simd-stable"] }
+bevy_egui = "0.24"
 rand = "0"
 humantime = "2"
 

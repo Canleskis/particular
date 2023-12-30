@@ -64,20 +64,17 @@ impl Plugin for CustomRapierSchedule {
             .add_systems(First, time_sync)
             .add_systems(PreUpdate, physics_step);
 
-        let mut pre_schedule = Schedule::new();
+        let mut pre_schedule = Schedule::new(PreRapierSchedule);
         pre_schedule.add_systems(apply_accelerations);
 
-        let mut sync_schedule = Schedule::new();
-        sync_schedule
-            .configure_sets((PhysicsSet::SyncBackend, PhysicsSet::SyncBackendFlush).chain());
-        sync_schedule.add_systems((
-            RapierPhysicsPlugin::<()>::get_systems(PhysicsSet::SyncBackend)
-                .in_set(PhysicsSet::SyncBackend),
-            RapierPhysicsPlugin::<()>::get_systems(PhysicsSet::SyncBackendFlush)
-                .in_set(PhysicsSet::SyncBackendFlush),
-        ));
+        let mut sync_schedule = Schedule::new(SyncRapierSchedule);
+        sync_schedule.configure_sets(PhysicsSet::SyncBackend);
+        sync_schedule.add_systems((RapierPhysicsPlugin::<()>::get_systems(
+            PhysicsSet::SyncBackend,
+        )
+        .in_set(PhysicsSet::SyncBackend),));
 
-        let mut step_schedule = Schedule::new();
+        let mut step_schedule = Schedule::new(StepRapierSchedule);
         step_schedule.configure_sets((PhysicsSet::StepSimulation, PhysicsSet::Writeback).chain());
         step_schedule.add_systems((
             RapierPhysicsPlugin::<()>::get_systems(PhysicsSet::StepSimulation)
@@ -86,9 +83,9 @@ impl Plugin for CustomRapierSchedule {
                 .in_set(PhysicsSet::Writeback),
         ));
 
-        app.add_schedule(PreRapierSchedule, pre_schedule)
-            .add_schedule(SyncRapierSchedule, sync_schedule)
-            .add_schedule(StepRapierSchedule, step_schedule);
+        app.add_schedule(pre_schedule)
+            .add_schedule(sync_schedule)
+            .add_schedule(step_schedule);
 
         app.insert_resource(RapierConfiguration {
             gravity: Vec3::ZERO,

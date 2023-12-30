@@ -98,7 +98,7 @@ fn compute_prediction(
     mut progress: Local<usize>,
 ) {
     let mut steps_per_frame = 5000;
-    let event = compute_event.iter().next();
+    let event = compute_event.read().next();
     let dt = physics.delta_time;
 
     if let Some(&ComputePredictionEvent { steps }) = event {
@@ -153,7 +153,7 @@ fn compute_prediction(
     mut query: Query<(Entity, &Velocity, &Position, &Mass, &mut PredictionState)>,
     mut receiver: Local<Option<PredictionReceiver>>,
 ) {
-    let event = compute_event.iter().next();
+    let event = compute_event.read().next();
     let dt = physics.delta_time;
 
     if let Some(&ComputePredictionEvent { steps }) = event {
