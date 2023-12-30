@@ -44,9 +44,8 @@
 
 <div class="padded-container">
     <div class="quickstart">
-        {{
-        load_data(url="https://github.com/Canleskis/particular/blob/main/particular/README.md?raw=true")
-        | markdown | safe }}
+        {{ load_data(url="https://github.com/Canleskis/particular/blob/latest/particular/README.md?raw=true") | markdown
+        | safe }}
     </div>
 </div>
 {% endblock content %}
