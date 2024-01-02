@@ -1,9 +1,6 @@
 use std::fmt::Display;
 
-use bevy::{
-    ecs::system::{EntityCommands, Res},
-    prelude::AssetServer,
-};
+use bevy::{ecs::system::EntityCommands, prelude::*};
 use bevy_egui::egui::Ui;
 
 use super::Spawnable;

@@ -1,4 +1,4 @@
-use crate::{rapier_schedule::physics_step, DT, G};
+use crate::{rapier_schedule::PreRapierSchedule, DT, G};
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::Velocity;
@@ -13,12 +13,7 @@ pub struct ParticularPlugin;
 
 impl Plugin for ParticularPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system_set_to_stage(
-            CoreStage::PreUpdate,
-            SystemSet::new()
-                .with_run_criteria(physics_step)
-                .with_system(accelerate_rigidbodies),
-        );
+        app.add_systems(PreRapierSchedule, accelerate_rigidbodies);
     }
 }
 

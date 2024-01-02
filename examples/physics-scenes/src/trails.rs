@@ -1,29 +1,27 @@
-use bevy::prelude::*;
-use bevy_inspector_egui::Inspectable;
-use bevy_prototype_debug_lines::{DebugLines, DebugLinesPlugin};
-use bevy_rapier2d::prelude::{RapierConfiguration, TimestepMode};
+use std::collections::VecDeque;
 
-use crate::rapier_schedule::physics_step;
+use bevy::prelude::*;
+
+use crate::rapier_schedule::PostRapierSchedule;
 
 pub struct TrailsPlugin;
 
 impl Plugin for TrailsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(DebugLinesPlugin::default())
-            .add_system_set_to_stage(
-                CoreStage::PostUpdate,
-                SystemSet::new()
-                    .with_run_criteria(physics_step)
-                    .with_system(draw_trails),
-            );
+        app.insert_resource(GizmoConfig {
+            line_width: 1.0,
+            ..default()
+        })
+        .add_systems(PostRapierSchedule, cache_trails)
+        .add_systems(Last, draw_trails);
     }
 }
 
-#[derive(Component, Inspectable)]
+#[derive(Component)]
 pub struct Trail {
     pub length: f32,
     pub resolution: usize,
-    cached: Option<(Vec3, usize)>,
+    cached: VecDeque<Vec2>,
 }
 
 impl Trail {
@@ -31,32 +29,25 @@ impl Trail {
         Self {
             length,
             resolution,
-            cached: None,
+            cached: VecDeque::new(),
         }
     }
 }
 
-fn draw_trails(
-    config: Res<RapierConfiguration>,
-    mut lines: ResMut<DebugLines>,
-    mut query: Query<(&GlobalTransform, &mut Trail)>,
-) {
-    let TimestepMode::Fixed { dt, .. } = config.timestep_mode else {
-        return;
-    };
+fn cache_trails(mut query: Query<(&GlobalTransform, &mut Trail)>) {
     for (transform, mut trail) in query.iter_mut() {
-        let (resolution, length) = (trail.resolution, trail.length);
-        if let Some((last_position, last_iteration)) = &mut trail.cached {
-            if *last_iteration == resolution {
-                lines.line_colored(*last_position, transform.translation(), length, Color::RED);
-                *last_position = transform.translation();
-                *last_iteration = 0;
-            } else {
-                lines.line_colored(*last_position, transform.translation(), dt, Color::RED);
-                *last_iteration += 1;
-            }
-        } else {
-            trail.cached = Some((transform.translation(), 0));
+        trail.cached.push_back(transform.translation().truncate());
+        if trail.cached.len() == (trail.length / crate::DT) as usize {
+            trail.cached.pop_front();
         }
+    }
+}
+
+fn draw_trails(mut gizmos: Gizmos, query: Query<&Trail>) {
+    for trail in &query {
+        gizmos.linestrip_2d(
+            trail.cached.iter().step_by(trail.resolution).copied(),
+            Color::RED,
+        );
     }
 }

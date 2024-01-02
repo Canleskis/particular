@@ -1,11 +1,5 @@
 use crate::{SceneData, SimulationScene};
-use bevy::{
-    ecs::{
-        entity::Entity,
-        system::{EntityCommands, Res},
-    },
-    prelude::{AssetServer, Resource},
-};
+use bevy::{ecs::system::EntityCommands, prelude::*};
 
 use crate::Spawnable;
 
