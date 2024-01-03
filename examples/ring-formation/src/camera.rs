@@ -64,12 +64,8 @@ pub fn camera_controls(
     rotation *= Quat::from_rotation_y(-delta.x * 2.0);
     rotation *= Quat::from_rotation_x(-delta.y);
 
-    let translation = orbit.focus
-        + Mat3::from_quat(rotation).mul_vec3(Vec3::new(
-            0.0,
-            0.0,
-            *radius,
-        ));
+    let translation =
+        orbit.focus + Mat3::from_quat(rotation).mul_vec3(Vec3::new(0.0, 0.0, *radius));
 
     *transform = Transform {
         translation,

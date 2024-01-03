@@ -106,15 +106,16 @@ fn setup_ui_fps(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn update_ui_fps(
-    mut query_text: Query<&mut Text, With<FpsText>>,
     diagnostic: Res<DiagnosticsStore>,
+    mut query_text: Query<&mut Text, With<FpsText>>,
 ) {
-    let fps = diagnostic
-        .get(FrameTimeDiagnosticsPlugin::FPS)
-        .and_then(|fps| fps.average());
-    if let Some(fps) = fps {
+    let Some(fps) = diagnostic.get(FrameTimeDiagnosticsPlugin::FPS) else {
+        return;
+    };
+
+    if let Some(average) = fps.average() {
         for mut text in &mut query_text {
-            text.sections[1].value = format!("{fps:.1}");
+            text.sections[1].value = format!("{average:.1}");
         }
     }
 }
