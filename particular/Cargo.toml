@@ -3,6 +3,7 @@ name = "particular"
 description = "N-body simulation library written in Rust featuring BarnesHut and GPU accelerated algorithms."
 documentation = "https://docs.rs/particular"
 exclude = [
+    "benches",
     "particular-showcase.gif",
     "particular-comparison.png",
     "particular-comparison.svg",
