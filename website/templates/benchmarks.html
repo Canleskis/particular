@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
+
 <style>
+    @media (max-width: 920px) {
+        body {
+            width: var(--default-width);
+        }
+    }
+
     .padded-container ul {
         list-style: none;
         padding: 0;
@@ -9,86 +16,136 @@
         gap: 20px;
     }
 
-    [id^="chart-"] {
-        width: inherit;
+    .padded-container input {
+        font-size: 18px;
+        border: 2px solid #5e5e5e;
+        border-radius: var(--border-radius);
+        background-color: #121212;
+        padding: 5px;
+        color: inherit;
+        width: 100%;
     }
 
     .padded-container li {
         border: 2px solid #5e5e5e;
         border-radius: var(--border-radius);
-        display: flex;
-        width: var(--default-width);
+    }
+
+    .chart {
+        width: inherit;
         height: 800px;
     }
 
     .benchmark-info {
         display: flex;
+        align-items: center;
         position: absolute;
-        margin: 10px 0 0 20px;
-        gap: 5px;
+        margin: 8px 0 0 8px;
+        gap: 10px;
         z-index: 10;
+        font-size: 18px;
     }
 
     .benchmark-info h1 {
-        font-size: 24px;
+        font-size: inherit;
         font-weight: 100;
         margin: 0;
-    }
-
-    .tooltip .tooltiptext {
-        visibility: hidden;
-        width: 150px;
-        background-color: #0a0a0a9c;
-        text-align: center;
-        border-radius: 4px;
-        padding: 5px 0;
-
-        position: absolute;
-        z-index: 10;
-        top: 2px;
-        left: 105%;
-    }
-
-    .tooltip:hover .tooltiptext {
-        visibility: visible;
-    }
-
-    .tooltip::after {
-        content: "\24D8";
-        font-size: 20px;
+        border: 2px solid #5e5e5e;
+        border-radius: var(--border-radius);
+        padding: 4px;
+        white-space: nowrap;
+        background-color: #121212;
     }
 </style>
 
+<script type="module">
+    import { showChart } from "/utils.js";
+
+    function reduceGroup(benchmark) {
+        return Object.values(benchmark).reduce((acc, benchmark) => {
+            const {
+                criterion_benchmark_v1: { function_id, value_str },
+                criterion_estimates_v1: {
+                    mean: { point_estimate },
+                },
+            } = benchmark;
+
+            acc[function_id] ??= {};
+            acc[function_id][value_str] = point_estimate;
+
+            return acc;
+        }, {});
+    }
+
+    const colour_map = JSON.parse(
+        '{{ section.extra.colour_map | json_encode() | safe }}'
+    );
+
+    const benches = await fetch("benchmarks.json")
+        .then((res) => res.json())
+        .then((bench) =>
+            bench.map(({ tags, extra, benchmarks }) => {
+                return {
+                    tags,
+                    extra,
+                    cm: reduceGroup(benchmarks),
+                };
+            })
+        );
+
+
+    let list = document.getElementById("benchmark-list");
+
+    let listElements = benches.map(({ tags, extra, cm }) => {
+        const series = Object.entries(cm).map(([name, data]) => {
+            return {
+                name,
+                data: Object.entries(data),
+                type: "line",
+                symbol: "circle",
+                symbolSize: 8,
+            };
+        });
+        const color = series.map(({ name }) => colour_map[name]);
+
+        let li = document.createElement("li");
+        li.id = tags.join("-").replace(/ /g, "-").toLowerCase();
+        list.appendChild(li);
+
+        let info = document.createElement("div");
+        info.className = "benchmark-info";
+        li.appendChild(info);
+
+        let chart = document.createElement("div");
+        chart.className = "chart";
+        li.appendChild(chart);
+
+        Object.values(tags).flatMap((tag) => {
+            let benchmarkName = document.createElement("h1");
+            benchmarkName.textContent = tag;
+            info.appendChild(benchmarkName);
+        });
+        showChart(chart, series, color);
+
+        return li;
+    });
+
+    let search = document.getElementById("search");
+
+    search.addEventListener("input", (item) => {
+        const input = item.target.value.toLowerCase().split(" ");
+        listElements.forEach((li) => {
+            li.style.display = input.every((word) => li.id.includes(word))
+                ? "flex"
+                : "none";
+        });
+    });
+</script>
+
 <script src="/echarts.js"></script>
 <div class=" padded-container">
-    <ul>
-        {% for benchmark in section.pages %}
-        <script type="module">
-            import { drawChart } from "/utils.js";
-
-            fetch("{{ benchmark.path | safe }}/benchmark.json")
-                .then((response) => response.json())
-                .then((json) =>
-                    drawChart(
-                        json,
-                        "chart-{{ benchmark.title }}",
-                        JSON.parse('{{ benchmark.extra.colours | safe }}')
-                    ));
-        </script>
-        <li>
-            <div class="benchmark-info">
-                <h1>{{ benchmark.title }}</h1>
-                <span class="tooltip">
-                    <span class="tooltiptext">
-                        {% for key, value in benchmark.extra.info %}
-                            <div>{{ key }}: {{ value }}</div>
-                        {% endfor %}
-                    </span>
-                </span>
-            </div>
-            <div id="chart-{{ benchmark.title }}" class="chart"></div>
-        </li>
-        {% endfor %}
+    <input id="search" type="text" placeholder="Search tags (fe: f32 3d wasm)">
+    <ul id="benchmark-list">
     </ul>
 </div>
 {% endblock content %}

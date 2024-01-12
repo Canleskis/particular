@@ -23,11 +23,15 @@ jobs:
               with:
                   version: "0.2.89"
 
-            - name: Build Examples
+            - name: Deploy Benchmarks
+              run: |
+                  bash ./.github/scripts/deploy_benchmarks.sh website/content/benchmarks
+
+            - name: Deploy Examples
               run: |
                   ./.github/scripts/deploy_showcase.sh
 
-            - name: Deploy
+            - name: Deploy Site
               uses: shalzz/zola-deploy-action@v0.17.2
               env:
                   BUILD_DIR: website

@@ -1,6 +1,6 @@
 export function timeFormatter(number, current = "ns") {
-    const units = ["ns", "µs", "ms", "s", "min"];
-    const factors = [1, 1000, 1000, 1000, 60];
+    const units = ["ns", "µs", "ms", "s"];
+    const factors = [1, 1000, 1000, 1000];
 
     let currentIndex = units.indexOf(current);
     if (currentIndex === -1) {
@@ -20,24 +20,8 @@ export function timeFormatter(number, current = "ns") {
     return `${number.toFixed(1)}${units[currentIndex]}`;
 }
 
-export function drawChart({ benchmarks }, elementId, color) {
-    const result = Object.values(benchmarks).reduce((rv, benchmark) => {
-        const {
-            criterion_benchmark_v1: { function_id, value_str },
-            criterion_estimates_v1: {
-                mean: { point_estimate },
-            },
-        } = benchmark;
-
-        rv[function_id] ??= [];
-        let index = rv[function_id].findIndex(([i]) => i > +value_str);
-        index = index === -1 ? rv[function_id].length : index;
-        rv[function_id].splice(index, 0, [+value_str, point_estimate]);
-
-        return rv;
-    }, {});
-
-    var chart = echarts.init(document.getElementById(elementId), null, {
+export function showChart(div, series, color) {
+    var chart = echarts.init(div, null, {
         // renderer: "svg",
     });
 
@@ -64,15 +48,7 @@ export function drawChart({ benchmarks }, elementId, color) {
 
     /** @type EChartsOption */
     const option = {
-        series: Object.entries(result).map(([name, data]) => {
-            return {
-                name,
-                data,
-                type: "line",
-                symbol: "circle",
-                symbolSize: 8,
-            };
-        }),
+        series,
         xAxis: {
             min: "dataMin",
             type: "log",
@@ -145,22 +121,25 @@ export function drawChart({ benchmarks }, elementId, color) {
             borderWidth: 0,
             valueFormatter: timeFormatter,
             transitionDuration: 0,
-            position: (point, params) => {
-                if (Array.isArray(params)) {
-                    const offset = [10, -30];
-                    let min = [0, 0];
-
-                    params?.forEach(({ value}) => {
-                        if (value[1] > min[1]) {
-                            min = value;
-                        }
-                    })
-
-                    const converted = chart.convertToPixel({ seriesIndex: 0 }, min); 
-                    return [converted[0] + offset[0], converted[1] + offset[1]];
+            position: (pos, params, dom, rect, { viewSize, contentSize }) => {
+                // When data is hovered
+                if (!Array.isArray(params)) {
+                    return "top";
                 }
 
-                return "top";
+                const pastCenter = pos[0] < viewSize[0] / 2;
+                const offsetX = pastCenter ? 10 : -(10 + contentSize[0]);
+                const offset = [offsetX, -30];
+                let min = [0, 0];
+
+                params.forEach(({ value }) => {
+                    if (value[1] > min[1]) {
+                        min = value;
+                    }
+                });
+
+                const converted = chart.convertToPixel({ seriesIndex: 0 }, min);
+                return [converted[0] + offset[0], converted[1] + offset[1]];
             },
             textStyle: {
                 ...textStyle,
@@ -178,9 +157,11 @@ export function drawChart({ benchmarks }, elementId, color) {
                 saveAsImage: {},
                 dataView: {
                     backgroundColor: "#1b1b1b",
-                    textareaColor: "#1b1b1b",
+                    textareaColor: "#121212",
                     textColor: textStyle.color,
                     readOnly: true,
+                    title: 'Data',
+                    lang: ['Data', 'Close', 'Refresh'],
                 },
                 dataZoom: {
                     title: {
@@ -192,7 +173,7 @@ export function drawChart({ benchmarks }, elementId, color) {
         },
         animationDuration: 200,
         textStyle,
-        color: color,
+        color,
     };
 
     chart.setOption(option);

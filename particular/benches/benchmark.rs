@@ -14,33 +14,17 @@ where
     [0.0; N].map(|_| rng.gen_range(range.clone())).into()
 }
 
-pub fn random_massive_bodies(mut rng: StdRng, i: usize) -> Vec<PointMass> {
+pub fn random_bodies(rng: &mut StdRng, i: usize, ratio_massive: f32) -> Vec<PointMass> {
+    let massive_bodies = (i as f32 * ratio_massive).round() as usize;
+
     (0..i)
-        .map(|_| {
-            let position = gen_range_vector(&mut rng, -5000.0..5000.0);
-            let mass = rng.gen_range(0.1..100.0);
-
-            PointMass { position, mass }
-        })
-        .collect()
-}
-
-pub fn random_massless_bodies(mut rng: StdRng, i: usize) -> Vec<PointMass> {
-    (0..i)
-        .map(|_| {
-            let position = gen_range_vector(&mut rng, -5000.0..5000.0);
-            let mass = 0.0;
-
-            PointMass { position, mass }
-        })
-        .collect()
-}
-
-pub fn random_mix_bodies(mut rng: StdRng, i: usize) -> Vec<PointMass> {
-    (0..i)
-        .map(|_| {
-            let position = gen_range_vector(&mut rng, -5000.0..5000.0);
-            let mass = rng.gen_range(-300.0_f32..100.0).max(0.0);
+        .map(|i| {
+            let position = gen_range_vector(rng, -5e3..5e3);
+            let mass = if i < massive_bodies {
+                rng.gen_range(1e-1..1e3)
+            } else {
+                0.0
+            };
 
             PointMass { position, mass }
         })
@@ -51,34 +35,45 @@ fn bench_compute_method<C>(
     bodies: &[PointMass],
     mut cm: C,
     group: &mut BenchmarkGroup<'_, criterion::measurement::WallTime>,
+    trim_generic: bool,
     suffix: &str,
 ) where
     for<'a> C: ComputeMethod<&'a [PointMass]>,
 {
-    let name = std::any::type_name::<C>().trim_start_matches("particular::algorithms::");
-    let bench_name = name
-        .find('<')
-        .map_or(name, |index| &name[..index])
-        .to_owned()
-        + suffix;
+    let trimmed_start =
+        std::any::type_name::<C>().trim_start_matches("particular::compute_method::");
 
-    group.bench_function(BenchmarkId::new(bench_name, bodies.len()), |b| {
-        b.iter(|| cm.compute(bodies))
-    });
+    let trimmed_start = if trim_generic {
+        trimmed_start.split('<').next().unwrap_or_default()
+    } else {
+        trimmed_start
+    }
+    .to_owned();
+
+    group.bench_function(
+        BenchmarkId::new(trimmed_start + suffix, bodies.len()),
+        |b| b.iter(|| cm.compute(bodies)),
+    );
 }
+
+// On wasm there are only 128-bit registers, so we use 4 lanes.
+#[cfg(target_arch = "wasm32")]
+const LANES: usize = 4;
+#[cfg(not(target_arch = "wasm32"))]
+const LANES: usize = 8;
 
 fn criterion_benchmark(c: &mut Criterion) {
     let mut g = c.benchmark_group("Particular");
     g.plot_config(PlotConfiguration::default().summary_scale(AxisScale::Logarithmic))
-        .warm_up_time(std::time::Duration::from_secs(2))
-        .measurement_time(std::time::Duration::from_secs(4))
-        .sample_size(50);
+        .warm_up_time(std::time::Duration::from_secs(1))
+        .measurement_time(std::time::Duration::from_secs(1))
+        .sample_size(15);
 
-    let particle_count_iterator = (1..21).map(|i| 2usize.pow(i));
+    let particle_count_iterator = (1..15).map(|i| 2usize.pow(i));
     let thetas = [0.3, 0.7];
 
     for i in particle_count_iterator {
-        let b = random_massive_bodies(StdRng::seed_from_u64(1808), i);
+        let b = random_bodies(&mut StdRng::seed_from_u64(1808), i, 1.0);
 
         #[cfg(feature = "gpu")]
         {
@@ -89,26 +84,26 @@ fn criterion_benchmark(c: &mut Criterion) {
                 device,
                 queue,
             };
-            bench_compute_method(&b, gpu_brute_force, &mut g, "");
+            bench_compute_method(&b, gpu_brute_force, &mut g, true, "");
         }
 
         #[cfg(feature = "parallel")]
         {
-            bench_compute_method(&b, parallel::BruteForceScalar, &mut g, "");
-            bench_compute_method(&b, parallel::BruteForceSIMD::<8>, &mut g, "");
+            bench_compute_method(&b, parallel::BruteForceScalar, &mut g, true, "");
+            bench_compute_method(&b, parallel::BruteForceSIMD::<LANES>, &mut g, false, "");
             for theta in thetas {
-                let suffix = format!("::{theta}");
-                bench_compute_method(&b, parallel::BarnesHut { theta }, &mut g, &suffix);
+                let suffix = &format!("::{theta}");
+                bench_compute_method(&b, parallel::BarnesHut { theta }, &mut g, true, suffix);
             }
         }
 
         {
-            bench_compute_method(&b, sequential::BruteForceScalar, &mut g, "");
-            bench_compute_method(&b, sequential::BruteForcePairs, &mut g, "");
-            bench_compute_method(&b, sequential::BruteForceSIMD::<8>, &mut g, "");
+            bench_compute_method(&b, sequential::BruteForceScalar, &mut g, true, "");
+            bench_compute_method(&b, sequential::BruteForcePairs, &mut g, true, "");
+            bench_compute_method(&b, sequential::BruteForceSIMD::<LANES>, &mut g, false, "");
             for theta in thetas {
-                let suffix = format!("::{theta}");
-                bench_compute_method(&b, sequential::BarnesHut { theta }, &mut g, &suffix);
+                let suffix = &format!("::{theta}");
+                bench_compute_method(&b, sequential::BarnesHut { theta }, &mut g, true, suffix);
             }
         }
     }

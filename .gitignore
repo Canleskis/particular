@@ -14,3 +14,4 @@ build_docs.bat
 
 website/public
 website/content/demos/*
+website/content/benchmarks/*.json

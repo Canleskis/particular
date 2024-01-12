@@ -32,27 +32,4 @@ mild_outlier = {r = 5, g = 127, b = 0}
 severe_outlier = {r = 7, g = 26, b = 28}
 
 # These are used for the line chart to compare multiple different functions.
-comparison_colors = [
-    # gpu::BruteForce
-    {r = 255, g = 0, b = 0},
-
-    # parallel::BarnesHut::0.2
-    {r = 0, g = 204, b = 0},
-    # parallel::BarnesHut::0.8
-    {r = 184, g = 204, b = 0},
-
-    # parallel::BruteForce
-    {r = 0, g = 128, b = 255},
-    # parallel::BruteForceSIMD
-    {r = 255, g = 100, b = 0},
-
-    # sequential::BarnesHut::0.2
-    {r = 0, g = 142, b = 0},
-    # sequential::BarnesHut::0.8
-    {r = 128, g = 142, b = 0},
-    
-    # sequential::BruteForcePairs
-    {r = 0, g = 76, b = 153},
-    # sequential::BruteForceSIMD
-    {r = 153, g = 60, b = 0},
-]
+comparison_colors = []
