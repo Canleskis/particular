@@ -80,7 +80,7 @@ impl Plugin for OrbitPredictionPlugin {
 }
 
 fn reset_prediction(
-    reset_event: EventReader<ResetPredictionEvent>,
+    mut reset_event: EventReader<ResetPredictionEvent>,
     mut query: Query<&mut PredictionState>,
 ) {
     if reset_event.is_empty() {
@@ -88,6 +88,7 @@ fn reset_prediction(
     }
 
     query.for_each_mut(|mut state| state.reset());
+    reset_event.clear();
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -144,7 +145,13 @@ fn compute_prediction(
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-type PredictionReceiver = crossbeam_channel::Receiver<Vec<(Entity, Vec3, Vec3)>>;
+type PredictionReceiver = crossbeam_channel::Receiver<PredictionMessage>;
+
+#[cfg(not(target_arch = "wasm32"))]
+enum PredictionMessage {
+    Done,
+    Send(Vec<(Entity, Vec3, Vec3)>),
+}
 
 #[cfg(not(target_arch = "wasm32"))]
 fn compute_prediction(
@@ -178,7 +185,7 @@ fn compute_prediction(
 
         std::thread::spawn(move || {
             for _ in 0..steps {
-                tx.send(
+                tx.send(PredictionMessage::Send(
                     mapped_query
                         .iter()
                         .map(|&(.., position, mass)| (position.to_array(), mass))
@@ -192,18 +199,24 @@ fn compute_prediction(
                             (*entity, *velocity, *position)
                         })
                         .collect::<Vec<_>>(),
-                )
+                ))
                 .unwrap();
             }
+
+            tx.send(PredictionMessage::Done).unwrap();
         });
     }
 
-    if let Some(receiver) = &*receiver {
-        for received in receiver.try_iter() {
-            for (entity, velocity, position) in received {
-                if let Ok((.., mut state)) = query.get_mut(entity) {
-                    state.push(velocity, position);
+    if let Some(receiver_inner) = receiver.clone() {
+        for received in receiver_inner.try_iter() {
+            if let PredictionMessage::Send(received) = received {
+                for (entity, velocity, position) in received {
+                    if let Ok((.., mut state)) = query.get_mut(entity) {
+                        state.push(velocity, position);
+                    }
                 }
+            } else {
+                *receiver = None;
             }
         }
     }
