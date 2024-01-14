@@ -257,7 +257,7 @@ impl<V, S> PointMass<V, S> {
 pub struct ParticleSystem<'p, V, S, T: ?Sized> {
     /// Particles for which the acceleration is computed.
     pub affected: &'p [PointMass<V, S>],
-    /// Particle storage responsible for the acceleration exerted on the `affected` particles.
+    /// Particles responsible for the acceleration exerted on the `affected` particles, in a storage `S`.
     pub massive: &'p T,
 }
 
@@ -280,7 +280,7 @@ impl<'p, V, S, T: ?Sized> ParticleSystem<'p, V, S, T> {
 /// [`ParticleSystem`] with a slice of particles for the massive storage.
 pub type ParticleSliceSystem<'p, V, S> = ParticleSystem<'p, V, S, [PointMass<V, S>]>;
 
-/// Storage with particles in a [`Orthtree`].
+/// Storage with particles in an [`Orthtree`] and its root.
 #[derive(Clone, Debug)]
 pub struct ParticleTree<const X: usize, const D: usize, V, S> {
     root: Option<NodeID>,
@@ -296,7 +296,7 @@ impl<const X: usize, const D: usize, V, S> ParticleTree<X, D, V, S> {
 
     /// Returns a reference to the [`Orthtree`].
     #[inline]
-    pub const fn tree(&self) -> &Orthtree<X, D, S, PointMass<V, S>> {
+    pub const fn get(&self) -> &Orthtree<X, D, S, PointMass<V, S>> {
         &self.tree
     }
 }
@@ -453,25 +453,6 @@ where
     }
 }
 
-impl<const X: usize, const D: usize, V, S, C, O> ComputeMethod<ParticleSliceSystem<'_, V, S>> for C
-where
-    O: IntoIterator,
-    for<'a> C: ComputeMethod<ParticleTreeSystem<'a, X, D, V, S>, Output = O>,
-    V: Copy + FloatVector<Float = S, Array = [S; D]>,
-    S: Copy + Float + Sum + PartialOrd + FromPrimitive<usize>,
-    BoundingBox<[S; D]>: SubDivide<Division = [BoundingBox<[S; D]>; X]>,
-{
-    type Output = O;
-
-    #[inline]
-    fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
-        self.compute(ParticleTreeSystem {
-            affected: system.affected,
-            massive: &ParticleTree::from(system.massive),
-        })
-    }
-}
-
 impl<V, S, C, O> ComputeMethod<&[PointMass<V, S>]> for C
 where
     O: IntoIterator,
@@ -516,6 +497,25 @@ where
         self.compute(ParticleSliceSystem {
             affected: reordered.unordered,
             massive: reordered.massive(),
+        })
+    }
+}
+
+impl<const X: usize, const D: usize, V, S, C, O> ComputeMethod<ParticleSliceSystem<'_, V, S>> for C
+where
+    O: IntoIterator,
+    for<'a> C: ComputeMethod<ParticleTreeSystem<'a, X, D, V, S>, Output = O>,
+    V: Copy + FloatVector<Float = S, Array = [S; D]>,
+    S: Copy + Float + Sum + PartialOrd + FromPrimitive<usize>,
+    BoundingBox<[S; D]>: SubDivide<Division = [BoundingBox<[S; D]>; X]>,
+{
+    type Output = O;
+
+    #[inline]
+    fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
+        self.compute(ParticleTreeSystem {
+            affected: system.affected,
+            massive: &ParticleTree::from(system.massive),
         })
     }
 }

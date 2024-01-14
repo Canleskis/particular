@@ -169,11 +169,11 @@ where
 
     #[inline]
     fn compute(&mut self, system: ParticleTreeSystem<X, D, V, S>) -> Self::Output {
-        let storage = system.massive;
+        let tree = system.massive;
         system
             .affected
             .iter()
-            .map(|p| p.acceleration_tree(storage.tree(), storage.root(), self.theta))
+            .map(|p| p.acceleration_tree(tree.get(), tree.root(), self.theta))
             .collect()
     }
 }

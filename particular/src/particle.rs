@@ -172,10 +172,8 @@ where
             vec.into_iter().map(Into::into).collect()
         }
 
-        scalar_to_array(cm.compute(ParticleReordered::from(
-            &*self.map(|p| p.point_mass()).collect::<Vec<_>>(),
-        )))
-        .into_iter()
+        let collection = self.map(|p| p.point_mass()).collect::<Vec<_>>();
+        scalar_to_array(cm.compute(ParticleReordered::from(&*collection))).into_iter()
     }
 }
 impl<I: Iterator> Accelerations for I where I::Item: Particle {}
