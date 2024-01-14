@@ -32,8 +32,8 @@ Particular consists of two "modules", a "backend" that takes care of the abstrac
 
 ### Simple usage
 
-The [`Particle`] trait provides the main abstraction layer between the internal representation of the position and mass of an object in N-dimensional space and external types, by defining methods to retrieve the position and the gravitational parameter of a type.  
-The return types of these methods, respectively an array of scalars and a scalar, are converted using the [point_mass] method to interface with the backend of Particular.
+The [`Particle`] trait provides the main abstraction layer between the internal representation of the position and mass of an object in N-dimensional space and external types by defining methods to retrieve a position and a gravitational parameter.  
+These methods respectively return an array of scalars and a scalar, which are converted using the [point_mass] method to interface with the backend of Particular.
 
 #### Implementing the [`Particle`] trait
 
@@ -88,8 +88,8 @@ assert_eq!(particle.mu(), 5.0);
 
 #### Computing and using the gravitational acceleration
 
-In order to compute the accelerations of your particles, you can use the [accelerations] method on iterators, passing in a mutable reference to a [`ComputeMethod`] of your choice.  
-This method collects the mapped particles in a [`ParticleReordered`] in order to optimise the computation of forces of massless particles, which requires one additional allocation. See the [advanced usage](#advanced-usage) section for information on how to opt out.
+In order to compute the accelerations of your particles, you can use the [accelerations] method on iterators, passing in a mutable reference to a [`ComputeMethod`] of your choice. It returns the acceleration of each iterated item, preserving the original order.  
+Because it collects the mapped particles in a [`ParticleReordered`] in order to optimise the computation of forces of massless particles, this method call results in one additional allocation. See the [advanced usage](#advanced-usage) section for information on how to opt out.
 
 ##### When the iterated type implements [`Particle`]
 
@@ -120,7 +120,7 @@ for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
 ### Advanced usage
 
 The "frontend" is built on top of the "backend" but in some instances the abstraction provided by the frontend might not be flexible enough. For example, you might need to access the tree built from the particles for the Barnes-Hut algorithm, want to compute the gravitational forces between two distinct collections of particles, or both at the same time.  
-In that case, you can use the backend directly by calling [compute] on a struct implementing [`ComputeMethod`], passing in an appropriate storage.
+In that case, you can use the backend directly by calling the [compute] method on a struct implementing [`ComputeMethod`], passing in an appropriate storage.
 
 #### Storages and built-in [`ComputeMethod`] implementations
 
@@ -174,6 +174,7 @@ struct MyComputeMethod;
 impl ComputeMethod<ParticleReordered<'_, Vec3, f32>> for MyComputeMethod {
     type Output = Vec<Vec3>;
 
+    #[inline]
     fn compute(&mut self, storage: ParticleReordered<Vec3, f32>) -> Self::Output {
         // Only return the accelerations of the massless particles.
         sequential::BruteForceScalar.compute(ParticleSliceSystem {
@@ -182,6 +183,21 @@ impl ComputeMethod<ParticleReordered<'_, Vec3, f32>> for MyComputeMethod {
         })
     }
 }
+```
+
+#### The [`PointMass`] type
+
+The underlying type used in storages is the [`PointMass`], a simple representation in N-dimensional space of a position and a gravitational parameter. Instead of going through a [`ComputeMethod`], you can directly use the different generic methods available to compute the gravitational forces between [`PointMass`]es, with variants optimised for scalar and simd types.
+
+##### Example
+
+```rust
+use storage::PointMass;
+
+let p1 = PointMass::new(Vec2::new(0.0, 1.0), 1.0);
+let p2 = PointMass::new(Vec2::new(0.0, 0.0), 1.0);
+
+assert_eq!(p1.acceleration_scalar::<false>(&p2), Vec2::new(0.0, -1.0));
 ```
 
 ## License
@@ -202,3 +218,4 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 [`ParticleSystem`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleSystem.html
 [`ParticleSliceSystem`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleSliceSystem.html
 [`ParticleTreeSystem`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleTreeSystem.html
+[`PointMass`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.PointMass.html

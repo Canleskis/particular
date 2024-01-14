@@ -24,7 +24,7 @@
 //! 
 //! ### Simple usage
 //! 
-//! The [`Particle`] trait provides the main abstraction layer between the internal representation of the position and mass of an object in N-dimensional space and external types by defining methods to retrieve the position and the gravitational parameter.  
+//! The [`Particle`] trait provides the main abstraction layer between the internal representation of the position and mass of an object in N-dimensional space and external types by defining methods to retrieve a position and a gravitational parameter.  
 //! These methods respectively return an array of scalars and a scalar, which are converted using the [point_mass] method to interface with the backend of Particular.
 //! 
 //! #### Implementing the [`Particle`] trait
@@ -38,7 +38,6 @@
 //! ```
 //! # use particular::prelude::*;
 //! # use ultraviolet::Vec3;
-//! #
 //! #[derive(Particle)]
 //! #[dim(3)]
 //! struct Body {
@@ -54,10 +53,8 @@
 //! 
 //! ```
 //! # const G: f32 = 1.0;
-//! #
 //! # use particular::prelude::*;
 //! # use ultraviolet::Vec3;
-//! #
 //! struct Body {
 //!     position: Vec3,
 //!     mass: f32,
@@ -89,18 +86,16 @@
 //! 
 //! #### Computing and using the gravitational acceleration
 //! 
-//! In order to compute the accelerations of your particles, you can use the [accelerations] method on iterators, passing in a mutable reference to a [`ComputeMethod`] of your choice.  
-//! This method collects the mapped particles in a [`ParticleReordered`] in order to optimise the computation of forces of massless particles, which requires one additional allocation. See the [advanced usage](#advanced-usage) section for information on how to opt out.
+//! In order to compute the accelerations of your particles, you can use the [accelerations] method on iterators, passing in a mutable reference to a [`ComputeMethod`] of your choice. It returns the acceleration of each iterated item, preserving the original order.  
+//! Because it collects the mapped particles in a [`ParticleReordered`] in order to optimise the computation of forces of massless particles, this method call results in one additional allocation. See the [advanced usage](#advanced-usage) section for information on how to opt out.
 //! 
 //! ##### When the iterated type implements [`Particle`]
 //! 
 //! ```
 //! # use particular::prelude::*;
 //! # use ultraviolet::Vec3;
-//! #
 //! # const DT: f32 = 1.0 / 60.0;
 //! # let mut cm = sequential::BruteForceScalar;
-//! #
 //! # #[derive(Particle)]
 //! # #[dim(3)]
 //! # struct Body {
@@ -120,11 +115,9 @@
 //! ```
 //! # use particular::prelude::*;
 //! # use ultraviolet::Vec3;
-//! #
 //! # const DT: f32 = 1.0 / 60.0;
 //! # const G: f32 = 1.0;
 //! # let mut cm = sequential::BruteForceScalar;
-//! #
 //! # let mut items = vec![
 //! #     (Vec3::zero(), -Vec3::one(), 5.0),
 //! #     (Vec3::zero(), Vec3::zero(), 3.0),
@@ -165,11 +158,11 @@
 //! # use ultraviolet::Vec3;
 //! let particles = vec![
 //!     // ...
-//!     # PointMass::new(Vec3::new(-10.0, 0.0, 0.0), 5.0),
-//!     # PointMass::new(Vec3::new(-5.0, 20.0, 0.0), 0.0),
-//!     # PointMass::new(Vec3::new(-50.0, 0.0, 5.0), 0.0),
-//!     # PointMass::new(Vec3::new(10.0, 5.0, 5.0), 10.0),
-//!     # PointMass::new(Vec3::new(0.0, -5.0, 20.0), 0.0),
+//! #   PointMass::new(Vec3::new(-10.0, 0.0, 0.0), 5.0),
+//! #   PointMass::new(Vec3::new(-5.0, 20.0, 0.0), 0.0),
+//! #   PointMass::new(Vec3::new(-50.0, 0.0, 5.0), 0.0),
+//! #   PointMass::new(Vec3::new(10.0, 5.0, 5.0), 10.0),
+//! #   PointMass::new(Vec3::new(0.0, -5.0, 20.0), 0.0),
 //! ];
 //! 
 //! // Create a `ParticleOrdered` to split massive and massless particles.
@@ -195,7 +188,7 @@
 //! 
 //! #### Custom [`ComputeMethod`] implementations
 //! 
-//! In order to work with the highest number of cases, built-in compute method implementations may not be the most appropriate for your specific use case. You can implement the [`ComputeMethod`] trait on your own type to satisfy your specific requirements but also if you want to implement other algorithms.
+//! In order to work with the highest number of cases, built-in compute method implementations may not be the most appropriate or optimised for your specific use case. You can implement the [`ComputeMethod`] trait on your own type to satisfy your specific requirements but also if you want to implement other algorithms.
 //! 
 //! ##### Example
 //! 
@@ -220,6 +213,23 @@
 //! }
 //! ```
 //! 
+//! #### The [`PointMass`] type
+//! 
+//! The underlying type used in storages is the [`PointMass`], a simple representation in N-dimensional space of a position and a gravitational parameter. Instead of going through a [`ComputeMethod`], you can directly use the different generic methods available to compute the gravitational forces between [`PointMass`]es, with variants optimised for scalar and simd types.
+//! 
+//! ##### Example
+//! 
+//! ```
+//! # use particular::prelude::*;
+//! # use ultraviolet::Vec2;
+//! use storage::PointMass;
+//! 
+//! let p1 = PointMass::new(Vec2::new(0.0, 1.0), 1.0);
+//! let p2 = PointMass::new(Vec2::new(0.0, 0.0), 1.0);
+//! 
+//! assert_eq!(p1.acceleration_scalar::<false>(&p2), Vec2::new(0.0, -1.0));
+//! ```
+//! 
 //! [accelerations]: particle::Accelerations::accelerations
 //! [point_mass]: particle::IntoPointMass::point_mass
 //! [compute]: compute_method::ComputeMethod::compute
@@ -230,6 +240,7 @@
 //! [`ParticleSystem`]: compute_method::storage::ParticleSystem
 //! [`ParticleSliceSystem`]: compute_method::storage::ParticleSliceSystem
 //! [`ParticleTreeSystem`]: compute_method::storage::ParticleTreeSystem
+//! [`PointMass`]: compute_method::storage::PointMass
 
 #![warn(missing_docs)]
 

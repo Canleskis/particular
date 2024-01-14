@@ -18,7 +18,7 @@ pub mod parallel;
 /// Compute methods that use one CPU thread.
 pub mod sequential;
 
-/// Trait to perform a computation of values of type `V` between objects contained in a storage of type `S`.
+/// Trait to perform a computation of values between objects contained in a storage of type `S`.
 ///
 /// # Example
 ///
