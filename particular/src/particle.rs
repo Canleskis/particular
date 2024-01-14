@@ -75,9 +75,9 @@ pub trait Particle {
 }
 
 /// Marker trait to bind a [`FloatVector`] to an array.
-pub trait ScalarArray: Array + Sized {
+pub trait ScalarArray: Array + From<Self::Vector> + Into<Self::Vector> {
     /// Associated [`FloatVector`] of the array, which should ideally have the same layout.
-    type Vector: FloatVector<Float = Self::Item> + From<Self> + Into<Self>;
+    type Vector: FloatVector<Float = Self::Item>;
 }
 
 macro_rules! impl_scalar_array {
@@ -169,7 +169,7 @@ where
         {
             // If the array and its associated vector have the same layout (which is the case for all current implementations of `ScalarArray`),
             // this doesn't actually allocate and is a no-op.
-            vec.into_iter().map(Into::into).collect()
+            vec.into_iter().map(A::from).collect()
         }
 
         let collection = self.map(|p| p.point_mass()).collect::<Vec<_>>();
