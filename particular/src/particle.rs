@@ -5,7 +5,8 @@ use crate::compute_method::{
 };
 use std::vec::IntoIter;
 
-/// Trait to describe a particle which consists of a [position](Particle::position) and a [gravitational parameter mu](Particle::mu).
+/// Trait to describe a particle which consists of a [position](Particle::position) and a
+/// [gravitational parameter mu](Particle::mu).
 ///
 /// #### Deriving:
 ///
@@ -52,7 +53,8 @@ use std::vec::IntoIter;
 /// }
 /// ```
 ///
-/// If you can't implement [`Particle`] on a type, you can use the fact that it is implemented for tuples of an array and its scalar type instead of creating an intermediate type.
+/// If you can't implement [`Particle`] on a type, you can use the fact that it is implemented for
+/// tuples of an array and its scalar type instead of creating an intermediate type.
 ///
 /// ```
 /// # use particular::prelude::*;
@@ -117,7 +119,8 @@ pub trait IntoPointMass: Particle + Sized {
 }
 impl<P: Particle> IntoPointMass for P {}
 
-/// Marker trait for [`ComputeMethod`]s implemented with a [`ParticleReordered`] storage for a [`Particle`] of type `P`.
+/// Marker trait for [`ComputeMethod`]s implemented with a [`ParticleReordered`] storage for a
+/// [`Particle`] of type `P`.
 pub trait ReorderedCompute<P>:
     for<'a> ComputeMethod<
     ParticleReordered<'a, ParticleVector<P>, ParticleScalar<P>>,
@@ -167,8 +170,9 @@ where
         where
             A: ScalarArray,
         {
-            // If the array and its associated vector have the same layout (which is the case for all current implementations of `ScalarArray`),
-            // this doesn't actually allocate and is a no-op.
+            // If the array and its associated vector have the same layout (which is the case for
+            // all current implementations of `ScalarArray`), this doesn't actually
+            // allocate and is a no-op.
             vec.into_iter().map(A::from).collect()
         }
 

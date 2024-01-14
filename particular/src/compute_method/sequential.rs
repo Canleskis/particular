@@ -63,7 +63,8 @@ where
 
 /// Brute-force [`ComputeMethod`] using the CPU and scalar vectors.
 ///
-/// Typically faster than [`BruteForceScalar`] because it computes the acceleration over the combination of pairs of particles instead of all the pairs.
+/// Typically faster than [`BruteForceScalar`] because it computes the acceleration over the
+/// combination of pairs of particles instead of all the pairs.
 #[derive(Clone, Copy, Default)]
 pub struct BruteForcePairs;
 
@@ -152,10 +153,12 @@ where
     }
 }
 
-/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`] using the CPU and scalar vectors.
+/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`]
+/// using the CPU and scalar vectors.
 #[derive(Clone, Copy, Default)]
 pub struct BarnesHut<S> {
-    /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as [`BruteForceScalar`].
+    /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as
+    /// [`BruteForceScalar`].
     pub theta: S,
 }
 

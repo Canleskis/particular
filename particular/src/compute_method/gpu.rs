@@ -64,10 +64,11 @@ impl Default for GpuData {
 
 /// Brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
 ///
-/// Currently only available for 3D f32 vectors. You can still use it in 2D by converting your 2D f32 vectors to 3D f32 vectors.
+/// Currently only available for 3D f32 vectors. You can still use it in 2D by converting your 2D
+/// f32 vectors to 3D f32 vectors.
 pub struct BruteForce<'a> {
-    /// Instanced [`GpuData`] used for the computation. It **should not** be recreated for every iteration.
-    /// Doing so would result in significantly reduced performance.
+    /// Instanced [`GpuData`] used for the computation. It **should not** be recreated for every
+    /// iteration. Doing so would result in significantly reduced performance.
     pub gpu_data: &'a mut GpuData,
     /// [`wgpu::Device`] used for the computation.
     pub device: &'a wgpu::Device,

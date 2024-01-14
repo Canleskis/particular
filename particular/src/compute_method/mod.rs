@@ -3,8 +3,8 @@
 pub mod gpu_compute;
 /// Trait abstractions for generic vectors and associated floating-point numbers.
 pub mod math;
-/// Representation of the position and mass of an object in N-dimensional space and collections used by
-/// built-in [`ComputeMethods`](crate::compute_method::ComputeMethod).
+/// Representation of the position and mass of an object in N-dimensional space and collections used
+/// by built-in [`ComputeMethod`] implementations.
 pub mod storage;
 /// Tree, bounding box and BarnesHut implementation details.
 pub mod tree;

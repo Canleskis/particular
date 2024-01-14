@@ -5,7 +5,8 @@ use crate::compute_method::{
 };
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
-/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and scalar vectors.
+/// Brute-force [`ComputeMethod`] using the CPU in parallel with
+/// [rayon](https://github.com/rayon-rs/rayon) and scalar vectors.
 #[derive(Clone, Copy, Default)]
 pub struct BruteForceScalar;
 
@@ -30,7 +31,8 @@ where
     }
 }
 
-/// Brute-force [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) and simd vectors.
+/// Brute-force [`ComputeMethod`] using the CPU in parallel with
+/// [rayon](https://github.com/rayon-rs/rayon) and simd vectors.
 #[derive(Clone, Copy, Default)]
 pub struct BruteForceSIMD<const L: usize>;
 
@@ -60,10 +62,13 @@ where
     }
 }
 
-/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`] using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) for the force computation and scalar vectors.
+/// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`]
+/// using the CPU in parallel with [rayon](https://github.com/rayon-rs/rayon) for the force
+/// computation and scalar vectors.
 #[derive(Clone, Copy, Default)]
 pub struct BarnesHut<S> {
-    /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as [`BruteForceScalar`].
+    /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as
+    /// [`BruteForceScalar`].
     pub theta: S,
 }
 

@@ -110,7 +110,8 @@ where
     Self: SubDivide<Division = [Self; X]>,
     S: Copy + Float,
 {
-    /// Subdivides this [`BoundingBox`] into mutliple bounding boxes defined by [`SubDivide`] implementation.
+    /// Subdivides this [`BoundingBox`] into mutliple bounding boxes defined by [`SubDivide`]
+    /// implementation.
     #[inline]
     pub fn subdivide(&self) -> [Self; X] {
         let bbox_min = self.min;

@@ -39,7 +39,8 @@ impl<V, S> PointMass<V, S> {
         Self::new(V::new_lane(position), S::new_lane(mass))
     }
 
-    /// Returns the [`PointMass`] corresponding to the center of mass and total mass of the given slice of point-masses.
+    /// Returns the [`PointMass`] corresponding to the center of mass and total mass of the given
+    /// slice of point-masses.
     #[inline]
     pub fn new_com(data: &[Self]) -> Self
     where
@@ -112,11 +113,11 @@ impl<V, S> PointMass<V, S> {
         self.mass != S::ZERO
     }
 
-    /// Computes the gravitational force exerted on the current point-mass using the given position and mass,
-    /// provided `V` and `S` are scalar types.
+    /// Computes the gravitational force exerted on the current point-mass using the given position
+    /// and mass, provided `V` and `S` are scalar types.
     ///
-    /// If the position of the current point-mass is guaranteed to be different from the given position,
-    /// this computation can be more efficient with `CHECK_ZERO` set to false.
+    /// If the position of the current point-mass is guaranteed to be different from the given
+    /// position, this computation can be more efficient with `CHECK_ZERO` set to false.
     #[inline]
     pub fn force_mul_mass_scalar<const CHECK_ZERO: bool>(&self, position: V, mass: S) -> V
     where
@@ -137,8 +138,8 @@ impl<V, S> PointMass<V, S> {
     /// Computes the gravitational force exerted on the current point-mass by the given point-mass,
     /// provided `V` and `S` are scalar types.
     ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of the given point-mass,
-    /// this computation can be more efficient with `CHECK_ZERO` set to false.
+    /// If the position of the current point-mass is guaranteed to be different from the position of
+    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to false.
     #[inline]
     pub fn force_scalar<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
     where
@@ -148,11 +149,11 @@ impl<V, S> PointMass<V, S> {
         self.force_mul_mass_scalar::<CHECK_ZERO>(point_mass.position, self.mass * point_mass.mass)
     }
 
-    /// Computes the gravitational acceleration exerted on the current point-mass by the given point-mass,
-    /// provided `V` and `S` are scalar types.
+    /// Computes the gravitational acceleration exerted on the current point-mass by the given
+    /// point-mass, provided `V` and `S` are scalar types.
     ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of the given point-mass,
-    /// this computation can be more efficient with `CHECK_ZERO` set to false.
+    /// If the position of the current point-mass is guaranteed to be different from the position of
+    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to false.
     #[inline]
     pub fn acceleration_scalar<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
     where
@@ -162,11 +163,11 @@ impl<V, S> PointMass<V, S> {
         self.force_mul_mass_scalar::<CHECK_ZERO>(point_mass.position, point_mass.mass)
     }
 
-    /// Computes the gravitational force exerted on the current point-mass using the given position and mass,
-    /// provided `V` and `S` are SIMD types.
+    /// Computes the gravitational force exerted on the current point-mass using the given position
+    /// and mass, provided `V` and `S` are SIMD types.
     ///
-    /// If the position of the current point-mass is guaranteed to be different from the given position,
-    /// this computation can be more efficient with `CHECK_ZERO` set to false.
+    /// If the position of the current point-mass is guaranteed to be different from the given
+    /// position, this computation can be more efficient with `CHECK_ZERO` set to false.
     #[inline]
     pub fn force_mul_mass_simd<const CHECK_ZERO: bool>(&self, position: V, mass: S) -> V
     where
@@ -184,11 +185,12 @@ impl<V, S> PointMass<V, S> {
         }
     }
 
-    /// Computes the gravitational acceleration exerted on the current point-mass by the given point-mass,
-    /// provided `V` and `S` are SIMD types.
+    /// Computes the gravitational acceleration exerted on the current point-mass by the given
+    /// point-mass, provided `V` and `S` are SIMD types.
     ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of the given point-mass,
-    /// this computation can be more efficient with `CHECK_ZERO` set to false.
+    /// If the position of the current point-mass is guaranteed to be different from the position of
+    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to
+    /// false.
     #[inline]
     pub fn force_simd<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
     where
@@ -198,11 +200,12 @@ impl<V, S> PointMass<V, S> {
         self.force_mul_mass_simd::<CHECK_ZERO>(point_mass.position, self.mass * point_mass.mass)
     }
 
-    /// Computes the gravitational acceleration exerted on the current point-mass by the given point-mass,
-    /// provided `V` and `S` are SIMD types.
+    /// Computes the gravitational acceleration exerted on the current point-mass by the given
+    /// point-mass, provided `V` and `S` are SIMD types.
     ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of the given point-mass,
-    /// this computation can be more efficient with `CHECK_ZERO` set to false.
+    /// If the position of the current point-mass is guaranteed to be different from the position of
+    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to
+    /// false.
     #[inline]
     pub fn acceleration_simd<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
     where
@@ -212,9 +215,9 @@ impl<V, S> PointMass<V, S> {
         self.force_mul_mass_simd::<CHECK_ZERO>(point_mass.position, point_mass.mass)
     }
 
-    /// Computes the gravitational acceleration exerted on the current point-mass by the specified node of the given [`Orthtree`] following the
-    /// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) approximation with the given `theta` parameter,
-    /// provided `V` and `S` are scalar types.
+    /// Computes the gravitational acceleration exerted on the current point-mass by the specified
+    /// node of the given [`Orthtree`] following the [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation)
+    /// approximation with the given `theta` parameter, provided `V` and `S` are scalar types.
     #[inline]
     pub fn acceleration_tree<const X: usize, const D: usize>(
         &self,
@@ -257,7 +260,8 @@ impl<V, S> PointMass<V, S> {
 pub struct ParticleSystem<'p, V, S, T: ?Sized> {
     /// Particles for which the acceleration is computed.
     pub affected: &'p [PointMass<V, S>],
-    /// Particles responsible for the acceleration exerted on the `affected` particles, in a storage `S`.
+    /// Particles responsible for the acceleration exerted on the `affected` particles, in a
+    /// storage `S`.
     pub massive: &'p T,
 }
 
@@ -322,7 +326,8 @@ pub type ParticleTreeSystem<'p, const X: usize, const D: usize, V, S> =
 
 /// Storage inside of which the massive particles are placed before the massless ones.
 ///
-/// Allows for easy optimisation of the computation of forces between massive and massless particles.
+/// Allows for easy optimisation of the computation of forces between massive and massless
+/// particles.
 #[derive(Clone, Debug)]
 pub struct ParticleOrdered<V, S> {
     massive_len: usize,

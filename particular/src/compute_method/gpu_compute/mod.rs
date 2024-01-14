@@ -13,7 +13,8 @@ pub struct WgpuResources {
 }
 
 impl WgpuResources {
-    /// Creates a new [`WgpuResources`] with the given [`wgpu::Device`] and count of affected and massive particles.
+    /// Creates a new [`WgpuResources`] with the given [`wgpu::Device`] and count of affected and
+    /// massive particles.
     #[inline]
     pub fn init(device: &wgpu::Device, affected_count: usize, massive_count: usize) -> Self {
         let affected_size = (std::mem::size_of::<PointMass>() * affected_count) as u64;

@@ -15,7 +15,8 @@ pub struct Tree<Node, Data> {
 
     /// Vector of generic `Data` objects that contain information about the associated `Node`.
     ///
-    /// The `data` vector is parallel to the `nodes` vector, so the `i`-th element of the `data` vector corresponds to the `i`-th element of the `nodes` vector.
+    /// The `data` vector is parallel to the `nodes` vector, so the `i`-th element of the `data`
+    /// vector corresponds to the `i`-th element of the `nodes` vector.
     pub data: Vec<Data>,
 }
 
@@ -28,7 +29,8 @@ impl<Node, Data> Tree<Node, Data> {
         }
     }
 
-    /// Creates a new empty [`Tree`] with at least the specified capacity in the `nodes` and `data` vectors.
+    /// Creates a new empty [`Tree`] with at least the specified capacity in the `nodes` and `data`
+    /// vectors.
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             nodes: Vec::with_capacity(capacity),
@@ -43,7 +45,8 @@ impl<Node, Data> Default for Tree<Node, Data> {
     }
 }
 
-/// Node for trees that can either be internal and containing data or external and containing no data.
+/// Node for trees that can either be internal and containing data or external and containing no
+/// data.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Node<N> {
     /// Node with child nodes.
@@ -57,7 +60,8 @@ pub type Orthtree<const X: usize, const D: usize, S, Data> =
     Tree<Node<SizedOrthant<X, D, NodeID, S>>, Data>;
 
 impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data> {
-    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and functions until the created square bounding box stops subdividing.
+    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and
+    /// functions until the created square bounding box stops subdividing.
     pub fn build_node<I, P, C>(&mut self, input: &[I], position: P, compute: C) -> Option<NodeID>
     where
         I: Copy,
@@ -74,7 +78,8 @@ impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data> {
         )
     }
 
-    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and functions until the given bounding box stops subdividing.
+    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and
+    /// functions until the given bounding box stops subdividing.
     pub fn build_node_with<I, P, C>(
         &mut self,
         bbox: BoundingBox<[S; D]>,
