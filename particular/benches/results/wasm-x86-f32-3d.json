@@ -3,6 +3,7 @@
     "tags": [
         "wasm",
         "x86",
+        "simd128",
         "f32",
         "3d",
         "Chrome 120",
