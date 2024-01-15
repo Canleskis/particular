@@ -162,10 +162,10 @@ pub trait SIMDElement<const L: usize>: Sized {
     type SIMD: SIMD<Element = Self, Lane = [Self; L]>;
 }
 
-/// Trait to sum the lanes of a SIMD vector.
-pub trait ReduceAdd: SIMD {
+/// Trait to reduce the lanes of a SIMD vector.
+pub trait Reduce: SIMD {
     /// Sums the lanes of a SIMD vector.
-    fn reduce_add(self) -> Self::Element;
+    fn reduce_sum(self) -> Self::Element;
 }
 
 /// Trait to replace infinites values with zeros in `SIMD` types.
@@ -400,29 +400,31 @@ impl_simd_vector!(DVec3x4, [DVec3; 4]);
 impl_simd_vector!(DVec4x2, [DVec4; 2]);
 impl_simd_vector!(DVec4x4, [DVec4; 4]);
 
-macro_rules! impl_reduce_add {
+macro_rules! impl_reduce {
     ($vector: ty, [$($f: ident),+]) => {
-        impl ReduceAdd for $vector {
+        impl Reduce for $vector {
             #[inline]
-            fn reduce_add(self) -> Self::Element {
-                From::from([$(self.$f.reduce_add()),+])
+            fn reduce_sum(self) -> Self::Element {
+                Self::Element {
+                    $($f: self.$f.reduce_add()),+
+                }
             }
         }
     };
 }
 
-impl_reduce_add!(Vec2x4, [x, y]);
-impl_reduce_add!(Vec2x8, [x, y]);
-impl_reduce_add!(Vec3x4, [x, y, z]);
-impl_reduce_add!(Vec3x8, [x, y, z]);
-impl_reduce_add!(Vec4x4, [x, y, z, w]);
-impl_reduce_add!(Vec4x8, [x, y, z, w]);
-impl_reduce_add!(DVec2x2, [x, y]);
-impl_reduce_add!(DVec2x4, [x, y]);
-impl_reduce_add!(DVec3x2, [x, y, z]);
-impl_reduce_add!(DVec3x4, [x, y, z]);
-impl_reduce_add!(DVec4x2, [x, y, z, w]);
-impl_reduce_add!(DVec4x4, [x, y, z, w]);
+impl_reduce!(Vec2x4, [x, y]);
+impl_reduce!(Vec2x8, [x, y]);
+impl_reduce!(Vec3x4, [x, y, z]);
+impl_reduce!(Vec3x8, [x, y, z]);
+impl_reduce!(Vec4x4, [x, y, z, w]);
+impl_reduce!(Vec4x8, [x, y, z, w]);
+impl_reduce!(DVec2x2, [x, y]);
+impl_reduce!(DVec2x4, [x, y]);
+impl_reduce!(DVec3x2, [x, y, z]);
+impl_reduce!(DVec3x4, [x, y, z]);
+impl_reduce!(DVec4x2, [x, y, z, w]);
+impl_reduce!(DVec4x4, [x, y, z, w]);
 
 macro_rules! impl_inf_to_zero {
     ($float: ty) => {

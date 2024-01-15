@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `GpuData` struct used for `gpu::BruteForce`.
 - `ParticleSystem`, `ParticleTree`, `ParticleOrdered` and `ParticleReordered` structs used for storages in built-in compute methods.
-- `Array`, `Zero`, `One`, `Infinty`, `FloatOps`, `Float`, `IntoArray`, `FloatVectorOps`, `FloatVector`, `SIMD`, `SIMDElement`, `ReduceAdd`, `InfToZero`, `FromPrimitive` and `AsPrimitive` traits for math operation abstractions.
+- `Array`, `Zero`, `One`, `Infinty`, `FloatOps`, `Float`, `IntoArray`, `FloatVectorOps`, `FloatVector`, `SIMD`, `SIMDElement`, `Reduce`, `InfToZero`, `FromPrimitive` and `AsPrimitive` traits for math operation abstractions.
 - `force_mul_mass_scalar`, `force_mul_mass_simd` `acceleration_tree`, `force_scalar` and `force_simd` methods for `PointMass` and various `new` methods.
 - `ScalarArray` trait to bind a `FloatVector` and an array for `Particle` to `PointMass` conversion.
 - Marker `ReorderedCompute` trait.

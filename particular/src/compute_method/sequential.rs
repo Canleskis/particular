@@ -1,5 +1,5 @@
 use crate::compute_method::{
-    math::{Float, FloatVector, InfToZero, ReduceAdd, SIMDElement, Zero},
+    math::{Float, FloatVector, InfToZero, Reduce, SIMDElement, Zero},
     storage::{
         ParticleOrdered, ParticleReordered, ParticleSliceSystem, ParticleTreeSystem, PointMass,
     },
@@ -39,7 +39,7 @@ impl<const L: usize, V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for Brut
 where
     V: SIMDElement<L> + Copy + Zero,
     S: SIMDElement<L> + Copy + Zero,
-    V::SIMD: FloatVector<Float = S::SIMD> + Copy + ReduceAdd,
+    V::SIMD: FloatVector<Float = S::SIMD> + Copy + Reduce,
     S::SIMD: Float + Copy + InfToZero,
 {
     type Output = Vec<V>;
@@ -56,7 +56,7 @@ where
                     acceleration + p1.acceleration_simd::<true>(p2)
                 })
             })
-            .map(ReduceAdd::reduce_add)
+            .map(Reduce::reduce_sum)
             .collect()
     }
 }
