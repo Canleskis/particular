@@ -180,7 +180,11 @@ impl WgpuResources {
         buffer.map_async(wgpu::MapMode::Read, move |r| sender.send(r).unwrap());
 
         device.poll(wgpu::Maintain::Wait);
-        receiver.recv_async().await.unwrap().unwrap();
+        receiver
+            .recv_async()
+            .await
+            .unwrap()
+            .expect("Could not read buffer");
 
         let view = buffer.get_mapped_range();
         // vec3<f32> is 16 byte aligned so we need to cast to a slice of `Vec4`.

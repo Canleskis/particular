@@ -1,8 +1,9 @@
 /// Bounding box related traits and types.
 pub mod partition;
 
+pub use partition::*;
+
 use crate::compute_method::math::Float;
-use partition::{BoundingBox, SizedOrthant, SubDivide};
 
 /// Index of a [`Node`] in a [`Tree`].
 pub type NodeID = u32;
@@ -22,6 +23,7 @@ pub struct Tree<Node, Data> {
 
 impl<Node, Data> Tree<Node, Data> {
     /// Creates a new empty [`Tree`].
+    #[inline]
     pub fn new() -> Self {
         Self {
             nodes: Vec::new(),
@@ -31,6 +33,7 @@ impl<Node, Data> Tree<Node, Data> {
 
     /// Creates a new empty [`Tree`] with at least the specified capacity in the `nodes` and `data`
     /// vectors.
+    #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
             nodes: Vec::with_capacity(capacity),
@@ -40,6 +43,7 @@ impl<Node, Data> Tree<Node, Data> {
 }
 
 impl<Node, Data> Default for Tree<Node, Data> {
+    #[inline]
     fn default() -> Self {
         Self::new()
     }
@@ -61,7 +65,8 @@ pub type Orthtree<const X: usize, const D: usize, S, Data> =
 
 impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data> {
     /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and
-    /// functions until the created square bounding box stops subdividing.
+    /// functions until the computed square bounding box stops subdividing.
+    #[inline]
     pub fn build_node<I, P, C>(&mut self, input: &[I], position: P, compute: C) -> Option<NodeID>
     where
         I: Copy,

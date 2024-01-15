@@ -157,6 +157,8 @@ gravitational forces between [`PointMass`]es, with variants optimised for scalar
 ##### Example
 
 ```rust
+use particular::math::Vec2;
+
 use storage::PointMass;
 
 let p1 = PointMass::new(Vec2::new(0.0, 1.0), 1.0);
@@ -184,7 +186,7 @@ mass when computing the gravitational forces of particles.
 ##### Example
 
 ```rust
-use storage::{ParticleOrdered, ParticleSystem, ParticleTree};
+use particular::math::Vec3;
 
 let particles = vec![
     // ...
@@ -221,7 +223,7 @@ want to implement other algorithms.
 ##### Example
 
 ```rust
-use storage::{ParticleReordered, ParticleSystem};
+use particular::math::Vec3;
 
 struct MyComputeMethod;
 

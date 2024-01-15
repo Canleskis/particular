@@ -166,7 +166,7 @@
 //! between two distinct collections of particles, or both at the same time.  
 //! In that case, you can use the backend directly by calling [compute] on a struct implementing
 //! [`ComputeMethod`], passing in an appropriate storage.
-//! 
+//!
 //! #### The [`PointMass`] type
 //!
 //! The underlying type used in storages is the [`PointMass`], a simple representation in
@@ -178,8 +178,7 @@
 //!
 //! ```
 //! # use particular::prelude::*;
-//! # use ultraviolet::Vec2;
-//! use storage::PointMass;
+//! use particular::math::Vec2;
 //!
 //! let p1 = PointMass::new(Vec2::new(0.0, 1.0), 1.0);
 //! let p2 = PointMass::new(Vec2::new(0.0, 0.0), 1.0);
@@ -207,10 +206,8 @@
 //!
 //! ```
 //! # use particular::prelude::*;
-//! # use storage::PointMass;
-//! # use ultraviolet::Vec3;
-//! use storage::{ParticleOrdered, ParticleSystem, ParticleTree};
-//! 
+//! use particular::math::Vec3;
+//!
 //! let particles = vec![
 //!     // ...
 //! #   PointMass::new(Vec3::new(-10.0, 0.0, 0.0), 5.0),
@@ -252,8 +249,7 @@
 //!
 //! ```
 //! # use particular::prelude::*;
-//! # use ultraviolet::Vec3;
-//! use storage::{ParticleReordered, ParticleSystem};
+//! use particular::math::Vec3;
 //!
 //! struct MyComputeMethod;
 //!
@@ -289,18 +285,23 @@
 pub mod compute_method;
 /// Traits for particle representation of objects and computing their acceleration.
 pub mod particle;
-/// Derive macro for the [`Particle`](crate::particle::Particle) trait.
-pub mod particular_derive {
-    pub use particular_derive::Particle;
+/// Built-in [`ComputeMethod`](crate::compute_method::ComputeMethod) implementations.
+pub mod compute_methods {
+    #[cfg(feature = "gpu")]
+    pub use crate::compute_method::gpu;
+    #[cfg(feature = "parallel")]
+    pub use crate::compute_method::parallel;
+    pub use crate::compute_method::sequential;
 }
 
 pub use compute_method::*;
+pub use particular_derive;
 
-/// Most commonly used re-exported types.
+/// Commonly used types, re-exported.
 pub mod prelude {
-    #[doc(hidden)]
     pub use crate::{
-        compute_method::*,
+        compute_method::{storage::*, ComputeMethod},
+        compute_methods::*,
         particle::{Accelerations, IntoPointMass, Particle},
         particular_derive::Particle,
     };

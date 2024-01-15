@@ -18,22 +18,24 @@ pub mod parallel;
 /// Compute methods that use one CPU thread.
 pub mod sequential;
 
+pub use storage::*;
+
 /// Trait to perform a computation of values between objects contained in a storage of type `S`.
 ///
 /// # Example
 ///
 /// ```
 /// # use particular::prelude::*;
-/// # use ultraviolet::Vec3;
+/// # use particular::math::Vec3;
 ///
 /// struct AccelerationCalculator;
 ///
-/// impl ComputeMethod<&[storage::PointMass<Vec3, f32>]> for AccelerationCalculator {
+/// impl ComputeMethod<&[PointMass<Vec3, f32>]> for AccelerationCalculator {
 ///     type Output = Vec<Vec3>;
 ///     
-///     fn compute(&mut self, storage: &[storage::PointMass<Vec3, f32>]) -> Self::Output {
+///     fn compute(&mut self, storage: &[PointMass<Vec3, f32>]) -> Self::Output {
 ///         // ...
-///         # Vec::new()
+/// #       Vec::new()
 ///     }
 /// }
 /// ```
@@ -47,8 +49,7 @@ pub trait ComputeMethod<Storage> {
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use crate::{compute_method::storage::PointMass, compute_method::ComputeMethod};
-    use ultraviolet::Vec3;
+    use crate::{math::Vec3, ComputeMethod, PointMass};
 
     pub fn acceleration_error<C>(mut cm: C, epsilon: f32)
     where
