@@ -9,10 +9,6 @@
         "Chrome 120",
         "Snapdragon 855"
     ],
-    "extra": {
-        "browser": "Chrome 120",
-        "cpu": "Snapdragon 855"
-    },
     "benchmarks": {
         "Particular/sequential::BarnesHut::0.3/1024": {
             "baseline": "wasm-arm-f32-3d",
