@@ -182,8 +182,9 @@
 //!
 //! let p1 = PointMass::new(Vec2::new(0.0, 1.0), 1.0);
 //! let p2 = PointMass::new(Vec2::new(0.0, 0.0), 1.0);
+//! let softening = 0.0;
 //!
-//! assert_eq!(p1.acceleration_scalar::<false>(&p2), Vec2::new(0.0, -1.0));
+//! assert_eq!(p1.force_scalar::<false>(p2.position, p2.mass, softening), Vec2::new(0.0, -1.0));
 //! ```
 //!
 //! #### Storages and built-in [`ComputeMethod`] implementations

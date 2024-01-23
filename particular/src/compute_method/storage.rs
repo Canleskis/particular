@@ -1,7 +1,7 @@
 use crate::compute_method::{
-    math::{AsPrimitive, Float, FloatVector, FromPrimitive, InfToZero, Sum, Zero, SIMD},
+    math::{AsPrimitive, BitAnd, CmpNe, Float, FloatVector, FromPrimitive, Sum, Zero, SIMD},
     tree::{
-        partition::{BoundingBox, SizedOrthant, SubDivide},
+        partition::{BoundingBox, SubDivide},
         Node, NodeID, Orthtree,
     },
     ComputeMethod,
@@ -114,12 +114,12 @@ impl<V, S> PointMass<V, S> {
     }
 
     /// Computes the gravitational force exerted on the current point-mass using the given position
-    /// and mass, provided `V` and `S` are scalar types.
+    /// and mass. This method is optimised in the case where `V` and `S` are scalar types.
     ///
     /// If the position of the current point-mass is guaranteed to be different from the given
     /// position, this computation can be more efficient with `CHECK_ZERO` set to false.
     #[inline]
-    pub fn force_mul_mass_scalar<const CHECK_ZERO: bool>(&self, position: V, mass: S) -> V
+    pub fn force_scalar<const CHECK_ZERO: bool>(&self, position: V, mass: S, softening: S) -> V
     where
         V: FloatVector<Float = S> + Copy,
         S: Float + Copy,
@@ -127,92 +127,53 @@ impl<V, S> PointMass<V, S> {
         let dir = position - self.position;
         let mag = dir.norm_squared();
 
-        // Branch removed by the compiler when `CHECK_ZERO` is false.
-        if CHECK_ZERO && mag == S::ZERO {
-            dir
+        let force = |mag_s: S| {
+            // Branch removed by the compiler when `CHECK_ZERO` is false.
+            if CHECK_ZERO && mag == S::ZERO {
+                dir
+            } else {
+                dir * mass / (mag_s * mag_s.sqrt())
+            }
+        };
+
+        // Using this branch results in better performance when softening is zero.
+        if softening == S::ZERO {
+            force(mag)
         } else {
-            dir * mass / (mag * mag.sqrt())
+            force(mag + (softening * softening))
         }
-    }
-
-    /// Computes the gravitational force exerted on the current point-mass by the given point-mass,
-    /// provided `V` and `S` are scalar types.
-    ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of
-    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to false.
-    #[inline]
-    pub fn force_scalar<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
-    where
-        V: FloatVector<Float = S> + Copy,
-        S: Float + Copy,
-    {
-        self.force_mul_mass_scalar::<CHECK_ZERO>(point_mass.position, self.mass * point_mass.mass)
-    }
-
-    /// Computes the gravitational acceleration exerted on the current point-mass by the given
-    /// point-mass, provided `V` and `S` are scalar types.
-    ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of
-    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to false.
-    #[inline]
-    pub fn acceleration_scalar<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
-    where
-        V: FloatVector<Float = S> + Copy,
-        S: Float + Copy,
-    {
-        self.force_mul_mass_scalar::<CHECK_ZERO>(point_mass.position, point_mass.mass)
     }
 
     /// Computes the gravitational force exerted on the current point-mass using the given position
-    /// and mass, provided `V` and `S` are SIMD types.
+    /// and mass. This method is optimised in the case where `V` and `S` are simd types.
     ///
     /// If the position of the current point-mass is guaranteed to be different from the given
     /// position, this computation can be more efficient with `CHECK_ZERO` set to false.
     #[inline]
-    pub fn force_mul_mass_simd<const CHECK_ZERO: bool>(&self, position: V, mass: S) -> V
+    pub fn force_simd<const CHECK_ZERO: bool>(&self, position: V, mass: S, softening: S) -> V
     where
         V: FloatVector<Float = S> + Copy,
-        S: Float + InfToZero + Copy,
+        S: Float + BitAnd<Output = S> + CmpNe<Output = S> + Copy,
     {
         let dir = position - self.position;
         let mag = dir.norm_squared();
 
-        // Branch removed by the compiler when `CHECK_ZERO` is false.
-        if CHECK_ZERO {
-            dir * mass * (mag.recip() * mag.recip_sqrt()).inf_to_zero()
+        let force = |mag_s: S| {
+            let f = mass * (mag_s * mag_s * mag_s).rsqrt();
+            // Branch removed by the compiler when `CHECK_ZERO` is false.
+            if CHECK_ZERO {
+                dir * f.bitand(mag.cmp_ne(S::ZERO))
+            } else {
+                dir * f
+            }
+        };
+
+        // Using this branch results in better performance when softening is zero.
+        if softening == S::ZERO {
+            force(mag)
         } else {
-            dir * mass * (mag.recip() * mag.recip_sqrt())
+            force(mag + (softening * softening))
         }
-    }
-
-    /// Computes the gravitational acceleration exerted on the current point-mass by the given
-    /// point-mass, provided `V` and `S` are SIMD types.
-    ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of
-    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to
-    /// false.
-    #[inline]
-    pub fn force_simd<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
-    where
-        V: FloatVector<Float = S> + Copy,
-        S: Float + InfToZero + Copy,
-    {
-        self.force_mul_mass_simd::<CHECK_ZERO>(point_mass.position, self.mass * point_mass.mass)
-    }
-
-    /// Computes the gravitational acceleration exerted on the current point-mass by the given
-    /// point-mass, provided `V` and `S` are SIMD types.
-    ///
-    /// If the position of the current point-mass is guaranteed to be different from the position of
-    /// the given point-mass, this computation can be more efficient with `CHECK_ZERO` set to
-    /// false.
-    #[inline]
-    pub fn acceleration_simd<const CHECK_ZERO: bool>(&self, point_mass: &Self) -> V
-    where
-        V: FloatVector<Float = S> + Copy,
-        S: Float + InfToZero + Copy,
-    {
-        self.force_mul_mass_simd::<CHECK_ZERO>(point_mass.position, point_mass.mass)
     }
 
     /// Computes the gravitational acceleration exerted on the current point-mass by the specified
@@ -224,6 +185,7 @@ impl<V, S> PointMass<V, S> {
         tree: &Orthtree<X, D, S, PointMass<V, S>>,
         node: Option<NodeID>,
         theta: S,
+        softening: S,
     ) -> V
     where
         V: FloatVector<Float = S> + Copy + Sum,
@@ -244,13 +206,15 @@ impl<V, S> PointMass<V, S> {
         }
 
         match tree.nodes[id] {
-            Node::Internal(SizedOrthant { orthant, bbox }) if theta < bbox.width() / mag.sqrt() => {
-                orthant
-                    .map(|node| self.acceleration_tree(tree, node, theta))
-                    .into_iter()
-                    .sum()
+            Node::Internal(node) if theta < node.bbox.width() / mag.sqrt() => node
+                .orthant
+                .map(|node| self.acceleration_tree(tree, node, theta, softening))
+                .into_iter()
+                .sum(),
+            _ => {
+                let mag_s = mag + (softening * softening);
+                dir * p2.mass / (mag_s * mag_s.sqrt())
             }
-            _ => dir * p2.mass / (mag * mag.sqrt()),
         }
     }
 }
@@ -335,6 +299,26 @@ pub struct ParticleOrdered<V, S> {
 }
 
 impl<V, S> ParticleOrdered<V, S> {
+    /// Creates a new [`ParticleOrdered`] with the given massive and massless particles.
+    #[inline]
+    pub fn with<I, U>(massive: I, massless: U) -> Self
+    where
+        S: PartialEq + Zero,
+        I: IntoIterator<Item = PointMass<V, S>>,
+        U: IntoIterator<Item = PointMass<V, S>>,
+    {
+        let particles = massive.into_iter().chain(massless).collect::<Vec<_>>();
+        let massive_len = particles
+            .iter()
+            .position(PointMass::is_massless)
+            .unwrap_or(particles.len());
+
+        Self {
+            massive_len,
+            particles,
+        }
+    }
+
     /// Returns the number of stored massive particles.
     #[inline]
     pub const fn massive_len(&self) -> usize {
@@ -385,22 +369,10 @@ where
 {
     #[inline]
     fn from(particles: &[PointMass<V, S>]) -> Self {
-        let particles: Vec<_> = particles
-            .iter()
-            .filter(|p| p.is_massive())
-            .chain(particles.iter().filter(|p| p.is_massless()))
-            .cloned()
-            .collect();
-
-        let massive_len = particles
-            .iter()
-            .position(PointMass::is_massless)
-            .unwrap_or(particles.len());
-
-        Self {
-            massive_len,
-            particles,
-        }
+        Self::with(
+            particles.iter().filter(|p| p.is_massive()).cloned(),
+            particles.iter().filter(|p| p.is_massless()).cloned(),
+        )
     }
 }
 

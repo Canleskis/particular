@@ -1,7 +1,11 @@
-pub(crate) use std::{
-    iter::Sum,
-    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+pub(crate) use {
+    std::{
+        iter::Sum,
+        ops::{Add, AddAssign, BitAnd, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+    },
+    wide::CmpNe,
 };
+
 pub use ultraviolet::{
     f32x4, f32x8, f64x2, f64x4, DVec2, DVec2x2, DVec2x4, DVec3, DVec3x2, DVec3x4, DVec4, DVec4x2,
     DVec4x4, Vec2, Vec2x4, Vec2x8, Vec3, Vec3x4, Vec3x8, Vec4, Vec4x4, Vec4x8,
@@ -75,7 +79,7 @@ pub trait Float: One + Zero + Clone + Infinity + FloatOps + PartialEq {
 
     /// Returns the reciprocal (inverse) square root of a float.
     #[inline]
-    fn recip_sqrt(self) -> Self {
+    fn rsqrt(self) -> Self {
         self.recip().sqrt()
     }
 
@@ -168,12 +172,6 @@ pub trait Reduce: SIMD {
     fn reduce_sum(self) -> Self::Element;
 }
 
-/// Trait to replace infinites values with zeros in `SIMD` types.
-pub trait InfToZero: SIMD {
-    /// Returns itself with infinite values replaced with zeros.
-    fn inf_to_zero(self) -> Self;
-}
-
 /// Trait for casting from one primitive to another.
 pub trait FromPrimitive<U> {
     /// Converts to this primitive from the input primitive.
@@ -256,7 +254,7 @@ macro_rules! impl_float {
             }
 
             #[inline]
-            fn recip_sqrt(self) -> Self {
+            fn rsqrt(self) -> Self {
                 $recip_sqrt(self)
             }
 
@@ -425,22 +423,6 @@ impl_reduce!(DVec3x2, [x, y, z]);
 impl_reduce!(DVec3x4, [x, y, z]);
 impl_reduce!(DVec4x2, [x, y, z, w]);
 impl_reduce!(DVec4x4, [x, y, z, w]);
-
-macro_rules! impl_inf_to_zero {
-    ($float: ty) => {
-        impl InfToZero for $float {
-            #[inline]
-            fn inf_to_zero(self) -> Self {
-                self & wide::CmpNe::cmp_ne(self, Self::infinity())
-            }
-        }
-    };
-}
-
-impl_inf_to_zero!(f32x4);
-impl_inf_to_zero!(f32x8);
-impl_inf_to_zero!(f64x2);
-impl_inf_to_zero!(f64x4);
 
 macro_rules! impl_from_primitive {
     ($p1: ty => ($($pn: ty),*)) => {$(

@@ -11,10 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `GpuData` struct used for `gpu::BruteForce`.
 - `ParticleSystem`, `ParticleTree`, `ParticleOrdered` and `ParticleReordered` structs used for storages in built-in compute methods.
-- `Array`, `Zero`, `One`, `Infinty`, `FloatOps`, `Float`, `IntoArray`, `FloatVectorOps`, `FloatVector`, `SIMD`, `SIMDElement`, `Reduce`, `InfToZero`, `FromPrimitive` and `AsPrimitive` traits for math operation abstractions.
-- `force_mul_mass_scalar`, `force_mul_mass_simd` `acceleration_tree`, `force_scalar` and `force_simd` methods for `PointMass` and various `new` methods.
+- `Array`, `Zero`, `One`, `Infinty`, `FloatOps`, `Float`, `IntoArray`, `FloatVectorOps`, `FloatVector`, `SIMD`, `SIMDElement`, `Reduce`, `FromPrimitive` and `AsPrimitive` traits for math operation abstractions.
+- `force_scalar`, `force_simd` methods and various constructors for `PointMass`.
 - `ScalarArray` trait to bind a `FloatVector` and an array for `Particle` to `PointMass` conversion.
 - Marker `ReorderedCompute` trait.
+- `Softened` variants for all CPU compute methods.
 
 ### Changed
 
@@ -32,8 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Particle` trait only has the `Array` associated type and `position` expects this array type.
 - `accelerations` returns an iterator of arrays.
 - Merge `algorithms` and `compute_method` in one module with the name of the latter.
-- `SizedOrthant`'s size is no longer generic and is instead a `BoundingBox`
-- 3D f32 vectors now fully scalar unlike `glam::Vec3A`, use `BruteForceSIMD` compute methods for simd benefits.
+- The size of `SizedOrthant` is no longer generic and is instead a `BoundingBox`
+- 3D f32 vectors now fully scalar (unlike `glam::Vec3A`). Use `BruteForceSIMD` compute methods for simd benefits.
 
 ### Removed
 
@@ -41,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BruteForcePairsAlt` and `BruteForcePairsCore` compute methods.
 - `MassiveAffected`, `MassiveAffectedSIMD` and `ParticleSet` structs.
 - `Storage`, `Compute`, `TreeData`, `Positionable` and `BarnesHutTree` traits.
-- `total_acceleration_scalar` and `total_acceleration_simd` `PointMass` methods.
+- `acceleration_*` and `total_acceleration_*` methods for `PointMass`.
 - `vector` module and its members.
 
 ## [0.6.1] - 2023-19-07

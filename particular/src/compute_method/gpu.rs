@@ -96,7 +96,7 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForce<'_> {
     type Output = Vec<Vec3>;
 
     #[inline]
-    fn compute(&mut self, system: ParticleSliceSystem<'_, Vec3, f32>) -> Self::Output {
+    fn compute(&mut self, system: ParticleSliceSystem<Vec3, f32>) -> Self::Output {
         let affected_count = system.affected.len();
         let massive_count = system.massive.len();
 

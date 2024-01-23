@@ -31,49 +31,56 @@ pub fn random_bodies(rng: &mut StdRng, i: usize, ratio_massive: f32) -> Vec<Poin
         .collect()
 }
 
-fn bench_compute_method<C>(
-    bodies: &[PointMass],
+#[inline]
+fn bench_cm<C, S>(
+    bodies: S,
+    len: usize,
     mut cm: C,
     group: &mut BenchmarkGroup<'_, criterion::measurement::WallTime>,
     trim_generic: bool,
     suffix: &str,
 ) where
-    for<'a> C: ComputeMethod<&'a [PointMass]>,
+    S: Copy,
+    C: ComputeMethod<S>,
 {
     let trimmed_start =
         std::any::type_name::<C>().trim_start_matches("particular::compute_method::");
 
-    let trimmed_start = if trim_generic {
+    let trimmed = if trim_generic {
         trimmed_start.split('<').next().unwrap_or_default()
     } else {
         trimmed_start
     }
     .to_owned();
 
-    group.bench_function(
-        BenchmarkId::new(trimmed_start + suffix, bodies.len()),
-        |b| b.iter(|| cm.compute(bodies)),
-    );
+    group.bench_function(BenchmarkId::new(trimmed + suffix, len), |bencher| {
+        bencher.iter(|| cm.compute(bodies))
+    });
 }
 
-// On wasm there are only 128-bit registers, so we use 4 lanes.
+// On wasm there are only 128-bit registers.
 #[cfg(target_arch = "wasm32")]
-const LANES: usize = 4;
+const WIDTH: usize = 128;
 #[cfg(not(target_arch = "wasm32"))]
-const LANES: usize = 8;
+const WIDTH: usize = 256;
+
+const LANES: usize = WIDTH / (8 * std::mem::size_of::<Scalar>());
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let mut g = c.benchmark_group("Particular");
-    g.plot_config(PlotConfiguration::default().summary_scale(AxisScale::Logarithmic))
+    let mut group = c.benchmark_group("Particular");
+    group
+        .plot_config(PlotConfiguration::default().summary_scale(AxisScale::Logarithmic))
         .warm_up_time(std::time::Duration::from_secs(1))
         .measurement_time(std::time::Duration::from_secs(1))
         .sample_size(15);
 
-    let particle_count_iterator = (1..15).map(|i| 2usize.pow(i));
+    let particle_count_iterator = (1..17).map(|i| 2usize.pow(i));
     let thetas = [0.3, 0.7];
 
+    let g = &mut group;
     for i in particle_count_iterator {
         let b = random_bodies(&mut StdRng::seed_from_u64(1808), i, 1.0);
+        let len = b.len();
 
         #[cfg(feature = "gpu")]
         {
@@ -84,31 +91,31 @@ fn criterion_benchmark(c: &mut Criterion) {
                 device,
                 queue,
             };
-            bench_compute_method(&b, gpu_brute_force, &mut g, true, "");
+            bench_cm(&*b, len, gpu_brute_force, g, true, "");
         }
 
         #[cfg(feature = "parallel")]
         {
-            bench_compute_method(&b, parallel::BruteForceScalar, &mut g, true, "");
-            bench_compute_method(&b, parallel::BruteForceSIMD::<LANES>, &mut g, false, "");
+            bench_cm(&*b, len, parallel::BruteForceScalar, g, true, "");
+            bench_cm(&*b, len, parallel::BruteForceSIMD::<LANES>, g, false, "");
             for theta in thetas {
                 let suffix = &format!("::{theta}");
-                bench_compute_method(&b, parallel::BarnesHut { theta }, &mut g, true, suffix);
+                bench_cm(&*b, len, parallel::BarnesHut { theta }, g, true, suffix);
             }
         }
 
         {
-            bench_compute_method(&b, sequential::BruteForceScalar, &mut g, true, "");
-            bench_compute_method(&b, sequential::BruteForcePairs, &mut g, true, "");
-            bench_compute_method(&b, sequential::BruteForceSIMD::<LANES>, &mut g, false, "");
+            bench_cm(&*b, len, sequential::BruteForceScalar, g, true, "");
+            bench_cm(&*b, len, sequential::BruteForcePairs, g, true, "");
+            bench_cm(&*b, len, sequential::BruteForceSIMD::<LANES>, g, false, "");
             for theta in thetas {
                 let suffix = &format!("::{theta}");
-                bench_compute_method(&b, sequential::BarnesHut { theta }, &mut g, true, suffix);
+                bench_cm(&*b, len, sequential::BarnesHut { theta }, g, true, suffix);
             }
         }
     }
 
-    g.finish();
+    group.finish();
 }
 
 criterion::criterion_group!(benches, criterion_benchmark);

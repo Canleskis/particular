@@ -1,5 +1,5 @@
 use crate::compute_method::{
-    math::{Float, FloatVector, InfToZero, Reduce, SIMDElement, Zero},
+    math::{BitAnd, CmpNe, Float, FloatVector, Reduce, SIMDElement, Zero, SIMD},
     storage::{
         ParticleOrdered, ParticleReordered, ParticleSliceSystem, ParticleTreeSystem, PointMass,
     },
@@ -8,9 +8,12 @@ use crate::compute_method::{
 
 /// Brute-force [`ComputeMethod`] using the CPU and scalar vectors.
 #[derive(Clone, Copy, Default)]
-pub struct BruteForceScalar;
+pub struct BruteForceSoftenedScalar<S> {
+    /// Softening parameter to avoid singularities.
+    pub softening: S,
+}
 
-impl<V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for BruteForceScalar
+impl<V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for BruteForceSoftenedScalar<S>
 where
     V: FloatVector<Float = S> + Copy,
     S: Float + Copy,
@@ -24,40 +27,81 @@ where
             .iter()
             .map(|p1| {
                 system.massive.iter().fold(V::ZERO, |acceleration, p2| {
-                    acceleration + p1.acceleration_scalar::<true>(p2)
+                    acceleration + p1.force_scalar::<true>(p2.position, p2.mass, self.softening)
                 })
             })
             .collect()
     }
 }
 
-/// Brute-force [`ComputeMethod`] using the CPU and simd vectors.
+/// Same as [`BruteForceSoftenedScalar`], but with no softening.
 #[derive(Clone, Copy, Default)]
-pub struct BruteForceSIMD<const L: usize>;
+pub struct BruteForceScalar;
 
-impl<const L: usize, V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for BruteForceSIMD<L>
+impl<V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for BruteForceScalar
 where
-    V: SIMDElement<L> + Copy + Zero,
-    S: SIMDElement<L> + Copy + Zero,
-    V::SIMD: FloatVector<Float = S::SIMD> + Copy + Reduce,
-    S::SIMD: Float + Copy + InfToZero,
+    V: FloatVector<Float = S> + Copy,
+    S: Float + Copy,
 {
     type Output = Vec<V>;
 
     #[inline]
     fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
-        let simd: Vec<_> = PointMass::slice_to_lanes(system.massive).collect();
+        BruteForceSoftenedScalar { softening: S::ZERO }.compute(system)
+    }
+}
+
+/// Brute-force [`ComputeMethod`] using the CPU and simd vectors.
+#[derive(Clone, Copy, Default)]
+pub struct BruteForceSoftenedSIMD<const L: usize, S> {
+    /// Softening parameter to avoid singularities.
+    pub softening: S,
+}
+
+impl<const L: usize, V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>>
+    for BruteForceSoftenedSIMD<L, S>
+where
+    V: SIMDElement<L> + Zero + Copy,
+    S: SIMDElement<L> + Float + Copy,
+    V::SIMD: FloatVector<Float = S::SIMD> + Reduce + Copy,
+    S::SIMD: Float + BitAnd<Output = S::SIMD> + CmpNe<Output = S::SIMD> + Copy,
+{
+    type Output = Vec<V>;
+
+    #[inline]
+    fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
+        let simd_massive: Vec<_> = PointMass::slice_to_lanes(system.massive).collect();
+        let simd_softening = S::SIMD::splat(self.softening);
         system
             .affected
             .iter()
             .map(|p1| {
                 let p1 = PointMass::splat_lane(p1.position, p1.mass);
-                simd.iter().fold(V::SIMD::ZERO, |acceleration, p2| {
-                    acceleration + p1.acceleration_simd::<true>(p2)
+                simd_massive.iter().fold(V::SIMD::ZERO, |acceleration, p2| {
+                    acceleration + p1.force_simd::<true>(p2.position, p2.mass, simd_softening)
                 })
             })
             .map(Reduce::reduce_sum)
             .collect()
+    }
+}
+
+/// Same as [`BruteForceSoftenedSIMD`], but with no softening.
+#[derive(Clone, Copy, Default)]
+pub struct BruteForceSIMD<const L: usize>;
+
+impl<const L: usize, V, S> ComputeMethod<ParticleSliceSystem<'_, V, S>> for BruteForceSIMD<L>
+where
+    V: SIMDElement<L> + Zero + Copy,
+    S: SIMDElement<L> + Float + Copy,
+    V::SIMD: FloatVector<Float = S::SIMD> + Reduce + Copy,
+    S::SIMD: Float + BitAnd<Output = S::SIMD> + CmpNe<Output = S::SIMD> + Copy,
+{
+    type Output = Vec<V>;
+
+    #[inline]
+    fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
+        BruteForceSoftenedSIMD { softening: S::ZERO }.compute(system)
     }
 }
 
@@ -66,14 +110,17 @@ where
 /// Typically faster than [`BruteForceScalar`] because it computes the acceleration over the
 /// combination of pairs of particles instead of all the pairs.
 #[derive(Clone, Copy, Default)]
-pub struct BruteForcePairs;
+pub struct BruteForcePairsSoftened<S> {
+    /// Softening parameter to avoid singularities.
+    pub softening: S,
+}
 
-impl BruteForcePairs {
+impl<S> BruteForcePairsSoftened<S> {
     #[inline]
-    fn accelerations_pairs<T, S>(particles: &[PointMass<T, S>], massive_len: usize) -> Vec<T>
+    fn accelerations_pairs<T>(&self, particles: &[PointMass<T, S>], massive_len: usize) -> Vec<T>
     where
-        S: Copy + Float,
-        T: Copy + FloatVector<Float = S>,
+        S: Float + Copy,
+        T: FloatVector<Float = S> + Copy,
     {
         let len = particles.len();
         let mut accelerations = vec![Zero::ZERO; len];
@@ -84,7 +131,7 @@ impl BruteForcePairs {
 
             for j in (i + 1)..len {
                 let p2 = particles[j];
-                let force_dir = p1.force_mul_mass_scalar::<false>(p2.position, S::ONE);
+                let force_dir = p1.force_scalar::<false>(p2.position, S::ONE, self.softening);
 
                 acceleration += force_dir * p2.mass;
                 accelerations[j] -= force_dir * p1.mass;
@@ -97,36 +144,36 @@ impl BruteForcePairs {
     }
 }
 
-impl<V, S> ComputeMethod<&[PointMass<V, S>]> for BruteForcePairs
+impl<V, S> ComputeMethod<&[PointMass<V, S>]> for BruteForcePairsSoftened<S>
 where
-    V: Copy + FloatVector<Float = S>,
-    S: Copy + Float,
+    V: FloatVector<Float = S> + Copy,
+    S: Float + Copy,
 {
     type Output = Vec<V>;
 
     #[inline]
     fn compute(&mut self, storage: &[PointMass<V, S>]) -> Self::Output {
-        Self::accelerations_pairs(storage, storage.len())
+        self.accelerations_pairs(storage, storage.len())
     }
 }
 
-impl<V, S> ComputeMethod<&ParticleOrdered<V, S>> for BruteForcePairs
+impl<V, S> ComputeMethod<&ParticleOrdered<V, S>> for BruteForcePairsSoftened<S>
 where
-    V: Copy + FloatVector<Float = S>,
-    S: Copy + Float,
+    V: FloatVector<Float = S> + Copy,
+    S: Float + Copy,
 {
     type Output = Vec<V>;
 
     #[inline]
     fn compute(&mut self, storage: &ParticleOrdered<V, S>) -> Self::Output {
-        Self::accelerations_pairs(storage.particles(), storage.massive_len())
+        self.accelerations_pairs(storage.particles(), storage.massive_len())
     }
 }
 
-impl<V, S> ComputeMethod<ParticleReordered<'_, V, S>> for BruteForcePairs
+impl<V, S> ComputeMethod<ParticleReordered<'_, V, S>> for BruteForcePairsSoftened<S>
 where
-    V: Copy + FloatVector<Float = S>,
-    S: Copy + Float,
+    V: FloatVector<Float = S> + Copy,
+    S: Float + Copy,
 {
     type Output = Vec<V>;
 
@@ -153,8 +200,80 @@ where
     }
 }
 
+/// Same as [`BruteForcePairsSoftened`], but with no softening.
+#[derive(Clone, Copy, Default)]
+pub struct BruteForcePairs;
+
+impl<V, S> ComputeMethod<&[PointMass<V, S>]> for BruteForcePairs
+where
+    V: FloatVector<Float = S> + Copy,
+    S: Float + Copy,
+{
+    type Output = Vec<V>;
+
+    #[inline]
+    fn compute(&mut self, storage: &[PointMass<V, S>]) -> Self::Output {
+        BruteForcePairsSoftened { softening: S::ZERO }.compute(storage)
+    }
+}
+
+impl<V, S> ComputeMethod<&ParticleOrdered<V, S>> for BruteForcePairs
+where
+    V: FloatVector<Float = S> + Copy,
+    S: Float + Copy,
+{
+    type Output = Vec<V>;
+
+    #[inline]
+    fn compute(&mut self, storage: &ParticleOrdered<V, S>) -> Self::Output {
+        BruteForcePairsSoftened { softening: S::ZERO }.compute(storage)
+    }
+}
+
+impl<V, S> ComputeMethod<ParticleReordered<'_, V, S>> for BruteForcePairs
+where
+    V: FloatVector<Float = S> + Copy,
+    S: Float + Copy,
+{
+    type Output = Vec<V>;
+
+    #[inline]
+    fn compute(&mut self, storage: ParticleReordered<V, S>) -> Self::Output {
+        BruteForcePairsSoftened { softening: S::ZERO }.compute(storage)
+    }
+}
+
 /// [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) [`ComputeMethod`]
 /// using the CPU and scalar vectors.
+#[derive(Clone, Copy, Default)]
+pub struct BarnesHutSoftened<S> {
+    /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as
+    /// [`BruteForceScalar`].
+    pub theta: S,
+    /// Softening parameter to avoid singularities.
+    pub softening: S,
+}
+
+impl<const X: usize, const D: usize, V, S> ComputeMethod<ParticleTreeSystem<'_, X, D, V, S>>
+    for BarnesHutSoftened<S>
+where
+    V: FloatVector<Float = S> + Copy,
+    S: Float + PartialOrd + Copy,
+{
+    type Output = Vec<V>;
+
+    #[inline]
+    fn compute(&mut self, system: ParticleTreeSystem<X, D, V, S>) -> Self::Output {
+        let tree = system.massive;
+        system
+            .affected
+            .iter()
+            .map(|p| p.acceleration_tree(tree.get(), tree.root(), self.theta, self.softening))
+            .collect()
+    }
+}
+
+/// Same as [`BarnesHutSoftened`], but with no softening.
 #[derive(Clone, Copy, Default)]
 pub struct BarnesHut<S> {
     /// Parameter ruling the accuracy and speed of the algorithm. If 0, behaves the same as
@@ -165,19 +284,18 @@ pub struct BarnesHut<S> {
 impl<const X: usize, const D: usize, V, S> ComputeMethod<ParticleTreeSystem<'_, X, D, V, S>>
     for BarnesHut<S>
 where
-    V: Copy + FloatVector<Float = S>,
-    S: Copy + Float + PartialOrd,
+    V: FloatVector<Float = S> + Copy,
+    S: Float + PartialOrd + Copy,
 {
     type Output = Vec<V>;
 
     #[inline]
     fn compute(&mut self, system: ParticleTreeSystem<X, D, V, S>) -> Self::Output {
-        let tree = system.massive;
-        system
-            .affected
-            .iter()
-            .map(|p| p.acceleration_tree(tree.get(), tree.root(), self.theta))
-            .collect()
+        BarnesHutSoftened {
+            theta: self.theta,
+            softening: S::ZERO,
+        }
+        .compute(system)
     }
 }
 
