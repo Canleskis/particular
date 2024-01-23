@@ -191,31 +191,38 @@ impl<V, S> PointMass<V, S> {
         V: FloatVector<Float = S> + Copy + Sum,
         S: Float + PartialOrd + Copy,
     {
-        let Some(id) = node else {
-            return V::ZERO;
-        };
-        let id = id as usize;
+        let mut acceleration = V::ZERO;
 
-        let p2 = tree.data[id];
+        let estimate = X * (tree.nodes.len() as f32).ln() as usize; // TODO: find a proper estimate
+        let mut stack = Vec::with_capacity(estimate);
+        stack.push(node);
 
-        let dir = p2.position - self.position;
-        let mag = dir.norm_squared();
+        while let Some(node) = stack.pop() {
+            let id = match node {
+                Some(id) => id as usize,
+                None => continue,
+            };
 
-        if mag == S::ZERO {
-            return dir;
-        }
+            let p2 = tree.data[id];
+            let dir = p2.position - self.position;
+            let mag = dir.norm_squared();
 
-        match tree.nodes[id] {
-            Node::Internal(node) if theta < node.bbox.width() / mag.sqrt() => node
-                .orthant
-                .map(|node| self.acceleration_tree(tree, node, theta, softening))
-                .into_iter()
-                .sum(),
-            _ => {
-                let mag_s = mag + (softening * softening);
-                dir * p2.mass / (mag_s * mag_s.sqrt())
+            if mag == S::ZERO {
+                acceleration += dir;
+            } else {
+                match tree.nodes[id] {
+                    Node::Internal(node) if theta < node.bbox.width() / mag.sqrt() => {
+                        stack.extend(node.orthant);
+                    }
+                    _ => {
+                        let mag_s = mag + (softening * softening);
+                        acceleration += dir * p2.mass / (mag_s * mag_s.sqrt());
+                    }
+                }
             }
         }
+
+        acceleration
     }
 }
 
