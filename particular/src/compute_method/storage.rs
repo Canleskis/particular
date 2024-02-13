@@ -125,22 +125,22 @@ impl<V, S> PointMass<V, S> {
         S: Float + Copy,
     {
         let dir = position - self.position;
-        let mag = dir.norm_squared();
+        let norm = dir.norm_squared();
 
-        let force = |mag_s: S| {
+        let force = |norm_s: S| {
             // Branch removed by the compiler when `CHECK_ZERO` is false.
-            if CHECK_ZERO && mag == S::ZERO {
+            if CHECK_ZERO && norm == S::ZERO {
                 dir
             } else {
-                dir * mass / (mag_s * mag_s.sqrt())
+                dir * mass / (norm_s * norm_s.sqrt())
             }
         };
 
         // Using this branch results in better performance when softening is zero.
         if softening == S::ZERO {
-            force(mag)
+            force(norm)
         } else {
-            force(mag + (softening * softening))
+            force(norm + (softening * softening))
         }
     }
 
@@ -156,13 +156,13 @@ impl<V, S> PointMass<V, S> {
         S: Float + BitAnd<Output = S> + CmpNe<Output = S> + Copy,
     {
         let dir = position - self.position;
-        let mag = dir.norm_squared();
+        let norm = dir.norm_squared();
 
-        let force = |mag_s: S| {
-            let f = mass * (mag_s * mag_s * mag_s).rsqrt();
+        let force = |norm_s: S| {
+            let f = mass * (norm_s * norm_s * norm_s).rsqrt();
             // Branch removed by the compiler when `CHECK_ZERO` is false.
             if CHECK_ZERO {
-                dir * f.bitand(mag.cmp_ne(S::ZERO))
+                dir * f.bitand(norm.cmp_ne(S::ZERO))
             } else {
                 dir * f
             }
@@ -170,9 +170,9 @@ impl<V, S> PointMass<V, S> {
 
         // Using this branch results in better performance when softening is zero.
         if softening == S::ZERO {
-            force(mag)
+            force(norm)
         } else {
-            force(mag + (softening * softening))
+            force(norm + (softening * softening))
         }
     }
 
@@ -205,18 +205,18 @@ impl<V, S> PointMass<V, S> {
 
             let p2 = tree.data[id];
             let dir = p2.position - self.position;
-            let mag = dir.norm_squared();
+            let norm = dir.norm_squared();
 
-            if mag == S::ZERO {
+            if norm == S::ZERO {
                 acceleration += dir;
             } else {
                 match tree.nodes[id] {
-                    Node::Internal(node) if theta < node.bbox.width() / mag.sqrt() => {
+                    Node::Internal(node) if theta < node.bbox.width() / norm.sqrt() => {
                         stack.extend(node.orthant);
                     }
                     _ => {
-                        let mag_s = mag + (softening * softening);
-                        acceleration += dir * p2.mass / (mag_s * mag_s.sqrt());
+                        let norm_s = norm + (softening * softening);
+                        acceleration += dir * p2.mass / (norm_s * norm_s.sqrt());
                     }
                 }
             }

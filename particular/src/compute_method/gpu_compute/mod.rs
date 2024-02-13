@@ -137,9 +137,12 @@ impl WgpuResources {
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(
-                include_str!("compute.wgsl")
-                    .replace("R_WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
-                    .into(),
+                concat!(
+                    include_str!("particle.wgsl"),
+                    include_str!("compute.wgsl")
+                )
+                .replace("#WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
+                .into(),
             ),
         });
 
@@ -169,13 +172,13 @@ impl WgpuResources {
         device: &wgpu::Device,
         queue: &wgpu::Queue,
     ) {
-        let affected = bytemuck::cast_slice(affected);
-        self.buffer_affected.write(device, queue, affected);
+        let affected_data = bytemuck::cast_slice(affected);
+        self.buffer_affected.write(device, queue, affected_data);
 
-        let massive = bytemuck::cast_slice(massive);
-        self.buffer_massive.write(device, queue, massive);
+        let massive_data = bytemuck::cast_slice(massive);
+        self.buffer_massive.write(device, queue, massive_data);
 
-        let size = affected.len() as wgpu::BufferAddress;
+        let size = affected_data.len() as wgpu::BufferAddress; // vec3<f32> is 16 byte aligned.
         self.buffer_accelerations.resize(device, size);
     }
 
