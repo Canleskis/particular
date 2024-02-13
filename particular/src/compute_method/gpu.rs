@@ -1,74 +1,72 @@
-use crate::compute_method::{
-    gpu_compute,
-    math::Zero,
-    storage::{ParticleSliceSystem, PointMass},
-    ComputeMethod,
+use {
+    crate::compute_method::{
+        gpu_compute::WgpuResources,
+        storage::{ParticleSliceSystem, PointMass},
+        ComputeMethod,
+    },
+    ultraviolet::Vec3,
 };
-use ultraviolet::Vec3;
 
-/// Initialized data used by `wgpu` for computing on the GPU.
-pub struct GpuData {
-    affected_count: usize,
-    massive_count: usize,
-    resources: Option<gpu_compute::WgpuResources>,
+enum GpuResourcesState {
+    New(u32),
+    Init(WgpuResources),
 }
+
+impl GpuResourcesState {
+    /// Returns a mutable reference to the [`WgpuResources`] if it is initialised.
+    #[inline]
+    pub fn get_or_init(&mut self, device: &wgpu::Device) -> &mut WgpuResources {
+        if let Self::New(workgroup_size) = self {
+            *self = Self::Init(WgpuResources::new(device, *workgroup_size));
+        }
+
+        match self {
+            Self::Init(resources) => resources,
+            _ => unreachable!(),
+        }
+    }
+}
+
+/// Initialised data used by `wgpu` for computing on the GPU.
+pub struct GpuData(GpuResourcesState);
 
 impl GpuData {
     /// Creates a new [`GpuData`] instance.
     #[inline]
-    pub fn new() -> Self {
-        Self {
-            affected_count: 0,
-            massive_count: 0,
-            resources: None,
-        }
+    pub fn new(workgroup_size: u32) -> Self {
+        Self(GpuResourcesState::New(workgroup_size))
     }
 
-    /// Creates a new [`BruteForce`] instance with initialized buffers and pipeline.
+    /// Creates a new [`GpuData`] instance with initialised buffers and pipeline.
     #[inline]
-    pub fn new_init(device: &wgpu::Device, affected_count: usize, massive_count: usize) -> Self {
-        Self {
-            affected_count,
-            massive_count,
-            resources: Some(gpu_compute::WgpuResources::init(
-                device,
-                affected_count,
-                massive_count,
-            )),
-        }
+    pub fn init(workgroup_size: u32, device: &wgpu::Device) -> Self {
+        Self(GpuResourcesState::Init(WgpuResources::new(
+            device,
+            workgroup_size,
+        )))
     }
 
+    /// Returns a mutable reference to the [`WgpuResources`] if it is initialised.
     #[inline]
-    fn get_or_init(&mut self, device: &wgpu::Device) -> &mut gpu_compute::WgpuResources {
-        self.resources.get_or_insert_with(|| {
-            gpu_compute::WgpuResources::init(device, self.affected_count, self.massive_count)
-        })
-    }
-
-    #[inline]
-    fn update(&mut self, affected_count: usize, massive_count: usize) {
-        if self.affected_count != affected_count || self.massive_count != massive_count {
-            self.affected_count = affected_count;
-            self.massive_count = massive_count;
-            self.resources = None;
-        }
+    pub fn get_or_init(&mut self, device: &wgpu::Device) -> &mut WgpuResources {
+        self.0.get_or_init(device)
     }
 }
 
 impl Default for GpuData {
     #[inline]
     fn default() -> Self {
-        Self::new()
+        Self(GpuResourcesState::New(256))
     }
 }
 
 /// Brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
 ///
-/// Currently only available for 3D f32 vectors. You can still use it in 2D by converting your 2D
-/// f32 vectors to 3D f32 vectors.
+/// Currently only implemented for 3D f32 vectors. You can still use it in 2D by converting your 2D
+/// f32 vectors to 3D f32 vectors. Does not work on WASM.
 pub struct BruteForce<'a> {
-    /// Instanced [`GpuData`] used for the computation. It **should not** be recreated for every
-    /// iteration. Doing so would result in significantly reduced performance.
+    /// Instanced resources used for the computation. It **should not** be recreated for every
+    /// iteration. Doing so can result in significantly reduced performance.
     pub gpu_data: &'a mut GpuData,
     /// [`wgpu::Device`] used for the computation.
     pub device: &'a wgpu::Device,
@@ -85,9 +83,9 @@ impl<'a> BruteForce<'a> {
         queue: &'a wgpu::Queue,
     ) -> Self {
         Self {
+            gpu_data,
             device,
             queue,
-            gpu_data,
         }
     }
 }
@@ -97,26 +95,10 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForce<'_> {
 
     #[inline]
     fn compute(&mut self, system: ParticleSliceSystem<Vec3, f32>) -> Self::Output {
-        let affected_count = system.affected.len();
-        let massive_count = system.massive.len();
+        let gpu_data = self.gpu_data.get_or_init(self.device);
 
-        if massive_count == 0 {
-            return system.affected.iter().map(|_| Vec3::ZERO).collect();
-        }
-
-        let gpu_data = {
-            self.gpu_data.update(affected_count, massive_count);
-            self.gpu_data.get_or_init(self.device)
-        };
-
-        gpu_data.write_particle_data(system.affected, system.massive, self.queue);
-        gpu_data.compute_pass(
-            self.device,
-            self.queue,
-            (affected_count as f32 / 256.0).ceil() as u32,
-        );
-
-        pollster::block_on(gpu_data.read_accelerations(self.device))
+        gpu_data.write_particle_data(system.affected, system.massive, self.device, self.queue);
+        pollster::block_on(gpu_data.compute(self.device, self.queue))
     }
 }
 
@@ -155,8 +137,9 @@ mod tests {
 
     #[test]
     fn brute_force() {
-        let (d, q) = &pollster::block_on(setup_wgpu());
-        tests::acceleration_error(BruteForce::new(&mut GpuData::new(), d, q), 1e-2);
-        tests::circular_orbit_stability(BruteForce::new(&mut GpuData::new(), d, q), 100, 1e-2);
+        let (device, queue) = &pollster::block_on(setup_wgpu());
+        let mut gpu_data = GpuData::default();
+        tests::acceleration_error(BruteForce::new(&mut gpu_data, device, queue), 1e-2);
+        tests::circular_orbit_stability(BruteForce::new(&mut gpu_data, device, queue), 100, 1e-2);
     }
 }

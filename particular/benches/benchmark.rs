@@ -14,10 +14,10 @@ where
     [0.0; N].map(|_| rng.gen_range(range.clone())).into()
 }
 
-pub fn random_bodies(rng: &mut StdRng, i: usize, ratio_massive: f32) -> Vec<PointMass> {
-    let massive_bodies = (i as f32 * ratio_massive).round() as usize;
+pub fn random_bodies(rng: &mut StdRng, n: usize, ratio_massive: f32) -> Vec<PointMass> {
+    let massive_bodies = (n as f32 * ratio_massive).round() as usize;
 
-    (0..i)
+    (0..n)
         .map(|i| {
             let position = gen_range_vector(rng, -5e3..5e3);
             let mass = if i < massive_bodies {
@@ -85,12 +85,8 @@ fn criterion_benchmark(c: &mut Criterion) {
         #[cfg(feature = "gpu")]
         {
             let (device, queue) = &pollster::block_on(particular::gpu::setup_wgpu());
-            let gpu_data = &mut gpu::GpuData::new_init(device, b.len(), b.len());
-            let gpu_brute_force = gpu::BruteForce {
-                gpu_data,
-                device,
-                queue,
-            };
+            let mut gpu_data = gpu::GpuData::default();
+            let gpu_brute_force = gpu::BruteForce::new(&mut gpu_data, device, queue);
             bench_cm(&*b, len, gpu_brute_force, g, true, "");
         }
 

@@ -3,7 +3,7 @@
 @group(0) @binding(2) var<storage, read_write> accelerations : array<vec3<f32>>;
 
 @compute
-@workgroup_size(256, 1, 1)
+@workgroup_size(R_WORKGROUP_SIZE, 1, 1)
 fn main(@builtin(global_invocation_id) global_invocation_id: vec3<u32>) {
     let i = global_invocation_id.x;
 
@@ -13,21 +13,13 @@ fn main(@builtin(global_invocation_id) global_invocation_id: vec3<u32>) {
     for (var j = 0u; j < arrayLength(&massive_particles); j++) {
         let p2 = massive_particles[j];
 
-        let dirx = p2.x - p1.x;
-        let diry = p2.y - p1.y;
-        let dirz = p2.z - p1.z;
-
-        let norm = dirx * dirx + diry * diry + dirz * dirz;
+        let dir = p2.xyz - p1.xyz;
+        let norm = dot(dir, dir);
         let inv = p2.w * inverseSqrt(norm * norm * norm);
-
-        let ax = dirx * inv;
-        let ay = diry * inv;
-        let az = dirz * inv;
+        let a = dir * inv;
 
         if norm != 0.0 {
-            acceleration.x += ax;
-            acceleration.y += ay;
-            acceleration.z += az;
+            acceleration += a;
         }
     }
 
