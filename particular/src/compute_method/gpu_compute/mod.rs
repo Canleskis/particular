@@ -140,9 +140,12 @@ impl WgpuResources {
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(
-                concat!(include_str!("particle.wgsl"), include_str!("compute.wgsl"))
-                    .replace("#WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
-                    .into(),
+                concat!(
+                    include_str!("particle.wgsl"),
+                    include_str!("compute_tiles.wgsl")
+                )
+                .replace("#WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
+                .into(),
             ),
         });
 

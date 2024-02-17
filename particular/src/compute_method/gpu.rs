@@ -53,13 +53,6 @@ impl GpuData {
     }
 }
 
-impl Default for GpuData {
-    #[inline]
-    fn default() -> Self {
-        Self(GpuResourcesState::New(256))
-    }
-}
-
 /// Brute-force [`ComputeMethod`] using the GPU with [wgpu](https://github.com/gfx-rs/wgpu).
 ///
 /// Currently only implemented for 3D f32 vectors. You can still use it in 2D by converting your 2D
@@ -181,7 +174,7 @@ mod tests {
     #[test]
     fn brute_force() {
         let (device, queue) = &pollster::block_on(setup_wgpu());
-        let mut gpu_data = GpuData::default();
+        let mut gpu_data = GpuData::new(64);
         tests::acceleration_error(BruteForce::new(&mut gpu_data, device, queue), 1e-2);
         tests::circular_orbit_stability(BruteForce::new(&mut gpu_data, device, queue), 100, 1e-2);
     }

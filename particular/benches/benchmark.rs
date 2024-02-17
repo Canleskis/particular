@@ -85,7 +85,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         #[cfg(feature = "gpu")]
         {
             let (device, queue) = &pollster::block_on(particular::gpu::setup_wgpu());
-            let mut gpu_data = gpu::GpuData::default();
+            let mut gpu_data = gpu::GpuData::new(64);
             let gpu_brute_force = gpu::BruteForce::new(&mut gpu_data, device, queue);
             bench_cm(&*b, len, gpu_brute_force, g, true, "");
         }
