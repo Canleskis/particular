@@ -131,18 +131,18 @@ impl WgpuResources {
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("Compute layout"),
             bind_group_layouts: &[&bind_group_layout],
-            push_constant_ranges: &[],
+            push_constant_ranges: &[wgpu::PushConstantRange {
+                stages: wgpu::ShaderStages::COMPUTE,
+                range: 0..4,
+            }],
         });
 
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(
-                concat!(
-                    include_str!("particle.wgsl"),
-                    include_str!("compute.wgsl")
-                )
-                .replace("#WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
-                .into(),
+                concat!(include_str!("particle.wgsl"), include_str!("compute.wgsl"))
+                    .replace("#WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
+                    .into(),
             ),
         });
 
@@ -184,7 +184,12 @@ impl WgpuResources {
 
     /// Returns the computed accelerations on the GPU.
     #[inline]
-    pub async fn compute(&self, device: &wgpu::Device, queue: &wgpu::Queue) -> Vec<Vec3> {
+    pub async fn compute(
+        &self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        softening: f32,
+    ) -> Vec<Vec3> {
         let affected_count = self.buffer_affected.size() / PARTICLE_SIZE;
         let massive_count = self.buffer_massive.size() / PARTICLE_SIZE;
 
@@ -224,6 +229,7 @@ impl WgpuResources {
             let compute_pass_descriptor = wgpu::ComputePassDescriptor { label: None };
             let mut compute_pass = encoder.begin_compute_pass(&compute_pass_descriptor);
             compute_pass.set_pipeline(&self.pipeline);
+            compute_pass.set_push_constants(0, bytemuck::cast_slice(&[softening * softening]));
             compute_pass.set_bind_group(0, &bind_group, &[]);
             compute_pass.dispatch_workgroups(workgroups, 1, 1);
         }

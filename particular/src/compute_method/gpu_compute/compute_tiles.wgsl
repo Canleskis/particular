@@ -2,6 +2,7 @@
 @group(0) @binding(1) var<storage, read> massive_particles: array<PointMass>;
 @group(0) @binding(2) var<storage, read_write> accelerations: array<Vector>;
 
+var<push_constant> softening_squared: f32;
 var<workgroup> shared_particles: array<PointMass, #WORKGROUP_SIZE>;
 
 @compute @workgroup_size(#WORKGROUP_SIZE, 1, 1)
@@ -21,7 +22,7 @@ fn main(@builtin(global_invocation_id) global_invocation_id: vec3<u32>, @builtin
         for (var j = 0u; j < #WORKGROUP_SIZE; j++) {
             let p2 = shared_particles[j];
 
-            particle_acceleration(p1, p2, &acceleration);
+            particle_acceleration(p1, p2, softening_squared, &acceleration);
         }
         
         workgroupBarrier();

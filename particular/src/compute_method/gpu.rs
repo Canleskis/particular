@@ -64,6 +64,49 @@ impl Default for GpuData {
 ///
 /// Currently only implemented for 3D f32 vectors. You can still use it in 2D by converting your 2D
 /// f32 vectors to 3D f32 vectors. Does not work on WASM.
+pub struct BruteForceSoftened<'a> {
+    /// Instanced resources used for the computation. It **should not** be recreated for every
+    /// iteration. Doing so can result in significantly reduced performance.
+    pub gpu_data: &'a mut GpuData,
+    /// [`wgpu::Device`] used for the computation.
+    pub device: &'a wgpu::Device,
+    /// [`wgpu::Queue`] used for the computation.
+    pub queue: &'a wgpu::Queue,
+    /// Softening parameter to avoid singularities.
+    pub softening: f32,
+}
+
+impl<'a> BruteForceSoftened<'a> {
+    /// Creates a new [`BruteForce`] instance.
+    #[inline]
+    pub fn new(
+        gpu_data: &'a mut GpuData,
+        device: &'a wgpu::Device,
+        queue: &'a wgpu::Queue,
+        softening: f32,
+    ) -> Self {
+        Self {
+            gpu_data,
+            device,
+            queue,
+            softening,
+        }
+    }
+}
+
+impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForceSoftened<'_> {
+    type Output = Vec<Vec3>;
+
+    #[inline]
+    fn compute(&mut self, system: ParticleSliceSystem<Vec3, f32>) -> Self::Output {
+        let gpu_data = self.gpu_data.get_or_init(self.device);
+
+        gpu_data.write_particle_data(system.affected, system.massive, self.device, self.queue);
+        pollster::block_on(gpu_data.compute(self.device, self.queue, self.softening))
+    }
+}
+
+/// Same as [`BruteForceSoftened`], but with no softening.
 pub struct BruteForce<'a> {
     /// Instanced resources used for the computation. It **should not** be recreated for every
     /// iteration. Doing so can result in significantly reduced performance.
@@ -94,11 +137,8 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForce<'_> {
     type Output = Vec<Vec3>;
 
     #[inline]
-    fn compute(&mut self, system: ParticleSliceSystem<Vec3, f32>) -> Self::Output {
-        let gpu_data = self.gpu_data.get_or_init(self.device);
-
-        gpu_data.write_particle_data(system.affected, system.massive, self.device, self.queue);
-        pollster::block_on(gpu_data.compute(self.device, self.queue))
+    fn compute(&mut self, storage: ParticleSliceSystem<Vec3, f32>) -> Self::Output {
+        BruteForceSoftened::new(self.gpu_data, self.device, self.queue, 0.0).compute(storage)
     }
 }
 
@@ -121,8 +161,11 @@ pub async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
         .request_device(
             &wgpu::DeviceDescriptor {
                 label: None,
-                features: wgpu::Features::empty(),
-                limits: wgpu::Limits::downlevel_defaults(),
+                features: wgpu::Features::empty() | wgpu::Features::PUSH_CONSTANTS,
+                limits: wgpu::Limits {
+                    max_push_constant_size: 4,
+                    ..Default::default()
+                },
             },
             None,
         )
