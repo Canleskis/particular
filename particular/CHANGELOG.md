@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-27-12
+## Unreleased - 2023-02-17
 
 ### Added
 
@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `force_scalar`, `force_simd` methods and various constructors for `PointMass`.
 - `ScalarArray` trait to bind a `FloatVector` and an array for `Particle` to `PointMass` conversion.
 - Marker `ReorderedCompute` trait.
-- `Softened` variants for all CPU compute methods.
+- `Softened` variants for all compute methods.
 
 ### Changed
 
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `acceleration_*` and `total_acceleration_*` methods for `PointMass`.
 - `vector` module and its members.
 
-## [0.6.1] - 2023-19-07
+## [0.6.1] - 2023-07-19
 
 ### Added
 
@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Built-in compute methods use `total_acceleration_*` methods when applicable.
 - `sequential::BruteForcePairs` is more efficient with less allocations.
 
-## [0.6.0] - 2023-14-07
+## [0.6.0] - 2023-07-14
 
 ### Added
 
@@ -91,7 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Accelerations` iterator.
 - `MapCompute` trait.
 
-## [0.5.2] - 2023-16-05
+## [0.5.2] - 2023-05-16
 
 ### Changed
 
@@ -101,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `NaN` acceleration output when particles are in a certain mass order for `gpu::BruteForce`.
 
-## [0.5.1] - 2023-22-03
+## [0.5.1] - 2023-03-22
 
 ### Changed
 
@@ -111,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Panic when `BarnesHut` tree is empty.
 
-## [0.5.0] - 2023-22-03
+## [0.5.0] - 2023-03-22
 
 ### Added
 
@@ -133,7 +133,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ParticleSet`. Use `accelerations` and `map_accelerations` methods on iterators instead.
 
-## [0.4.0] - 2023-22-02
+## [0.4.0] - 2023-02-22
 
 ### Added
 
@@ -157,7 +157,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Descriptor`, `IntoVector` and `FromVector` traits.
 - `VectorDescriptor` wrapper.
 
-## [0.3.1] - 2022-26-11
+## [0.3.1] - 2022-11-26
 
 ### Changed
 

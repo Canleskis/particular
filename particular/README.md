@@ -11,10 +11,16 @@
 Particular is a crate providing a simple way to simulate N-body gravitational interaction of
 particles in Rust.
 
+Please note that this branch is for development purposes and may not represent the latest stable
+release of the library. For the most recent stable version, refer to the
+[`latest`](https://github.com/Canleskis/particular/tree/latest) branch.
+
+## [Change log](https://github.com/Canleskis/particular/blob/main/particular/CHANGELOG.md)
+
 ## Goals
 
 The main goal of this crate is to provide users with a simple API to set up N-body gravitational
-simulations that can easily be integrated into existing game and physics engines. Thus it does
+simulations that can easily be integrated into existing game and physics engines. Thus it doe
 not concern itself with numerical integration or other similar tools and instead only focuses on
 the acceleration calculations.
 
