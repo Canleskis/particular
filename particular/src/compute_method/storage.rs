@@ -132,7 +132,7 @@ impl<V, S> PointMass<V, S> {
             if CHECK_ZERO && norm == S::ZERO {
                 dir
             } else {
-                dir * mass / (norm_s * norm_s.sqrt())
+                dir * (mass / (norm_s * norm_s.sqrt()))
             }
         };
 
@@ -208,16 +208,16 @@ impl<V, S> PointMass<V, S> {
             let norm = dir.norm_squared();
 
             if norm == S::ZERO {
-                acceleration += dir;
-            } else {
-                match tree.nodes[id] {
-                    Node::Internal(node) if theta < node.bbox.width() / norm.sqrt() => {
-                        stack.extend(node.orthant);
-                    }
-                    _ => {
-                        let norm_s = norm + (softening * softening);
-                        acceleration += dir * p2.mass / (norm_s * norm_s.sqrt());
-                    }
+                continue;
+            }
+
+            match tree.nodes[id] {
+                Node::Internal(node) if theta < node.bbox.width() / norm.sqrt() => {
+                    stack.extend(node.orthant);
+                }
+                _ => {
+                    let norm_s = norm + (softening * softening);
+                    acceleration += dir * (p2.mass / (norm_s * norm_s.sqrt()));
                 }
             }
         }
@@ -232,7 +232,7 @@ pub struct ParticleSystem<'p, V, S, T: ?Sized> {
     /// Particles for which the acceleration is computed.
     pub affected: &'p [PointMass<V, S>],
     /// Particles responsible for the acceleration exerted on the `affected` particles, in a
-    /// storage `S`.
+    /// storage `T`.
     pub massive: &'p T,
 }
 
