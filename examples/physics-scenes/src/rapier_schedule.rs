@@ -1,9 +1,6 @@
 use bevy::{ecs::schedule::ScheduleLabel, prelude::*};
 use bevy_rapier2d::prelude::*;
 
-#[derive(Default, Resource)]
-pub struct RealWorldTick(pub f32);
-
 #[derive(ScheduleLabel, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct PreRapierSchedule;
 
@@ -16,39 +13,27 @@ struct StepRapierSchedule;
 #[derive(ScheduleLabel, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct PostRapierSchedule;
 
-pub fn time_sync(
-    time: Res<Time>,
-    config: Res<RapierConfiguration>,
-    mut physics_time: ResMut<RealWorldTick>,
-    mut sim_to_render_time: ResMut<SimulationToRenderTime>,
-) {
+fn run_physics_schedule(world: &mut World) {
+    let config = *world.resource::<RapierConfiguration>();
+    let TimestepMode::Fixed { dt, .. } = world.resource::<RapierConfiguration>().timestep_mode
+    else {
+        return;
+    };
+
     if !config.physics_pipeline_active {
         return;
     }
 
-    let TimestepMode::Fixed { dt, .. } = config.timestep_mode else {
-        return;
-    };
+    let delta = world.resource::<Time>().delta_seconds();
+    let diff = &mut world.resource_mut::<SimulationToRenderTime>().diff;
 
-    if sim_to_render_time.diff > dt {
-        sim_to_render_time.diff = 0.0;
-    }
+    *diff += delta;
 
-    physics_time.0 = time.delta_seconds().min(dt);
-    sim_to_render_time.diff += time.delta_seconds();
-}
-
-pub fn physics_step(world: &mut World) {
-    let config = world.resource::<RapierConfiguration>();
-    let sim_to_render_time = world.resource::<SimulationToRenderTime>();
-
-    let TimestepMode::Fixed { dt, .. } = config.timestep_mode else {
-        return;
-    };
-
-    let is_physics_step = config.physics_pipeline_active && sim_to_render_time.diff > dt;
+    let is_physics_step = *diff >= dt;
 
     if is_physics_step {
+        *diff = 0.0;
+
         world.run_schedule(PreRapierSchedule);
     }
 
@@ -64,9 +49,7 @@ pub struct CustomRapierSchedule;
 
 impl Plugin for CustomRapierSchedule {
     fn build(&self, app: &mut App) {
-        app.init_resource::<RealWorldTick>()
-            .add_systems(First, time_sync)
-            .add_systems(PreUpdate, physics_step);
+        app.add_systems(PreUpdate, run_physics_schedule);
 
         let pre_schedule = Schedule::new(PreRapierSchedule);
 

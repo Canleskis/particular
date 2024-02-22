@@ -41,12 +41,13 @@ fn main() {
             .iter()
             // Calling accelerations returns an iterator over the acceleration of each body.
             .accelerations(&mut sequential::BruteForceScalar)
-            // Zipping the accelerations with a mutable reference to the bodies
+            .map(Vec2::from)
+            // Zipping the accelerations with a mutable reference to the bodies allows us
             // to change the state of each body using their computed acceleration.
             .zip(&mut bodies)
             .for_each(|(acceleration, body)| {
                 // Integrating using the semi-implicit Euler method https://en.wikipedia.org/wiki/Semi-implicit_Euler_method.
-                body.velocity += Vec2::from(acceleration) * DT;
+                body.velocity += acceleration * DT;
                 body.position += body.velocity * DT;
             });
 

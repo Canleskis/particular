@@ -113,7 +113,7 @@ fn update_ui_fps(
         return;
     };
 
-    if let Some(average) = fps.average() {
+    if let Some(average) = fps.smoothed() {
         for mut text in &mut query_text {
             text.sections[1].value = format!("{average:.1}");
         }
