@@ -29,11 +29,10 @@
 //!
 //! ## Using Particular
 //!
-//! Particular consists of two "modules", a "backend" that takes care of the abstraction of the
-//! computation of the gravitational forces between bodies for different floating-point types and
-//! dimensions, and a "frontend" that facilitates usage of that abstraction for user-defined and
-//! non-user-defined types. For most simple use cases, the latter is all that you need to know
-//! about.
+//! Particular consists of two "modules", one that takes care of the abstraction of the computation
+//! of the gravitational forces between bodies for different floating-point types and dimensions,
+//! and one that facilitates usage of that abstraction for user-defined andnon-user-defined types.
+//! For most simple use cases, the latter is all that you need to know about.
 //!
 //! ### Simple usage
 //!
@@ -41,7 +40,7 @@
 //! of the position and mass of an object in N-dimensional space and external types by defining
 //! methods to retrieve a position and a gravitational parameter.  
 //! These methods respectively return an array of scalars and a scalar, which are converted using
-//! the [point_mass] method to interface with the backend of Particular.
+//! the [point_mass] method to interface with the underlying algorithm implementations.
 //!
 //! #### Implementing the [`Particle`] trait
 //!
@@ -160,12 +159,10 @@
 //!
 //! ### Advanced usage
 //!
-//! The "frontend" is built on top of the "backend" but in some instances the abstraction provided
-//! by the frontend might not be flexible enough. For example, you might need to access the tree
-//! built from the particles for the Barnes-Hut algorithm, want to compute the gravitational forces
-//! between two distinct collections of particles, or both at the same time.  
-//! In that case, you can use the backend directly by calling [compute] on a struct implementing
-//! [`ComputeMethod`], passing in an appropriate storage.
+//! In some instances the iterator abstraction provided by particular might not be flexible enough.
+//! For example, you might need to access the tree built from the particles for the Barnes-Hut
+//! algorithm, want to compute the gravitational forces between two distinct collections of
+//! particles, or both at the same time.
 //!
 //! #### The [`PointMass`] type
 //!
@@ -270,7 +267,6 @@
 //!
 //! [accelerations]: particle::Accelerations::accelerations
 //! [point_mass]: particle::IntoPointMass::point_mass
-//! [compute]: compute_method::ComputeMethod::compute
 //! [`Particle`]: particle::Particle
 //! [`ComputeMethod`]: compute_method::ComputeMethod
 //! [`ParticleReordered`]: compute_method::storage::ParticleReordered

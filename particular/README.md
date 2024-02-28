@@ -20,7 +20,7 @@ release of the library. For the most recent stable version, refer to the
 ## Goals
 
 The main goal of this crate is to provide users with a simple API to set up N-body gravitational
-simulations that can easily be integrated into existing game and physics engines. Thus it doe
+simulations that can easily be integrated into existing game and physics engines. Thus it does
 not concern itself with numerical integration or other similar tools and instead only focuses on
 the acceleration calculations.
 
@@ -43,11 +43,10 @@ Enable the respective `parallel` and `gpu` features to access the available comp
 
 ## Using Particular
 
-Particular consists of two "modules", a "backend" that takes care of the abstraction of the
-computation of the gravitational forces between bodies for different floating-point types and
-dimensions, and a "frontend" that facilitates usage of that abstraction for user-defined and
-non-user-defined types. For most simple use cases, the latter is all that you need to know
-about.
+Particular consists of two "modules", one that takes care of the abstraction of the computation of
+the gravitational forces between bodies for different floating-point types and dimensions, and one
+that facilitates usage of that abstraction for user-defined andnon-user-defined types. For most
+simple use cases, the latter is all that you need to know about.
 
 ### Simple usage
 
@@ -55,7 +54,7 @@ The [`Particle`] trait provides the main abstraction layer between the internal 
 of the position and mass of an object in N-dimensional space and external types by defining
 methods to retrieve a position and a gravitational parameter.  
 These methods respectively return an array of scalars and a scalar, which are converted using
-the [point_mass] method to interface with the backend of Particular.
+the [point_mass] method to interface with the underlying algorithm implementations.
 
 #### Implementing the [`Particle`] trait
 
@@ -92,7 +91,7 @@ impl Particle for Body {
     fn position(&self) -> [f32; 3] {
         self.position.into()
     }
-    
+
     fn mu(&self) -> f32 {
         self.mass * G
     }
@@ -146,12 +145,10 @@ for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
 
 ### Advanced usage
 
-The "frontend" is built on top of the "backend" but in some instances the abstraction provided
-by the frontend might not be flexible enough. For example, you might need to access the tree
-built from the particles for the Barnes-Hut algorithm, want to compute the gravitational forces
-between two distinct collections of particles, or both at the same time.  
-In that case, you can use the backend directly by calling [compute] on a struct implementing
-[`ComputeMethod`], passing in an appropriate storage.
+In some instances the iterator abstraction provided by particular might not be flexible enough.
+For example, you might need to access the tree built from the particles for the Barnes-Hut
+algorithm, want to compute the gravitational forces between two distinct collections of particles,
+or both at the same time.
 
 #### The [`PointMass`] type
 
@@ -258,7 +255,6 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 [accelerations]: https://docs.rs/particular/latest/particular/particle/trait.Accelerations.html#method.accelerations
 [point_mass]: https://docs.rs/particular/latest/particular/particle/trait.IntoPointMass.html#method.point_mass
-[compute]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html#tymethod.compute
 [`Particle`]: https://docs.rs/particular/latest/particular/particle/trait.Particle.html
 [`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
 [`ParticleReordered`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleReordered.html
