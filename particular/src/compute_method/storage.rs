@@ -469,7 +469,7 @@ where
     }
 }
 
-impl<V, S, C, O> ComputeMethod<ParticleReordered<'_, V, S>> for C
+impl<V, S, C, O> ComputeMethod<&ParticleReordered<'_, V, S>> for C
 where
     O: IntoIterator,
     for<'a> C: ComputeMethod<ParticleSliceSystem<'a, V, S>, Output = O>,
@@ -477,7 +477,7 @@ where
     type Output = O;
 
     #[inline]
-    fn compute(&mut self, reordered: ParticleReordered<V, S>) -> Self::Output {
+    fn compute(&mut self, reordered: &ParticleReordered<V, S>) -> Self::Output {
         self.compute(ParticleSliceSystem {
             affected: reordered.unordered,
             massive: reordered.massive(),

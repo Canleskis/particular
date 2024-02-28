@@ -123,7 +123,7 @@ impl<P: Particle> IntoPointMass for P {}
 /// [`Particle`] of type `P`.
 pub trait ReorderedCompute<P>:
     for<'a> ComputeMethod<
-    ParticleReordered<'a, ParticleVector<P>, ParticleScalar<P>>,
+    &'a ParticleReordered<'a, ParticleVector<P>, ParticleScalar<P>>,
     Output = Vec<ParticleVector<P>>,
 >
 where
@@ -136,7 +136,7 @@ where
     P: Particle,
     P::Array: ScalarArray,
     for<'a> C: ComputeMethod<
-        ParticleReordered<'a, ParticleVector<P>, ParticleScalar<P>>,
+        &'a ParticleReordered<'a, ParticleVector<P>, ParticleScalar<P>>,
         Output = Vec<ParticleVector<P>>,
     >,
 {
@@ -177,7 +177,7 @@ where
         }
 
         let collection = self.map(|p| p.point_mass()).collect::<Vec<_>>();
-        scalar_to_array(cm.compute(ParticleReordered::from(&*collection))).into_iter()
+        scalar_to_array(cm.compute(&ParticleReordered::from(&*collection))).into_iter()
     }
 }
 impl<I: Iterator> Accelerations for I where I::Item: Particle {}
