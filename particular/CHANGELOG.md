@@ -5,25 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-02-17
+## Unreleased - 2023-02-28
 
 ### Added
 
-- `GpuData` struct used for `gpu::BruteForce`.
 - `ParticleSystem`, `ParticleTree`, `ParticleOrdered` and `ParticleReordered` structs used for storages in built-in compute methods.
 - `Array`, `Zero`, `One`, `Infinty`, `FloatOps`, `Float`, `IntoArray`, `FloatVectorOps`, `FloatVector`, `SIMD`, `SIMDElement`, `Reduce`, `FromPrimitive` and `AsPrimitive` traits for math operation abstractions.
 - `force_scalar`, `force_simd` methods and various constructors for `PointMass`.
 - `ScalarArray` trait to bind a `FloatVector` and an array for `Particle` to `PointMass` conversion.
 - Marker `ReorderedCompute` trait.
 - `Softened` variants for all compute methods.
+- `GpuResources` struct used for `gpu::BruteForce`.
+- `compute_shared.wgsl` compute shader.
+- `MemoryStrategy` to allow user selection between shared and global memory for massive particles within the compute shader used for `gpu::BruteForce`.
 
 ### Changed
 
 - Built-in compute methods implemented with the different provided storage structs.
 - `ComputeMethod` no longer generic over `V`.
-- Renamed `WgpuData` to `WgpuResources` and `wgpu_data` to `gpu_compute`.
+- Renamed `WgpuData` to `WgpuResources` and `wgpu_data` module to `gpu_compute`.
 - `gpu_compute` (internals of `gpu::BruteForce`) is public.
-- `gpu::BruteForce` holds a reference to a `wgpu::Device`, `wgpu::Queue` and a mutable reference to a `GpuData`.
+- `gpu::BruteForce` holds a reference to a `wgpu::Device`, `wgpu::Queue` and a mutable reference to a `GpuResources`.
 - `write_particle_data` and `read_accelerations` not generic and use `ultraviolet::Vec3`.
 - `read_accelerations` is async.
 - Update `wgpu` to 0.17

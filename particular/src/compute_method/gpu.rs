@@ -7,15 +7,17 @@ use {
     ultraviolet::Vec3,
 };
 
+pub use crate::compute_method::gpu_compute::MemoryStrategy;
+
 enum GpuResourcesState {
-    New(u32),
+    New(MemoryStrategy),
     Init(WgpuResources),
 }
 
 impl GpuResourcesState {
     /// Returns a mutable reference to the [`WgpuResources`] if it is initialised.
     #[inline]
-    pub fn get_or_init(&mut self, device: &wgpu::Device) -> &mut WgpuResources {
+    fn get_or_init(&mut self, device: &wgpu::Device) -> &mut WgpuResources {
         if let Self::New(workgroup_size) = self {
             *self = Self::Init(WgpuResources::new(device, *workgroup_size));
         }
@@ -27,22 +29,22 @@ impl GpuResourcesState {
     }
 }
 
-/// Initialised data used by `wgpu` for computing on the GPU.
-pub struct GpuData(GpuResourcesState);
+/// Resources used by `wgpu` for computing on the GPU.
+pub struct GpuResources(GpuResourcesState);
 
-impl GpuData {
-    /// Creates a new [`GpuData`] instance.
+impl GpuResources {
+    /// Creates a new [`GpuResources`] instance.
     #[inline]
-    pub fn new(workgroup_size: u32) -> Self {
-        Self(GpuResourcesState::New(workgroup_size))
+    pub fn new(shader_type: MemoryStrategy) -> Self {
+        Self(GpuResourcesState::New(shader_type))
     }
 
-    /// Creates a new [`GpuData`] instance with initialised buffers and pipeline.
+    /// Creates a new [`GpuResources`] instance with initialised buffers and pipeline.
     #[inline]
-    pub fn init(workgroup_size: u32, device: &wgpu::Device) -> Self {
+    pub fn init(shader_type: MemoryStrategy, device: &wgpu::Device) -> Self {
         Self(GpuResourcesState::Init(WgpuResources::new(
             device,
-            workgroup_size,
+            shader_type,
         )))
     }
 
@@ -60,7 +62,7 @@ impl GpuData {
 pub struct BruteForceSoftened<'a> {
     /// Instanced resources used for the computation. It **should not** be recreated for every
     /// iteration. Doing so can result in significantly reduced performance.
-    pub gpu_data: &'a mut GpuData,
+    pub resources: &'a mut GpuResources,
     /// [`wgpu::Device`] used for the computation.
     pub device: &'a wgpu::Device,
     /// [`wgpu::Queue`] used for the computation.
@@ -73,13 +75,13 @@ impl<'a> BruteForceSoftened<'a> {
     /// Creates a new [`BruteForce`] instance.
     #[inline]
     pub fn new(
-        gpu_data: &'a mut GpuData,
+        resources: &'a mut GpuResources,
         device: &'a wgpu::Device,
         queue: &'a wgpu::Queue,
         softening: f32,
     ) -> Self {
         Self {
-            gpu_data,
+            resources,
             device,
             queue,
             softening,
@@ -92,7 +94,7 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForceSoftened<'_
 
     #[inline]
     fn compute(&mut self, system: ParticleSliceSystem<Vec3, f32>) -> Self::Output {
-        let gpu_data = self.gpu_data.get_or_init(self.device);
+        let gpu_data = self.resources.get_or_init(self.device);
 
         gpu_data.write_particle_data(system.affected, system.massive, self.device, self.queue);
         pollster::block_on(gpu_data.compute(self.device, self.queue, self.softening))
@@ -103,7 +105,7 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForceSoftened<'_
 pub struct BruteForce<'a> {
     /// Instanced resources used for the computation. It **should not** be recreated for every
     /// iteration. Doing so can result in significantly reduced performance.
-    pub gpu_data: &'a mut GpuData,
+    pub resources: &'a mut GpuResources,
     /// [`wgpu::Device`] used for the computation.
     pub device: &'a wgpu::Device,
     /// [`wgpu::Queue`] used for the computation.
@@ -114,12 +116,12 @@ impl<'a> BruteForce<'a> {
     /// Creates a new [`BruteForce`] instance.
     #[inline]
     pub fn new(
-        gpu_data: &'a mut GpuData,
+        resources: &'a mut GpuResources,
         device: &'a wgpu::Device,
         queue: &'a wgpu::Queue,
     ) -> Self {
         Self {
-            gpu_data,
+            resources,
             device,
             queue,
         }
@@ -131,7 +133,7 @@ impl ComputeMethod<ParticleSliceSystem<'_, Vec3, f32>> for BruteForce<'_> {
 
     #[inline]
     fn compute(&mut self, storage: ParticleSliceSystem<Vec3, f32>) -> Self::Output {
-        BruteForceSoftened::new(self.gpu_data, self.device, self.queue, 0.0).compute(storage)
+        BruteForceSoftened::new(self.resources, self.device, self.queue, 0.0).compute(storage)
     }
 }
 
@@ -174,8 +176,8 @@ mod tests {
     #[test]
     fn brute_force() {
         let (device, queue) = &pollster::block_on(setup_wgpu());
-        let mut gpu_data = GpuData::new(64);
-        tests::acceleration_error(BruteForce::new(&mut gpu_data, device, queue), 1e-2);
-        tests::circular_orbit_stability(BruteForce::new(&mut gpu_data, device, queue), 100, 1e-2);
+        let resources = &mut GpuResources::new(MemoryStrategy::Shared(64));
+        tests::acceleration_error(BruteForce::new(resources, device, queue), 1e-2);
+        tests::circular_orbit_stability(BruteForce::new(resources, device, queue), 100, 1e-2);
     }
 }

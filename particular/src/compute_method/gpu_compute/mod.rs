@@ -44,6 +44,57 @@ impl DynamicBuffer {
     }
 }
 
+/// Defines the way memory for massive particles is accessed in the compute shader.
+#[derive(Debug, Clone, Copy)]
+pub enum MemoryStrategy {
+    /// Uses shared memory to store the massive particles and speed up memory access within one
+    /// workgroup. Based on https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-31-fast-n-body-simulation-cuda.
+    Shared(u32),
+    /// Uses global memory to store and access the massive particles.
+    Global(u32),
+}
+
+impl Default for MemoryStrategy {
+    #[inline]
+    fn default() -> Self {
+        MemoryStrategy::Global(256)
+    }
+}
+
+impl MemoryStrategy {
+    /// Returns the processed shader for the given [`MemoryStrategy`].
+    #[inline]
+    pub fn as_shader_source(&self) -> wgpu::ShaderSource {
+        let (concat, workgroup_size) = match self {
+            MemoryStrategy::Shared(workgroup_size) => (
+                concat!(
+                    include_str!("particle.wgsl"),
+                    include_str!("compute_shared.wgsl")
+                ),
+                workgroup_size,
+            ),
+            MemoryStrategy::Global(workgroup_size) => (
+                concat!(include_str!("particle.wgsl"), include_str!("compute.wgsl")),
+                workgroup_size,
+            ),
+        };
+        wgpu::ShaderSource::Wgsl(
+            concat
+                .replace("#WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
+                .into(),
+        )
+    }
+
+    /// Returns the workgroup size for the shader of this [`MemoryStrategy`].
+    #[inline]
+    pub fn workgroup_size(&self) -> u32 {
+        match self {
+            MemoryStrategy::Shared(workgroup_size) => *workgroup_size,
+            MemoryStrategy::Global(workgroup_size) => *workgroup_size,
+        }
+    }
+}
+
 type PointMass = crate::compute_method::storage::PointMass<Vec3, f32>;
 
 const PARTICLE_SIZE: u64 = std::mem::size_of::<PointMass>() as u64;
@@ -61,7 +112,7 @@ pub struct WgpuResources {
 impl WgpuResources {
     /// Creates a new [`WgpuResources`] with the given [`wgpu::Device`].
     #[inline]
-    pub fn new(device: &wgpu::Device, workgroup_size: u32) -> Self {
+    pub fn new(device: &wgpu::Device, shader_type: MemoryStrategy) -> Self {
         let bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             entries: &[
                 wgpu::BindGroupLayoutEntry {
@@ -137,16 +188,11 @@ impl WgpuResources {
             }],
         });
 
+        let workgroup_size = shader_type.workgroup_size();
+
         let compute_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
-            source: wgpu::ShaderSource::Wgsl(
-                concat!(
-                    include_str!("particle.wgsl"),
-                    include_str!("compute_tiles.wgsl")
-                )
-                .replace("#WORKGROUP_SIZE", &(workgroup_size.to_string() + "u"))
-                .into(),
-            ),
+            source: shader_type.as_shader_source(),
         });
 
         let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
@@ -229,7 +275,7 @@ impl WgpuResources {
         encoder.push_debug_group("Compute accelerations");
         {
             let workgroups = (affected_count as f32 / self.workgroup_size as f32).ceil() as u32;
-            let compute_pass_descriptor = wgpu::ComputePassDescriptor { label: None };
+            let compute_pass_descriptor = wgpu::ComputePassDescriptor::default();
             let mut compute_pass = encoder.begin_compute_pass(&compute_pass_descriptor);
             compute_pass.set_pipeline(&self.pipeline);
             compute_pass.set_push_constants(0, bytemuck::cast_slice(&[softening * softening]));
