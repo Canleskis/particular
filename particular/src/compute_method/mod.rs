@@ -110,42 +110,47 @@ pub(crate) mod tests {
             2.0 * std::f32::consts::PI * ((radius * radius * radius) / main_mass).sqrt()
         }
 
-        let mut main = (
-            Vec3::new(0.0, 0.0, 0.0),
+        let mut particles = [
             PointMass::new(Vec3::new(0.0, 0.0, 0.0), 1E6),
-        );
-        let mut orbiting = (
-            Vec3::new(0.0, 100.0, 0.0),
             PointMass::new(Vec3::new(100.0, 0.0, 0.0), 0.0),
-        );
+        ];
+        let mut velocities = [Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 100.0, 0.0)];
 
-        let distance_before = (main.1.position - orbiting.1.position).mag();
-        let energy_before = specific_orbital_energy(distance_before, main.1.mass, orbiting.1.mass);
+        let main = &particles[0];
+        let orbiting = &particles[1];
 
-        let period = orbital_period(distance_before, main.1.mass);
+        let distance_before = (main.position - orbiting.position).mag();
+        let energy_before = specific_orbital_energy(distance_before, main.mass, orbiting.mass);
+
+        let period = orbital_period(distance_before, main.mass);
         // Steps to complete one full orbit.
         let steps = (period / DT).round() as usize;
 
-        let mut particles = [&mut main, &mut orbiting];
         for _ in 0..steps * orbit_count {
-            let set: Vec<_> = particles.iter().map(|(.., pm)| *pm).collect();
-            let accelerations = cm.compute(&set);
+            let accelerations = cm.compute(&particles);
 
-            for ((velocity, point_mass), acceleration) in particles.iter_mut().zip(accelerations) {
+            for ((point_mass, velocity), acceleration) in particles
+                .iter_mut()
+                .zip(velocities.iter_mut())
+                .zip(accelerations)
+            {
                 *velocity += acceleration * DT;
                 point_mass.position += *velocity * DT;
             }
         }
 
-        let distance_after = (main.1.position - orbiting.1.position).mag();
-        let energy_after = specific_orbital_energy(distance_after, main.1.mass, orbiting.1.mass);
+        let main = &particles[0];
+        let orbiting = &particles[1];
+
+        let distance_after = (main.position - orbiting.position).mag();
+        let energy_after = specific_orbital_energy(distance_after, main.mass, orbiting.mass);
+        
+        let error_distance = (1.0 - distance_before / distance_after).abs();
+        dbg!(error_distance);
+        assert!(error_distance < epsilon);
 
         let error_energy = (1.0 - energy_before / energy_after).abs();
         dbg!(error_energy);
         assert!(error_energy.abs() < epsilon);
-
-        let error_distance = (1.0 - distance_before / distance_after).abs();
-        dbg!(error_distance);
-        assert!(error_distance < epsilon)
     }
 }
