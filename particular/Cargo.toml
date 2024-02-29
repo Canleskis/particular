@@ -28,7 +28,7 @@ wide = "0.7"
 
 rayon = { version = "1", optional = true }
 
-wgpu = { version = "0.17", optional = true }
+wgpu = { version = "0.19", optional = true }
 flume = { version = "0.11", optional = true }
 bytemuck = { version = "1", optional = true }
 pollster = { version = "0.3", optional = true }

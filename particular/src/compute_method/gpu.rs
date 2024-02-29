@@ -156,8 +156,8 @@ pub async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
         .request_device(
             &wgpu::DeviceDescriptor {
                 label: None,
-                features: wgpu::Features::empty() | wgpu::Features::PUSH_CONSTANTS,
-                limits: wgpu::Limits {
+                required_features: wgpu::Features::empty() | wgpu::Features::PUSH_CONSTANTS,
+                required_limits: wgpu::Limits {
                     max_push_constant_size: 4,
                     ..Default::default()
                 },
