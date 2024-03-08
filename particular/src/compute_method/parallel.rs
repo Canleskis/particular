@@ -48,7 +48,15 @@ where
 
     #[inline]
     fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
-        BruteForceSoftenedScalar { softening: S::ZERO }.compute(system)
+        system
+            .affected
+            .par_iter()
+            .map(|p1| {
+                system.massive.iter().fold(V::ZERO, |acceleration, p2| {
+                    acceleration + p1.force_scalar::<true>(p2.position, p2.mass, S::ZERO)
+                })
+            })
+            .collect()
     }
 }
 
@@ -104,7 +112,18 @@ where
 
     #[inline]
     fn compute(&mut self, system: ParticleSliceSystem<V, S>) -> Self::Output {
-        BruteForceSoftenedSIMD { softening: S::ZERO }.compute(system)
+        let simd_massive: Vec<_> = PointMass::slice_to_lanes(system.massive).collect();
+        system
+            .affected
+            .par_iter()
+            .map(|p1| {
+                let p1 = PointMass::splat_lane(p1.position, p1.mass);
+                simd_massive.iter().fold(V::SIMD::ZERO, |acceleration, p2| {
+                    acceleration + p1.force_simd::<true>(p2.position, p2.mass, S::SIMD::ZERO)
+                })
+            })
+            .map(Reduce::reduce_sum)
+            .collect()
     }
 }
 
@@ -157,11 +176,12 @@ where
 
     #[inline]
     fn compute(&mut self, system: ParticleTreeSystem<X, D, V, S>) -> Self::Output {
-        BarnesHutSoftened {
-            theta: self.theta,
-            softening: S::ZERO,
-        }
-        .compute(system)
+        let tree = system.massive;
+        system
+            .affected
+            .par_iter()
+            .map(|p| p.acceleration_tree(tree.get(), tree.root(), self.theta, S::ZERO))
+            .collect()
     }
 }
 

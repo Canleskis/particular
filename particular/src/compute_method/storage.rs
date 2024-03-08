@@ -126,21 +126,13 @@ impl<V, S> PointMass<V, S> {
     {
         let dir = position - self.position;
         let norm = dir.norm_squared();
+        let norm_s = norm + (softening * softening);
 
-        let force = |norm_s: S| {
-            // Branch removed by the compiler when `CHECK_ZERO` is false.
-            if CHECK_ZERO && norm == S::ZERO {
-                dir
-            } else {
-                dir * (mass / (norm_s * norm_s.sqrt()))
-            }
-        };
-
-        // Using this branch results in better performance when softening is zero.
-        if softening == S::ZERO {
-            force(norm)
+        // Branch removed by the compiler when `CHECK_ZERO` is false.
+        if CHECK_ZERO && norm == S::ZERO {
+            dir
         } else {
-            force(norm + (softening * softening))
+            dir * (mass / (norm_s * norm_s.sqrt()))
         }
     }
 
@@ -157,22 +149,14 @@ impl<V, S> PointMass<V, S> {
     {
         let dir = position - self.position;
         let norm = dir.norm_squared();
+        let norm_s = norm + (softening * softening);
+        let f = mass * (norm_s * norm_s * norm_s).rsqrt();
 
-        let force = |norm_s: S| {
-            let f = mass * (norm_s * norm_s * norm_s).rsqrt();
-            // Branch removed by the compiler when `CHECK_ZERO` is false.
-            if CHECK_ZERO {
-                dir * f.bitand(norm.cmp_ne(S::ZERO))
-            } else {
-                dir * f
-            }
-        };
-
-        // Using this branch results in better performance when softening is zero.
-        if softening == S::ZERO {
-            force(norm)
+        // Branch removed by the compiler when `CHECK_ZERO` is false.
+        if CHECK_ZERO {
+            dir * f.bitand(norm.cmp_ne(S::ZERO))
         } else {
-            force(norm + (softening * softening))
+            dir * f
         }
     }
 
