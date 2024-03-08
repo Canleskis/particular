@@ -118,7 +118,7 @@ fn setup_scene(
         name: "Comet",
         velocity: Vec3::new(2.8, 0.15, 0.4),
         position: Vec3::new(-200.0, 138.0, -18.0),
-        mu: 0.000,
+        mu: 0.0,
         radius: 0.1,
         material: StandardMaterial {
             base_color: Color::rgb(0.3, 0.3, 0.3),

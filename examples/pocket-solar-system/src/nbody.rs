@@ -3,7 +3,7 @@ use crate::{Acceleration, PhysicsSchedule, PhysicsSet, Position};
 use bevy::prelude::*;
 use particular::prelude::*;
 
-pub const COMPUTE_METHOD: sequential::BruteForcePairs = sequential::BruteForcePairs;
+pub const COMPUTE_METHOD: sequential::BruteForceScalar = sequential::BruteForceScalar;
 
 #[derive(Component, Clone, Copy, Default, Deref, DerefMut)]
 pub struct Mass(pub f32);
