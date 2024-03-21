@@ -21,7 +21,7 @@ parallel = ["dep:rayon"]
 gpu = ["dep:wgpu", "dep:flume", "dep:bytemuck", "dep:pollster"]
 
 [dependencies]
-particular_derive = { version = "0.7.0-dev", path = "../particular_derive" }
+particular_derive = { version = "0.7.0", path = "../particular_derive" }
 
 ultraviolet = { version = "0.9", features = ["f64", "bytemuck"] }
 wide = "0.7"
@@ -41,5 +41,6 @@ rand = "0.8"
 all-features = true
 
 [[bench]]
+path = "benches/benchmark.rs"
 name = "benchmark"
 harness = false

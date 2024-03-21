@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased - 2023-02-28
+## [0.7.0] - 2023-03-21
 
 ### Added
 
@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BruteForceSIMD` generic over the lane count.
 - `build_node` takes `position` and `compute` functions instead of using traits and computes a square `BoundingBox`. Use `build_node_with` to provide a specific `BoundingBox`.
 - `Particle` trait only has the `Array` associated type and `position` expects this array type.
+- Deriving `Particle` requires `#[dim]` attribute.
 - `accelerations` returns an iterator of arrays.
 - Merge `algorithms` and `compute_method` in one module with the name of the latter.
 - The size of `SizedOrthant` is no longer generic and is instead a `BoundingBox`
@@ -206,6 +207,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release.
 
+[0.7.0]: https://github.com/Canleskis/particular/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/Canleskis/particular/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/Canleskis/particular/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/Canleskis/particular/compare/v0.5.1...v0.5.2
