@@ -1,0 +1,16 @@
+[package]
+name = "particle-toy"
+publish = false
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+
+[dependencies]
+particular = { path = "../../particular", features = ["glam"] }
+bevy = "0.12.1"
+bevy_egui = "0.24"
+rand = "0.8"
+
+[package.metadata.particular.rs]
+title = "Particle Toy"
+mobile = true
