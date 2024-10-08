@@ -1,8 +1,8 @@
 use std::time::Duration;
 
 use crate::{
-    format_duration, ComputePredictionEvent, ElapsedPhysicsTime, Followed, PhysicsSettings,
-    PhysicsTime, PredictionDraw, PredictionState, ResetPredictionEvent, Selected,
+    format_duration, steps_per_second, ComputePredictionEvent, Followed, PhysicsTime,
+    PredictionDraw, PredictionState, ResetPredictionEvent, Selected, DT,
 };
 
 use bevy::prelude::*;
@@ -44,22 +44,17 @@ fn setup_egui(mut ctxs: EguiContexts) {
 fn window_simulation(
     mut ctxs: EguiContexts,
     diagnostics: Res<bevy::diagnostic::DiagnosticsStore>,
-    elapsed_time: Res<ElapsedPhysicsTime>,
-    mut physics: ResMut<PhysicsSettings>,
     mut physics_time: ResMut<PhysicsTime>,
     mut compute_event: EventWriter<ComputePredictionEvent>,
     mut reset_event: EventWriter<ResetPredictionEvent>,
     prediction_state: Query<&PredictionState>,
     mut event: Local<ComputePredictionEvent>,
 ) {
-    let dt = physics.delta_time;
-    let prediction_duration = Duration::from_secs_f32(
-        prediction_state
-            .iter()
-            .next()
-            .map(|state| state.positions.len() as f32 * dt)
-            .unwrap_or(0.0),
-    );
+    let prediction_duration = prediction_state
+        .iter()
+        .next()
+        .map(|state| state.len() as u32 * DT)
+        .unwrap_or(Duration::ZERO);
 
     egui::Window::new("Simulation settings")
         .default_width(255.0)
@@ -77,12 +72,12 @@ fn window_simulation(
 
             ui.horizontal(|ui| {
                 ui.label("Time elapsed:");
-                ui.label(format_duration(**elapsed_time, 3));
+                ui.label(format_duration(physics_time.current(), 3));
             });
 
             ui.horizontal(|ui| {
                 ui.label("Time scale:");
-                ui.add(egui::Slider::new(&mut physics.time_scale, 0.05..=100.0).logarithmic(true));
+                ui.add(egui::Slider::new(&mut physics_time.scale, 0.05..=100.0).logarithmic(true));
             });
 
             ui.checkbox(&mut physics_time.paused, "Paused");
@@ -99,8 +94,8 @@ fn window_simulation(
                 ui.add(
                     egui::Slider::new_duration(
                         &mut event.steps,
-                        physics.steps_per_second()..=physics.steps_per_second() * 3600 * 5,
-                        dt,
+                        steps_per_second()..=steps_per_second() * 3600 * 5,
+                        DT,
                         2,
                     )
                     .logarithmic(true),
@@ -121,13 +116,10 @@ fn window_simulation(
 
 fn windows_selection(
     mut ctxs: EguiContexts,
-    physics: Res<PhysicsSettings>,
     mut followed: ResMut<Followed>,
     mut query_prediction: Query<(&PredictionState, &mut PredictionDraw)>,
     query_selection: Query<(Option<Entity>, &Name, bevy::ecs::query::Has<Selected>)>,
 ) {
-    let dt = physics.delta_time;
-
     for (entity, selected_name, is_selected) in &query_selection {
         if !is_selected {
             continue;
@@ -173,7 +165,7 @@ fn windows_selection(
 
                     if ui.checkbox(&mut draw.steps.is_none(), "Draw all").changed() {
                         if draw.steps.is_none() {
-                            draw.steps.replace(state.positions.len());
+                            draw.steps.replace(state.len());
                         } else {
                             draw.steps.take();
                         }
@@ -188,9 +180,9 @@ fn windows_selection(
                         ui.horizontal(|ui| {
                             ui.label("Draw for:");
                             ui.add(egui::Slider::new_duration(
-                                draw.steps.as_mut().unwrap_or(&mut state.positions.len()),
-                                0..=state.positions.len(),
-                                dt,
+                                draw.steps.as_mut().unwrap_or(&mut state.len()),
+                                0..=state.len(),
+                                DT,
                                 2,
                             ));
                         });
@@ -278,11 +270,11 @@ trait DurationSlider<'a> {
     fn new_duration<Num: egui::emath::Numeric>(
         value: &'a mut Num,
         range: std::ops::RangeInclusive<Num>,
-        delta: f32,
+        delta: Duration,
         precision: usize,
     ) -> egui::Slider<'a> {
         egui::Slider::new(value, range).custom_formatter(move |s, _| {
-            format_duration(Duration::from_secs_f32(s as f32 * delta), precision)
+            format_duration(delta.mul_f64(s), precision)
         })
     }
 }

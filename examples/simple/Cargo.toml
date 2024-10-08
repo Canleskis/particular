@@ -6,5 +6,5 @@ version.workspace = true
 license.workspace = true
 
 [dependencies]
-particular = { path = "../../particular" }
-glam = "0"
+particular = { path = "../../particular", features = ["glam"]}
+glam = "0.24.2"

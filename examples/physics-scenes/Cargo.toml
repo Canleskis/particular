@@ -11,7 +11,7 @@ bevy_rapier2d = { version = "0.23.0" }
 rand = "0.8.5"
 bevy_pancam = { version = "0.10.0", features = ["bevy_egui"] }
 bevy_egui = "0.24.0"
-particular = { path = "../../particular", features = ["parallel"] }
+particular = { path = "../../particular", features = ["glam", "parallel"] }
 
 [package.metadata.particular.rs]
 title = "Physics Scenes"

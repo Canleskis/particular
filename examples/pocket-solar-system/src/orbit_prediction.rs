@@ -1,6 +1,9 @@
-use crate::{Mass, PhysicsSettings, Position, Velocity, COMPUTE_METHOD};
+use crate::{steps_per_second, PhysicsTime, DT};
 
 use bevy::prelude::*;
+use std::time::Duration;
+
+use particular::gravity::newtonian;
 use particular::prelude::*;
 
 #[derive(Event, Clone, Copy)]
@@ -8,10 +11,10 @@ pub struct ComputePredictionEvent {
     pub steps: usize,
 }
 
-impl FromWorld for ComputePredictionEvent {
-    fn from_world(world: &mut World) -> Self {
+impl Default for ComputePredictionEvent {
+    fn default() -> Self {
         Self {
-            steps: world.resource::<PhysicsSettings>().steps_per_second() * 60 * 5,
+            steps: steps_per_second() * 60 * 5,
         }
     }
 }
@@ -21,25 +24,46 @@ pub struct ResetPredictionEvent;
 
 #[derive(Bundle, Default)]
 pub struct PredictionBundle {
+    pub mass: Mass,
     pub state: PredictionState,
     pub draw: PredictionDraw,
 }
 
+#[derive(Component, Default, Deref, DerefMut)]
+pub struct Mass(pub f32);
+
 #[derive(Component, Default)]
 pub struct PredictionState {
-    pub velocity: Option<Vec3>,
+    pub velocities: Vec<Vec3>,
     pub positions: Vec<Vec3>,
 }
 
 impl PredictionState {
+    pub fn len(&self) -> usize {
+        self.positions.len().saturating_sub(1)
+    }
+
     pub fn push(&mut self, velocity: Vec3, position: Vec3) {
-        self.velocity.replace(velocity);
+        self.velocities.push(velocity);
         self.positions.push(position);
     }
 
-    pub fn reset(&mut self) {
-        self.velocity.take();
-        self.positions.clear();
+    pub fn evaluate_position(&self, time: Duration) -> Option<Vec3> {
+        let index = (time.as_nanos().saturating_sub(1) / DT.as_nanos()) as usize;
+        let s = (time - index as u32 * DT).as_secs_f32() / DT.as_secs_f32();
+        self.positions
+            .get(index)
+            .zip(self.positions.get(index + 1))
+            .map(|(pos1, pos2)| pos1.lerp(*pos2, s))
+    }
+
+    pub fn at(&self, time: Duration) -> Option<(Vec3, Vec3)> {
+        let index = (time.as_nanos() / DT.as_nanos()) as usize;
+
+        self.positions
+            .get(index)
+            .copied()
+            .zip(self.velocities.get(index).copied())
     }
 }
 
@@ -80,27 +104,35 @@ impl Plugin for OrbitPredictionPlugin {
 }
 
 fn reset_prediction(
+    mut physics_time: ResMut<PhysicsTime>,
     mut reset_event: EventReader<ResetPredictionEvent>,
     mut query: Query<&mut PredictionState>,
 ) {
     if reset_event.is_empty() {
         return;
     }
-
-    query.for_each_mut(|mut state| state.reset());
     reset_event.clear();
+
+    for mut state in query.iter_mut() {
+        if let Some((current_pos, current_vel)) = state.at(physics_time.current()) {
+            state.positions.clear();
+            state.positions.push(current_pos);
+
+            state.velocities.clear();
+            state.velocities.push(current_vel);
+        }
+    }
+    physics_time.reset();
 }
 
 #[cfg(target_arch = "wasm32")]
 fn compute_prediction(
-    physics: Res<PhysicsSettings>,
     mut compute_event: EventReader<ComputePredictionEvent>,
-    mut query: Query<(&Velocity, &Position, &Mass, &mut PredictionState)>,
+    mut query: Query<(&Mass, &mut PredictionState)>,
     mut progress: Local<usize>,
 ) {
     let mut steps_per_frame = 5000;
     let event = compute_event.read().next();
-    let dt = physics.delta_time;
 
     if let Some(&ComputePredictionEvent { steps }) = event {
         *progress = steps;
@@ -111,31 +143,37 @@ fn compute_prediction(
     }
 
     if *progress != 0 {
-        let mut mapped_query: Vec<_> = query
-            .iter_mut()
-            .map(|(velocity, position, mass, state)| {
+        let (mut velocities, mut point_masses): (Vec<_>, Vec<_>) = query
+            .iter()
+            .map(|(mass, state)| {
                 (
-                    state.velocity.unwrap_or(**velocity),
-                    *state.positions.last().unwrap_or(position),
-                    **mass,
-                    state,
+                    *state.velocities.last().unwrap(),
+                    (*state.positions.last().unwrap(), **mass),
                 )
             })
-            .collect();
+            .unzip();
 
         steps_per_frame = steps_per_frame.min(*progress);
 
         for _ in 0..steps_per_frame {
-            mapped_query
-                .iter()
-                .map(|&(.., position, mass, _)| (position.to_array(), mass))
-                .accelerations(&mut COMPUTE_METHOD.clone())
-                .map(Vec3::from)
-                .zip(&mut mapped_query)
-                .for_each(|(acceleration, (velocity, position, .., state))| {
-                    *velocity += acceleration * dt;
-                    *position += *velocity * dt;
+            point_masses
+                .brute_force(newtonian::Acceleration::checked())
+                .zip(velocities.iter_mut())
+                .for_each(|(acceleration, velocity)| {
+                    *velocity = crate::sympletic_euler_velocity(acceleration, *velocity, DT);
+                });
+            point_masses
+                .iter_mut()
+                .zip(velocities.iter())
+                .for_each(|((position, _), velocity)| {
+                    *position = crate::sympletic_euler_position(*velocity, *position, DT);
+                });
 
+            point_masses
+                .iter()
+                .zip(velocities.iter())
+                .zip(query.iter_mut())
+                .for_each(|(((position, _), velocity), (.., mut state))| {
                     state.push(*velocity, *position);
                 });
         }
@@ -155,49 +193,53 @@ enum PredictionMessage {
 
 #[cfg(not(target_arch = "wasm32"))]
 fn compute_prediction(
-    physics: Res<PhysicsSettings>,
     mut compute_event: EventReader<ComputePredictionEvent>,
-    mut query: Query<(Entity, &Velocity, &Position, &Mass, &mut PredictionState)>,
+    mut query: Query<(Entity, &Mass, &mut PredictionState)>,
     mut receiver: Local<Option<PredictionReceiver>>,
 ) {
     let event = compute_event.read().next();
-    let dt = physics.delta_time;
 
     if let Some(&ComputePredictionEvent { steps }) = event {
         for (.., mut prediction) in &mut query {
             prediction.positions.reserve(steps);
         }
 
-        let mut mapped_query: Vec<_> = query
+        let (entities, (mut velocities, mut point_masses)): (Vec<_>, (Vec<_>, Vec<_>)) = query
             .iter()
-            .map(|(entity, velocity, position, mass, state)| {
+            .map(|(entity, mass, state)| {
                 (
                     entity,
-                    state.velocity.unwrap_or(**velocity),
-                    *state.positions.last().unwrap_or(position),
-                    **mass,
+                    (
+                        *state.velocities.last().unwrap(),
+                        (*state.positions.last().unwrap(), **mass),
+                    ),
                 )
             })
-            .collect();
+            .unzip();
 
         let (tx, rx) = crossbeam_channel::bounded(steps);
         *receiver = Some(rx);
 
         std::thread::spawn(move || {
             for _ in 0..steps {
-                tx.send(PredictionMessage::Send(
-                    mapped_query
-                        .iter()
-                        .map(|&(.., position, mass)| (position.to_array(), mass))
-                        .accelerations(&mut COMPUTE_METHOD.clone())
-                        .map(Vec3::from)
-                        .zip(&mut mapped_query)
-                        .map(|(acceleration, (entity, velocity, position, ..))| {
-                            (*velocity, *position) =
-                                crate::sympletic_euler(acceleration, *velocity, *position, dt);
+                point_masses
+                    .brute_force(newtonian::Acceleration::checked())
+                    .zip(velocities.iter_mut())
+                    .for_each(|(acceleration, velocity)| {
+                        *velocity = crate::sympletic_euler_velocity(acceleration, *velocity, DT);
+                    });
+                point_masses.iter_mut().zip(velocities.iter()).for_each(
+                    |((position, _), velocity)| {
+                        *position = crate::sympletic_euler_position(*velocity, *position, DT);
+                    },
+                );
 
-                            (*entity, *velocity, *position)
-                        })
+                tx.send(PredictionMessage::Send(
+                    entities
+                        .iter()
+                        .zip(velocities.iter())
+                        .zip(point_masses.iter())
+                        .map(|((entity, velocity), (position, _))| (*entity, *velocity, *position))
                         .collect::<Vec<_>>(),
                 ))
                 .unwrap();
@@ -245,4 +287,12 @@ fn draw_prediction(
             gizmos.linestrip(positions.step_by(draw.resolution).copied(), draw.color)
         }
     }
+}
+
+pub fn sympletic_euler_velocity(acceleration: Vec3, velocity: Vec3, dt: Duration) -> Vec3 {
+    velocity + acceleration * dt.as_secs_f32()
+}
+
+pub fn sympletic_euler_position(velocity: Vec3, position: Vec3, dt: Duration) -> Vec3 {
+    position + velocity * dt.as_secs_f32()
 }

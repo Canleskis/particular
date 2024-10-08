@@ -6,7 +6,7 @@ version.workspace = true
 license.workspace = true
 
 [dependencies]
-particular = { path = "../../particular" }
+particular = { path = "../../particular", features = ["glam"] }
 bevy = "0.12.1"
 bevy_egui = "0.24"
 crossbeam-channel = "0"

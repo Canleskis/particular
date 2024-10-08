@@ -3,14 +3,8 @@
 mod camera;
 use camera::*;
 
-mod nbody;
-use nbody::*;
-
 mod orbit_prediction;
 use orbit_prediction::*;
-
-mod physics;
-use physics::*;
 
 mod selection;
 use selection::*;
@@ -18,7 +12,16 @@ use selection::*;
 mod ui;
 use ui::*;
 
+mod time;
+use time::*;
+
 use bevy::prelude::*;
+
+const DT: std::time::Duration = std::time::Duration::from_millis(20);
+
+pub fn steps_per_second() -> usize {
+    DT.as_secs_f32().recip().round() as usize
+}
 
 fn main() {
     App::new()
@@ -36,7 +39,7 @@ fn main() {
             }),
             CameraPlugin,
             PhysicsPlugin,
-            ParticularPlugin,
+            // ParticularPlugin,
             OrbitPredictionPlugin,
             SelectionPlugin,
             UiPlugin,
@@ -46,17 +49,12 @@ fn main() {
             color: Color::NONE,
             brightness: 0.0,
         })
-        .insert_resource(PhysicsSettings::delta_time(1.0 / 60.0))
         .add_systems(Startup, setup_scene)
         .add_systems(First, add_materials)
         .run();
 }
 
-fn setup_scene(
-    mut commands: Commands,
-    mut event_writer: EventWriter<ComputePredictionEvent>,
-    physics: Res<PhysicsSettings>,
-) {
+fn setup_scene(mut commands: Commands, mut event_writer: EventWriter<ComputePredictionEvent>) {
     commands.spawn((
         Camera3dBundle {
             transform: Transform::from_xyz(0.0, 0.0, 200.0)
@@ -145,7 +143,7 @@ fn setup_scene(
     commands.insert_resource(Followed(Some(star)));
 
     event_writer.send(ComputePredictionEvent {
-        steps: physics.steps_per_second() * 60 * 5,
+        steps: steps_per_second() * 60 * 5,
     });
 }
 
@@ -198,14 +196,14 @@ fn add_materials(
     }
 }
 
-#[derive(Bundle, Default)]
-pub struct ParticleBundle {
-    pub interolated: Interpolated,
-    pub acceleration: Acceleration,
-    pub velocity: Velocity,
-    pub position: Position,
-    pub mass: Mass,
-}
+// #[derive(Bundle, Default)]
+// pub struct ParticleBundle {
+//     pub interolated: Interpolated,
+//     pub acceleration: Acceleration,
+//     pub velocity: Velocity,
+//     pub position: Position,
+//     pub mass: Mass,
+// }
 
 #[derive(Bundle, Default)]
 pub struct BodyBundle {
@@ -214,7 +212,6 @@ pub struct BodyBundle {
     pub can_select: CanSelect,
     pub can_follow: CanFollow,
     pub body_material: BodyMaterial,
-    pub particle_bundle: ParticleBundle,
     pub prediction_bundle: PredictionBundle,
 }
 
@@ -258,18 +255,16 @@ impl BodyBundle {
             can_follow: CanFollow {
                 min_camera_distance: setting.radius * 3.0,
             },
-            particle_bundle: ParticleBundle {
-                mass: Mass(setting.mu),
-                velocity: Velocity(setting.velocity),
-                position: Position(setting.position),
-                ..default()
-            },
             prediction_bundle: PredictionBundle {
+                mass: Mass(setting.mu),
+                state: PredictionState {
+                    velocities: vec![setting.velocity],
+                    positions: vec![setting.position],
+                },
                 draw: PredictionDraw {
                     color: setting.material.base_color,
                     ..default()
                 },
-                ..default()
             },
             body_material: BodyMaterial {
                 mesh: shape::UVSphere {

@@ -1,13 +1,18 @@
 use glam::*;
 use particular::prelude::*;
 
+use particular::gravity::newtonian::Acceleration;
+
 const DT: f32 = 1.0 / 50.0;
 
-#[derive(Debug, Particle)]
-#[dim(2)]
+// `Body` needs to implement the `Position` and `Mass` traits to allow for gravitational 
+// interactions to be computed.
+#[derive(Debug, Position, Mass)]
 struct Body {
     velocity: Vec2,
     position: Vec2,
+    // This attribute is optional. If it is missing, the value of `G` is 1.0.
+    #[G = 1.0]
     mu: f32,
 }
 
@@ -38,12 +43,14 @@ fn main() {
         );
 
         bodies
-            .iter()
-            // Calling accelerations returns an iterator over the acceleration of each body.
-            .accelerations(&mut sequential::BruteForceScalar)
-            .map(Vec2::from)
-            // Zipping the accelerations with a mutable reference to the bodies allows us
-            // to change the state of each body using their computed acceleration.
+            // Calling `brute_force` returns an iterator over the calculated interaction of each body.
+            .brute_force(Acceleration::checked())
+            // Collecting the iterator to stop the borrow of `bodies` and allow subsequent mutation.
+            // There are other ways to handle this, but this is the simplest.
+            .collect::<Vec<_>>()
+            .into_iter()
+            // We can use the computed interaction to update the state of a body by zipping the
+            // computed interactions with the mutable reference to the bodies.
             .zip(&mut bodies)
             .for_each(|(acceleration, body)| {
                 // Integrating using the semi-implicit Euler method https://en.wikipedia.org/wiki/Semi-implicit_Euler_method.

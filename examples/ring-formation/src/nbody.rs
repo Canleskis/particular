@@ -1,10 +1,10 @@
-use bevy::prelude::*;
-use bevy_rapier3d::prelude::*;
-use particular::prelude::*;
-
 use crate::rapier_schedule::PreRapierSchedule;
 
-pub const COMPUTE_METHOD: sequential::BruteForceSIMD<8> = sequential::BruteForceSIMD;
+use bevy::prelude::*;
+use bevy_rapier3d::prelude::*;
+
+use particular::gravity::newtonian::Acceleration;
+use particular::prelude::*;
 
 pub struct ParticularPlugin;
 
@@ -15,11 +15,15 @@ impl Plugin for ParticularPlugin {
 }
 
 fn accelerate_particles(mut query: Query<(&mut Velocity, &Transform, &ReadMassProperties)>) {
-    query
+    // It is faster to collect the particles into a vector to compute their accelerations than to
+    // iterate over the query directly.
+    let particles = query
         .iter()
-        .map(|(.., transform, mass)| (transform.translation.to_array(), mass.get().mass))
-        .accelerations(&mut COMPUTE_METHOD.clone())
-        .map(Vec3::from)
+        .map(|(_, transform, mass)| (transform.translation, mass.get().mass))
+        .collect::<Vec<_>>();
+
+    particles
+        .brute_force_simd::<8>(Acceleration::checked())
         .zip(&mut query)
         .for_each(|(acceleration, (mut velocity, ..))| velocity.linvel += acceleration * crate::DT);
 }

@@ -23,8 +23,10 @@ impl Plugin for SelectionPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Followed>()
             .add_event::<ClickEvent>()
-            .add_systems(Update, (entity_picker, follow_clicked).chain())
-            .add_systems(PostUpdate, sync_followed.before(crate::camera_controls));
+            .add_systems(
+                Update,
+                (entity_picker, follow_clicked, sync_followed).chain(),
+            );
     }
 }
 
