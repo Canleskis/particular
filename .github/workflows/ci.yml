@@ -20,6 +20,6 @@ jobs:
             - name: Build
               run: cargo build --verbose --all-features
             - name: Test
-              run: cargo test --verbose --features parallel
+              run: cargo test --verbose --features "glam ultraviolet nalgebra parallel"
             - name: Clippy
               run: cargo clippy --verbose --all-features -- -D warnings

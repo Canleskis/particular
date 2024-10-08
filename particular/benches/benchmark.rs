@@ -1,11 +1,10 @@
-use criterion::{AxisScale, BenchmarkGroup, BenchmarkId, Criterion, PlotConfiguration};
+use criterion::{AxisScale, BenchmarkId, Criterion, PlotConfiguration};
 
 use particular::prelude::*;
 use rand::prelude::*;
 
 type Scalar = f32;
-type Vector = ultraviolet::Vec3;
-type PointMass = particular::storage::PointMass<Vector, Scalar>;
+type Vector = glam::Vec3;
 
 fn gen_range_vector<const N: usize, V>(rng: &mut StdRng, range: std::ops::Range<Scalar>) -> V
 where
@@ -14,57 +13,78 @@ where
     [0.0; N].map(|_| rng.gen_range(range.clone())).into()
 }
 
-pub fn random_bodies(rng: &mut StdRng, n: usize, ratio_massive: f32) -> Vec<PointMass> {
+#[derive(Clone, Copy, Debug, Position, Mass)]
+struct Body {
+    position: Vector,
+    mu: Scalar,
+}
+
+fn random_bodies(rng: &mut StdRng, n: usize, ratio_massive: f32) -> Vec<Body> {
     let massive_bodies = (n as f32 * ratio_massive).round() as usize;
 
     (0..n)
         .map(|i| {
             let position = gen_range_vector(rng, -5e3..5e3);
-            let mass = if i < massive_bodies {
-                rng.gen_range(1e-1..1e3)
+            let mu = if i < massive_bodies {
+                rng.gen_range(1e3..1e9)
             } else {
                 0.0
             };
 
-            PointMass { position, mass }
+            Body { position, mu }
         })
         .collect()
 }
 
-#[inline]
-fn bench_cm<C, S>(
-    bodies: S,
-    len: usize,
-    mut cm: C,
-    group: &mut BenchmarkGroup<'_, criterion::measurement::WallTime>,
-    trim_generic: bool,
-    suffix: &str,
-) where
-    S: Copy,
-    C: ComputeMethod<S>,
-{
-    let trimmed_start =
-        std::any::type_name::<C>().trim_start_matches("particular::compute_method::");
+/// Helper function to get default values for [`wgpu::Device`] and
+/// [`wgpu::Queue`].
+#[cfg(feature = "gpu")]
+async fn setup_wgpu() -> (wgpu::Device, wgpu::Queue) {
+    let instance = wgpu::Instance::default();
 
-    let trimmed = if trim_generic {
-        trimmed_start.split('<').next().unwrap_or_default()
-    } else {
-        trimmed_start
-    }
-    .to_owned();
+    let adapter = instance
+        .request_adapter(&wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::HighPerformance,
+            ..Default::default()
+        })
+        .await
+        .unwrap();
 
-    group.bench_function(BenchmarkId::new(trimmed + suffix, len), |bencher| {
-        bencher.iter(|| cm.compute(bodies))
-    });
+    adapter
+        .request_device(
+            &wgpu::DeviceDescriptor {
+                label: None,
+                required_features: wgpu::Features::empty() | wgpu::Features::PUSH_CONSTANTS,
+                required_limits: wgpu::Limits {
+                    max_push_constant_size: 4,
+                    ..Default::default()
+                },
+            },
+            None,
+        )
+        .await
+        .unwrap()
 }
 
 // On wasm there are only 128-bit registers.
 #[cfg(target_arch = "wasm32")]
 const WIDTH: usize = 128;
 #[cfg(not(target_arch = "wasm32"))]
-const WIDTH: usize = 256;
+const WIDTH: usize = 128;
 
-const LANES: usize = WIDTH / (8 * std::mem::size_of::<Scalar>());
+const L: usize = WIDTH / (std::mem::size_of::<Scalar>() * 8);
+
+use particular::gravity::newtonian::Acceleration;
+macro_rules! bench {
+    ($group: tt, $velocities: ident, $bodies: ident, $algorithm: ident$(::<$generic: tt>)?($($args: expr),*), $suffix: expr) => {
+        $group.bench_function(BenchmarkId::new(format!("{}{}", stringify!($algorithm), $suffix), $bodies.len()), |bencher| {
+            bencher.iter(|| $bodies.$algorithm::<$($generic)?>($($args,)* Acceleration::checked()).zip(&mut $velocities).for_each(|(a, v)| *v += a));
+        });
+    };
+    ($group: tt, $velocities: ident, $bodies: ident, $algorithm: ident$(::<$generic: tt>)?($($args: expr),*)) => {
+        bench!($group, $velocities, $bodies, $algorithm$(::<$generic>)?($($args),*), "");
+    };
+}
 
 fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("Particular");
@@ -77,36 +97,36 @@ fn criterion_benchmark(c: &mut Criterion) {
     let particle_count_iterator = (1..17).map(|i| 2usize.pow(i));
     let thetas = [0.3, 0.7];
 
-    let g = &mut group;
-    for i in particle_count_iterator {
-        let b = random_bodies(&mut StdRng::seed_from_u64(1808), i, 1.0);
-        let len = b.len();
+    for n in particle_count_iterator {
+        let mut rng = StdRng::seed_from_u64(1808);
+        let b = random_bodies(&mut rng, n, 1.0);
+        let mut v = b
+            .iter()
+            .map(|_| gen_range_vector(&mut rng, -100.0..100.0))
+            .collect::<Vec<Vector>>();
 
         #[cfg(feature = "gpu")]
         {
-            let (device, queue) = &pollster::block_on(particular::gpu::setup_wgpu());
-            let resources = &mut gpu::GpuResources::new(gpu::MemoryStrategy::Shared(64));
-            let gpu_brute_force = gpu::BruteForce::new(resources, device, queue);
-            bench_cm(&*b, len, gpu_brute_force, g, true, "");
+            let (device, queue) = &pollster::block_on(setup_wgpu());
+            let resources = &mut GpuResources::new(MemoryStrategy::Shared(64));
+            bench!(group, v, b, gpu_brute_force(resources, device, queue));
         }
 
         #[cfg(feature = "parallel")]
         {
-            bench_cm(&*b, len, parallel::BruteForceScalar, g, true, "");
-            bench_cm(&*b, len, parallel::BruteForceSIMD::<LANES>, g, false, "");
+            bench!(group, v, b, par_brute_force());
+            bench!(group, v, b, par_brute_force_simd::<L>(), format!("<{L}>"));
             for theta in thetas {
-                let suffix = &format!("::{theta}");
-                bench_cm(&*b, len, parallel::BarnesHut { theta }, g, true, suffix);
+                bench!(group, v, b, par_barnes_hut(theta), format!("({theta})"));
             }
         }
 
         {
-            bench_cm(&*b, len, sequential::BruteForceScalar, g, true, "");
-            bench_cm(&*b, len, sequential::BruteForcePairs, g, true, "");
-            bench_cm(&*b, len, sequential::BruteForceSIMD::<LANES>, g, false, "");
+            bench!(group, v, b, brute_force());
+            bench!(group, v, b, brute_force_simd::<L>(), format!("<{L}>"));
+            bench!(group, v, b, brute_force_pairs());
             for theta in thetas {
-                let suffix = &format!("::{theta}");
-                bench_cm(&*b, len, sequential::BarnesHut { theta }, g, true, suffix);
+                bench!(group, v, b, barnes_hut(theta), format!("({theta})"));
             }
         }
     }

@@ -5,7 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.0] - 2023-03-21
+## Unreleased - 2024-10-08
+
+### Added
+
+- `Between` struct.
+- `SimdInteraction`, `ReduceSimdInteraction`, `BarnesHutInteraction` and `TreeInteraction` traits.
+- `SequentialCompute`, `ParallelCompute` and `GpuCompute` traits.
+- `sequential::Interactions` and `sequential::Interactions` iterator structs.
+- `Acceleration` and `AccelerationSoftened` structs.
+- `Position` and `Mass` traits.
+- `ToSimd`, `TreeData`, `AccelerationAt`, `AccelerationPaired` and `AccelerationGPU` helper traits for the implementation of `xInteration` traits for `Acceleration` and `AccelerationSoftened` structs.
+- `glam`, `ultraviolet` and `nalgebra` features, required to enable implementations using these libraries.
+
+### Changed
+
+- Renamed `ComputeMethod` trait to `Interaction`.
+- Built-in algorithms (`BruteForce`, `BarnesHut`, ...) now generic over the interaction to compute which allows them to be more unified. `BruteForceScalar` is now named simply `BruteForce` and can compute over scalar or simd types. `BruteForceSimd` converts scalar types to simd types before computing interactions.
+- Renamed `ParticleTree` to `RootedOrthtree`, `ParticleOrdered` to `Ordered`, and `ParticleReordered` to `Reordered`. These storages are also generic over their particles.
+- Renamed `PointMass` to `GravitationalField` and renamed field `mass` to `m`. Removed most methods which are now implemented with the helper traits.
+- Moved `sequential`, `parallel` and `gpu` modules to the root of the crate.
+
+### Removed
+
+- `Particle` trait, replaced by the `Position` and `Mass` traits.
+- `math` module and its traits.
+- `accelerations` method on iterators. This method implicitly collected the particles in a `Reordered` storage, which is now required to be explicit.
+- `ParticleSystem` struct.
+- `BruteForceSoftened` variants. Softening information is now carried by the interaction.
+
+## [0.7.0] - 2024-03-21
 
 ### Added
 

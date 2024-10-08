@@ -18,24 +18,46 @@ categories.workspace = true
 
 [features]
 parallel = ["dep:rayon"]
-gpu = ["dep:wgpu", "dep:flume", "dep:bytemuck", "dep:pollster"]
+gpu = [
+    "dep:wgpu",
+    "dep:flume",
+    "dep:pollster",
+    "dep:wgsl-inline",
+    "dep:constcat",
+    "dep:bytemuck",
+    "ultraviolet?/bytemuck",
+    "glam?/bytemuck",
+    "nalgebra?/bytemuck",
+]
+ultraviolet = ["dep:ultraviolet", "dep:wide"]
+nalgebra = ["dep:nalgebra", "dep:simba", "dep:wide"]
+glam = ["dep:glam", "dep:wide"]
 
 [dependencies]
-particular_derive = { version = "0.7.0", path = "../particular_derive" }
+particular_derive = { version = "0.8.0-dev", path = "../particular_derive" }
 
-ultraviolet = { version = "0.9", features = ["f64", "bytemuck"] }
-wide = "0.7"
+wide = { version = "0.7", optional = true }
+ultraviolet = { version = "0.9", features = ["f64"], optional = true }
+nalgebra = { version = "0.33", optional = true }
+simba = { version = "0.9", optional = true }
+# Particular is compatible with this range of glam versions. 
+# Users might need to delete duplicate glam entries in their Cargo.lock to help it use the correct version.
+glam = { version = ">=0.12, <0.30", optional = true }
 
 rayon = { version = "1", optional = true }
 
-wgpu = { version = "0.19", optional = true }
+wgpu = { version = "0.20", optional = true }
 flume = { version = "0.11", optional = true }
-bytemuck = { version = "1", optional = true }
 pollster = { version = "0.3", optional = true }
+wgsl-inline = { version = "0.2.1", optional = true }
+constcat = { version = "0.5.0", optional = true }
+bytemuck = { version = "1", features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = { git = "https://github.com/bheisler/criterion.rs.git", branch = "feature-wasi-proper", default-features = false }
 rand = "0.8"
+paste = "1.0.15"
+glam = ">=0.12, <0.30"
 
 [package.metadata.docs.rs]
 all-features = true

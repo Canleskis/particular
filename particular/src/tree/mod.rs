@@ -1,14 +1,14 @@
 /// Bounding box related traits and types.
 pub mod partition;
 
+use std::ops::{Add, Sub};
+
 pub use partition::*;
 
-use crate::compute_method::math::Float;
-
-/// Index of a [`Node`] in a [`Tree`].
+/// Index of a [`Node`] in a [`Graph`].
 pub type NodeID = u32;
 
-/// Generic tree that can partition space into smaller regions.
+/// Generic tree data structure.
 #[derive(Clone, Debug)]
 pub struct Tree<Node, Data> {
     /// Vector of `Node` objects that define the structure of the tree.
@@ -31,8 +31,8 @@ impl<Node, Data> Tree<Node, Data> {
         }
     }
 
-    /// Creates a new empty [`Tree`] with at least the specified capacity in the `nodes` and `data`
-    /// vectors.
+    /// Creates a new empty [`Tree`] with at least the specified capacity in the `nodes` and
+    /// `data` vectors.
     #[inline]
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -49,8 +49,7 @@ impl<Node, Data> Default for Tree<Node, Data> {
     }
 }
 
-/// Node for trees that can either be internal and containing data or external and containing no
-/// data.
+/// Node that can either be internal and containing data or external and containing no data.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Node<N> {
     /// Node with child nodes.
@@ -61,43 +60,46 @@ pub enum Node<N> {
 
 /// N-dimensional generalisation of quadtrees/octrees.
 pub type Orthtree<const X: usize, const D: usize, S, Data> =
-    Tree<Node<SizedOrthant<X, D, NodeID, S>>, Data>;
+    Tree<Node<SizedOrthant<X, D, Option<NodeID>, S>>, Data>;
 
-impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data> {
-    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and
-    /// functions until the computed square bounding box stops subdividing.
+impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data>
+where
+    Const<D>: SubDivide<Division = Const<X>>,
+{
+    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input,
+    /// position function and compute function until the computed square bounding box stops
+    /// subdividing.
     #[inline]
-    pub fn build_node<I, P, C>(&mut self, input: &[I], position: P, compute: C) -> Option<NodeID>
+    pub fn build_node<I, F, G>(&mut self, input: &[I], coordinates: F, compute: G) -> Option<NodeID>
     where
-        I: Copy,
-        P: Fn(I) -> [S; D] + Copy,
-        C: Fn(&[I]) -> Data + Copy,
-        S: Copy + Float + PartialOrd,
-        BoundingBox<[S; D]>: SubDivide<Division = [BoundingBox<[S; D]>; X]>,
+        I: Clone,
+        F: Fn(&I) -> [S; D] + Copy,
+        G: Fn(&[I]) -> Data + Copy,
+        S: Add<Output = S> + Sub<Output = S> + MidPoint + MinMax + PartialOrd + Default + Clone,
+        BoundingBox<[S; D]>: Default,
     {
         self.build_node_with(
-            BoundingBox::square_with(input.iter().copied().map(position)),
             input,
-            position,
+            coordinates,
             compute,
+            BoundingBox::square_with(input.iter().map(coordinates)),
         )
     }
 
-    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`] from the given input and
-    /// functions until the given bounding box stops subdividing.
-    pub fn build_node_with<I, P, C>(
+    /// Recursively inserts new [`Nodes`](Node) in the current [`Orthtree`]  from the given input,
+    /// position function and compute function until the given bounding box stops subdividing.
+    pub fn build_node_with<I, F, G>(
         &mut self,
-        bbox: BoundingBox<[S; D]>,
         input: &[I],
-        pos: P,
-        compute: C,
+        coordinates: F,
+        compute: G,
+        bbox: BoundingBox<[S; D]>,
     ) -> Option<NodeID>
     where
-        I: Copy,
-        P: Fn(I) -> [S; D] + Copy,
-        C: Fn(&[I]) -> Data + Copy,
-        S: Copy + Float + PartialOrd,
-        BoundingBox<[S; D]>: SubDivide<Division = [BoundingBox<[S; D]>; X]>,
+        I: Clone,
+        F: Fn(&I) -> [S; D] + Copy,
+        G: Fn(&[I]) -> Data + Copy,
+        S: PartialOrd + MidPoint + Default + Clone,
     {
         if input.is_empty() {
             return None;
@@ -107,25 +109,29 @@ impl<const X: usize, const D: usize, S, Data> Orthtree<X, D, S, Data> {
         self.nodes.push(Node::External);
         self.data.push(compute(input));
 
-        if input.windows(2).any(|d| pos(d[0]) != pos(d[1])) {
+        if input
+            .windows(2)
+            .any(|d| coordinates(&d[0]) != coordinates(&d[1]))
+        {
             let center = bbox.center();
             let mut result = bbox.subdivide().map(|bbox| (Vec::new(), bbox));
 
-            for &d in input {
-                let position = pos(d);
+            for d in input {
+                let position = coordinates(d);
                 let index = (0..D).fold(0, |index, i| {
                     index + (usize::from(position[i] < center[i]) << i)
                 });
 
-                result[index].0.push(d);
+                result[index].0.push(d.clone());
             }
 
             self.nodes[id] = Node::Internal(SizedOrthant {
-                orthant: result.map(|(data, bbox)| self.build_node_with(bbox, &data, pos, compute)),
+                orthant: result
+                    .map(|(data, bbox)| self.build_node_with(&data, coordinates, compute, bbox)),
                 bbox,
             });
         }
 
-        Some(id as NodeID)
+        Some(id as _)
     }
 }

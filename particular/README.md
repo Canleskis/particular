@@ -8,24 +8,29 @@
 [![Crates.io](https://img.shields.io/crates/v/particular)](https://crates.io/crates/particular)
 [![Docs](https://docs.rs/particular/badge.svg)](https://docs.rs/particular)
 
-Particular is a crate providing a simple way to simulate N-body gravitational interaction of
-particles in Rust.
+Particular is a crate providing a simple way to compute N-body interaction of particles in
+Rust.
+
+Please note that this branch is for development purposes and may not represent the latest stable
+release of the library. For the most recent stable version, refer to the
+[`latest`](https://github.com/Canleskis/particular/tree/latest) branch.
 
 ## [Change log](https://github.com/Canleskis/particular/blob/main/particular/CHANGELOG.md)
 
 ## Goals
 
-The main goal of this crate is to provide users with a simple API to set up N-body gravitational
-simulations that can easily be integrated into existing game and physics engines. Thus it does
-not concern itself with numerical integration or other similar tools and instead only focuses on
-the acceleration calculations.
+The main goal of this crate is to provide users with a simple API to set up N-body simulations
+that can easily be integrated into existing game and physics engines. Thus it does not include
+anything related to numerical integration or other similar tools and instead only focuses on the
+calculations of the interactions between particles.
 
-Particular is also built with performance in mind and provides multiple ways of computing the
-acceleration between particles.
+In order to do this, `particular` provides multiple algorithms to compute the
+interactions between particles, allowing users to choose the one that best fits their needs in
+terms of performance and accuracy.
 
 ### Computation algorithms
 
-There are currently 2 algorithms used by the available compute methods:
+There are currently 2 algorithms:
 [Brute-force](https://en.wikipedia.org/wiki/N-body_problem#Simulation) and
 [Barnes-Hut](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation).
 
@@ -35,211 +40,214 @@ You can see more about their relative performance [here](https://particular.rs/b
 
 Particular uses [rayon](https://github.com/rayon-rs/rayon) for parallelization and
 [wgpu](https://github.com/gfx-rs/wgpu) for GPU computation.  
-Enable the respective `parallel` and `gpu` features to access the available compute methods.
+Enable the respective `parallel` and `gpu` features to access the relevant algorithms.
 
 ## Using Particular
 
-Particular consists of two "modules", one that takes care of the abstraction of the computation of
-the gravitational forces between bodies for different floating-point types and dimensions, and one
-that facilitates usage of that abstraction for user-defined andnon-user-defined types. For most
-simple use cases, the latter is all that you need to know about.
+At its core, Particular is a simple set of traits designed to simplify the implementation of
+different algorithms to compute interactions between particles. These interactions can be of any
+nature, but a common example is the gravitational interaction between particles, which is
+provided by the [`gravity`] module and the main focus of the library.  
+This module provides implementations using popular vector math libraries such as `glam` and
+`nalgebra`. You you will need to enable the corresponding features to use them.
 
-### Simple usage
+### Getting started
 
-The [`Particle`] trait provides the main abstraction layer between the internal representation
-of the position and mass of an object in N-dimensional space and external types by defining
-methods to retrieve a position and a gravitational parameter.  
-These methods respectively return an array of scalars and a scalar, which are converted using
-the [point_mass] method to interface with the underlying algorithm implementations.
+The [`Position`] and [`Mass`] traits provide methods to retrieve the position, mass and
+gravitational parameter of a particle. Implementing these traits for a type will result in
+multiple blanket implementations that will allow it to be used with all available algorithms for
+computing different interactions.
 
-#### Implementing the [`Particle`] trait
+#### Implementing the [`Position`] and [`Mass`] trait
 
-When possible, it can be useful to implement [`Particle`] on a type.
-
-##### Deriving
-
-Used when the type has fields named `position` and `mu`:
+When the type has fields named `position` and `mass` or `mu`, you can derive these traits. An
+optional attribute `#[G = ...]` defining the gravitational constant can be added on the field.
+If the attribute is missing, the value of the gravitational constant is `1.0`.
 
 ```rust
-#[derive(Particle)]
-#[dim(3)]
-struct Body {
-    position: Vec3,
-    mu: f32,
-//  ...
+use particular::prelude::*;
+use glam::DVec3;
+
+#[derive(Position, Mass)]
+struct Planet {
+    velocity: DVec3,
+    position: DVec3,
+    #[G = 6.67430e-11]
+    mass: f64,
 }
 ```
 
-##### Manual implementation
-
-Used when the type does not directly provide a position and a gravitational parameter.
-
-```rust
-struct Body {
-    position: Vec3,
-    mass: f32,
-//  ...
-}
-
-impl Particle for Body {
-    type Array = [f32; 3];
-
-    fn position(&self) -> [f32; 3] {
-        self.position.into()
-    }
-
-    fn mu(&self) -> f32 {
-        self.mass * G
-    }
-}
-```
-
-If you can't implement [`Particle`] on a type, you can use the fact that it is implemented for
-tuples of an array and its scalar type instead of creating an intermediate type.
+If you can't implement these traits, you can use the fact that it is implemented for tuples of a
+position and a mass or gravitational parameter instead of creating an intermediate type.
 
 ```rust
-let particle = ([1.0, 1.0, 0.0], 5.0);
+use particular::prelude::*;
+use glam::DVec3;
 
-assert_eq!(particle.position(), [1.0, 1.0, 0.0]);
+let particle = (DVec3::new(-1.0, 0.0, 1.0), 5.0);
+
+assert_eq!(particle.position(), DVec3::new(-1.0, 0.0, 1.0));
+assert_eq!(particle.mass(), 5.0);
 assert_eq!(particle.mu(), 5.0);
 ```
 
-#### Computing and using the gravitational acceleration
+#### Computing and using the gravitational interaction
 
-In order to compute the accelerations of your particles, you can use the [accelerations] method
-on iterators, passing in a mutable reference to a [`ComputeMethod`] of your choice. It returns
-the acceleration of each iterated item, preserving the original order.  
-Because it collects the mapped particles in a [`ParticleReordered`] in order to optimise the
-computation of forces of massless particles, this method call results in one additional
-allocation. See the [advanced usage](#advanced-usage) section for information on how to opt out.
-
-##### When the iterated type implements [`Particle`]
+In order to compute the gravitational interaction between particles, you can use the various
+methods implemented on storages of particles.  
+Note that most algorithms return iterators that borrow the particles, and as such, rust's
+borrowing rules will prevent you from mutating these particles as you iterate the computed
+interactions, even if the interaction does not use the fields you are mutating. You can either
+immediately collect the interactions or use separate collections for the properties you need to
+mutate.
 
 ```rust
-for (acceleration, body) in bodies.iter().accelerations(&mut cm).zip(&mut bodies) {
-    body.velocity += Vec3::from(acceleration) * DT;
-    body.position += body.velocity * DT;
+use particular::prelude::*;
+use particular::gravity::newtonian::Acceleration;
+
+let accelerations: Vec<_> = planets.brute_force(Acceleration::checked()).collect::<Vec<_>>();
+
+for (planet, acceleration) in planets.iter_mut().zip(accelerations) {
+    planet.velocity += acceleration * DT;
+    planet.position += planet.velocity * DT;
 }
 ```
 
-##### When the iterated type doesn't implement [`Particle`]
+You can alternatively use indices, but note that this requires making sure the positions don't
+change as the interaction is computed or you will get unexpected behaviour.
 
 ```rust
-// Items are a tuple of a velocity, a position and a mass.
-// We map them to a tuple of the positions as an array and the mu,
-// since this implements `Particle`.
-let accelerations = items
-    .iter()
-    .map(|(_, position, mass)| (*position.as_array(), *mass * G))
-    .accelerations(&mut cm);
+use particular::prelude::*;
+use particular::gravity::newtonian::AccelerationSoftened;
 
-for (acceleration, (velocity, position, _)) in accelerations.zip(&mut items) {
-    *velocity += Vec3::from(acceleration) * DT;
-    *position += *velocity * DT;
+for i in 0..planets.len() {
+    let between = Between(&planets[i], planets.as_slice());
+    let acceleration = between.brute_force(AccelerationSoftened::checked(1e-3));
+    planets[i].velocity += acceleration * DT;
+}
+
+for planet in planets.iter_mut() {
+    planet.position += planet.velocity * DT;
 }
 ```
 
-### Advanced usage
+<details>
+<summary><h4>Advanced usage</h4></summary>
 
-In some instances the iterator abstraction provided by particular might not be flexible enough.
-For example, you might need to access the tree built from the particles for the Barnes-Hut
-algorithm, want to compute the gravitational forces between two distinct collections of particles,
-or both at the same time.
-
-#### The [`PointMass`] type
-
-The underlying type used in storages is the [`PointMass`], a simple representation in
-N-dimensional space of a position and a gravitational parameter. Instead of going through a
-[`ComputeMethod`], you can directly use the different generic methods available to compute the
-gravitational forces between [`PointMass`]es, with variants optimised for scalar and simd types.
-
-##### Example
-
-```rust
-use particular::math::Vec2;
-
-use storage::PointMass;
-
-let p1 = PointMass::new(Vec2::new(0.0, 1.0), 1.0);
-let p2 = PointMass::new(Vec2::new(0.0, 0.0), 1.0);
-let softening = 0.0;
-
-assert_eq!(p1.force_scalar::<false>(p2.position, p2.mass, softening), Vec2::new(0.0, -1.0));
-```
-
-#### Storages and built-in [`ComputeMethod`] implementations
+#### Storages and built-in [`Interaction`] implementations
 
 Storages are containers that make it easy to apply certain optimisation or algorithms on
-collections of particles when computing their gravitational acceleration.
+collections of particles when computing their gravitational interaction.
 
-The [`ParticleSystem`] storage defines an `affected` slice of particles and a `massive` storage,
-allowing algorithms to compute gravitational forces the particles in the `massive` storage exert
-on the `affected` particles. It is used to implement most compute methods, and blanket
-implementations with the other storages allow a [`ComputeMethod`] implemented with
-[`ParticleSliceSystem`] or [`ParticleTreeSystem`] to also be implemented with the other
-storages.
+[`Between`] is a tuple struct of two objects where the first one is conventionally the affected
+object and the second one is the affecting object. These objects can be particles or storages
+of particles. [`Between`] is the underlying type used to implement most algorithms allowing
+trivial implementation of other storage types.
 
-The [`ParticleReordered`] similarly defines a slice of particles, but stores a copy of them in a
-[`ParticleOrdered`]. These two storages make it easy for algorithms to skip particles with no
-mass when computing the gravitational forces of particles.
+The [`Reordered`] storage defines a slice of particles and stores a copy of them in an
+[`Ordered`] storage. These two storages make it easy for algorithms to skip particles that do
+not affect other particles when computing interactions. A [`RootedOrthtree`] is a tree structure
+(equivalent to a quadtree in 2D, an octree in 3D etc.) that stores particles to be used in
+Barnes-Hut algorithms.
 
 ##### Example
 
 ```rust
-use particular::math::Vec3;
+use particular::prelude::*;
+use particular::gravity::newtonian::{Acceleration, TreeData};
 
-let particles = vec![
+use glam::Vec3;
+
+// Particles here are simple gravitational fields.
+let particles: Vec<GravitationalField<Vec3, f32>> = vec![
     // ...
 ];
 
-// Create a `ParticleOrdered` to split massive and massless particles.
-let ordered = ParticleOrdered::from(&*particles);
+// Function to determine if a field will affect particles.
+fn is_massive(p: &GravitationalField<Vec3, f32>) -> bool {
+    p.m != 0.0
+}
 
-// Build a `ParticleTree` from the massive particles.
-let tree = ParticleTree::from(ordered.massive());
+// Create an `Ordered` storage to split massive and massless particles.
+let ordered = Ordered::new(&particles, is_massive);
+
+// We can build a `RootedOrthtree` from just the massive particles. Note that this is done
+// automatically when computing over an [`Ordered`] or [`Reordered`] storage for the Barnes-Hut
+// algorithm.
+let tree = RootedOrthtree::new(
+    ordered.affecting(),
+    |p| p.position().to_array(),
+    |slice| GravitationalField::centre_of_mass(slice.iter().cloned()),
+);
 
 // Do something with the tree.
 for (node, data) in std::iter::zip(&tree.get().nodes, &tree.get().data) {
     // ...
 }
 
-let bh = &mut sequential::BarnesHut { theta: 0.5 };
-// The implementation computes the acceleration exerted on the particles in
-// the `affected` slice.
-// As such, this only computes the acceleration of the massless particles.
-let accelerations = bh.compute(ParticleSystem {
-    affected: ordered.massless(),
-    massive: &tree,
-});
+// Compute the acceleration the massive particles in a tree exert on the massless particles.
+let between = Between(ordered.non_affecting(), &tree);
+let accelerations = between.barnes_hut(0.5, Acceleration::checked()).collect::<Vec<_>>();
 ```
 
-#### Custom [`ComputeMethod`] implementations
+#### Custom [`Interaction`] implementations
 
-In order to work with the highest number of cases, built-in compute method implementations may
-not be the most appropriate or optimised for your specific use case. You can implement the
-[`ComputeMethod`] trait on your own type to satisfy your specific requirements but also if you
-want to implement other algorithms.
+Implementing [`Interaction`] for `YourInteraction` allows
+it to be used with the CPU brute-force algorithms. Other algorithms may require you to implement
+other traits to be used, namely [`SimdInteraction`], [`ReduceSimdInteraction`],
+[`BarnesHutInteraction`] and [`TreeInteraction`]. Refer to the documentation of the specific
+algorithms for more information.
 
 ##### Example
 
 ```rust
-use particular::math::Vec3;
+use particular::prelude::*;
 
-struct MyComputeMethod;
+use glam::DVec3;
 
-impl ComputeMethod<ParticleReordered<'_, Vec3, f32>> for MyComputeMethod {
-    type Output = Vec<Vec3>;
+#[derive(Clone, Copy)]
+struct Body {
+    position: DVec3,
+    mass: f64,
+}
 
-    #[inline]
-    fn compute(&mut self, storage: ParticleReordered<Vec3, f32>) -> Self::Output {
-        // Only return the accelerations of the massless particles.
-        sequential::BruteForceScalar.compute(ParticleSystem {
-            affected: storage.massless(),
-            massive: storage.massive(),
-        })
+#[derive(Clone)]
+struct GravitationalForce(pub f64);
+
+impl Interaction<Between<&Body, &Body>> for GravitationalForce {
+   type Output = DVec3;
+
+    fn compute(&mut self, Between(affected, affecting): Between<&Body, &Body>) -> DVec3 {
+        if affected.position == affecting.position {
+            return DVec3::ZERO;
+        }
+
+        let r = affecting.position - affected.position;
+        let l = r.length_squared();
+        let f = self.0 * affected.mass * affecting.mass / (l * l.sqrt());
+
+        r * f
     }
 }
+
+// Distance: AU, Mass: M☉ (solar mass)
+const G: f64 = 4.0 * std::f64::consts::PI * std::f64::consts::PI;
+let sun = Body::new(DVec3::ZERO, 1.0);
+let earth = Body::new(DVec3::new(1.0, 0.0, 0.0), 3.0027e-6);
+let jupiter = Body::new(DVec3::new(5.2, 0.0, 0.0), 0.000954588);
+
+let solar_system = [sun, earth, jupiter];
+let mut forces = solar_system.brute_force(GravitationalForce(G));
+
+let sun_earth = GravitationalForce(G).compute(Between(&sun, &earth));
+let sun_jupiter = GravitationalForce(G).compute(Between(&sun, &jupiter));
+let earth_jupiter = GravitationalForce(G).compute(Between(&earth, &jupiter));
+assert_eq!(forces.next(), Some(sun_earth + sun_jupiter));
+assert_eq!(forces.next(), Some(-sun_earth + earth_jupiter));
+assert_eq!(forces.next(), Some(-sun_jupiter - earth_jupiter));
 ```
+
+</details>
 
 ## License
 
@@ -249,13 +257,15 @@ This project is licensed under either of [Apache License, Version 2.0](https://g
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project by you, as defined in the Apache 2.0 license, shall be dual licensed as above, without any additional terms or conditions.
 
-[accelerations]: https://docs.rs/particular/latest/particular/particle/trait.Accelerations.html#method.accelerations
-[point_mass]: https://docs.rs/particular/latest/particular/particle/trait.IntoPointMass.html#method.point_mass
-[`Particle`]: https://docs.rs/particular/latest/particular/particle/trait.Particle.html
-[`ComputeMethod`]: https://docs.rs/particular/latest/particular/compute_method/trait.ComputeMethod.html
-[`ParticleReordered`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleReordered.html
-[`ParticleOrdered`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleOrdered.html
-[`ParticleSystem`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleSystem.html
-[`ParticleSliceSystem`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleSliceSystem.html
-[`ParticleTreeSystem`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.ParticleTreeSystem.html
-[`PointMass`]: https://docs.rs/particular/latest/particular/compute_method/storage/struct.PointMass.html
+[`gravity`]: https://docs.rs/particular/latest/particular/gravity/index.html
+[`Position`]: https://docs.rs/particular/latest/particular/gravity/trait.Position.html
+[`Mass`]: https://docs.rs/particular/latest/particular/gravity/trait.Mass.html
+[`Ordered`]: https://docs.rs/particular/latest/particular/storage/struct.Ordered.html
+[`Reordered`]: https://docs.rs/particular/latest/particular/storage/struct.Reordered.html
+[`RootedOrthtree`]: https://docs.rs/particular/latest/particular/storage/struct.RootedOrthtree.html
+[`Between`]: https://docs.rs/particular/latest/particular/struct.Between.html
+[`Interaction`]: https://docs.rs/particular/latest/particular/trait.Interaction.html
+[`SimdInteraction`]: https://docs.rs/particular/latest/particular/trait.SimdInteraction.html
+[`ReduceSimdInteraction`]: https://docs.rs/particular/latest/particular/trait.ReduceSimdInteraction.html
+[`BarnesHutInteraction`]: https://docs.rs/particular/latest/particular/trait.BarnesHutInteraction.html
+[`TreeInteraction`]: https://docs.rs/particular/latest/particular/trait.TreeInteraction.html
