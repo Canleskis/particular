@@ -39,9 +39,7 @@ pub fn impl_position(input: syn::Result<syn::DeriveInput>) -> syn::Result<proc_m
     .into())
 }
 
-pub fn impl_mass(
-    input: syn::Result<syn::DeriveInput>,
-) -> syn::Result<proc_macro::TokenStream> {
+pub fn impl_mass(input: syn::Result<syn::DeriveInput>) -> syn::Result<proc_macro::TokenStream> {
     let mut input = input?;
 
     let field = match &input.data {
@@ -90,14 +88,9 @@ pub fn impl_mass(
             predicates: Default::default(),
         })
         .predicates
-        .extend::<[syn::WherePredicate; 2]>([
-            syn::parse_quote! {
-                Self: Position
-            },
-            syn::parse_quote! {
-                #field_type: ::core::clone::Clone
-            },
-        ]);
+        .push(syn::parse_quote! {
+            #field_type: ::core::clone::Clone
+        });
 
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let name = &input.ident;
