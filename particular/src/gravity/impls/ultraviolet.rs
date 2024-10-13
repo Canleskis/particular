@@ -94,13 +94,13 @@ crate::impl_acceleration_gpu_3d!(Vec3, f32);
 
 #[cfg(test)]
 mod tests {
-    // use super::*;
-    // use std::ops::Div;
+    use super::*;
+    use std::ops::Div;
 
-    // crate::tests_algorithms!(Vec2, f32, broadcast, Div::div, [4, 8], vec2 on cpu and gpu);
-    // crate::tests_algorithms!(Vec3, f32, broadcast, Div::div, [4, 8], vec3 on cpu and gpu);
-    // crate::tests_algorithms!(Vec4, f32, broadcast, Div::div, [4, 8], vec4 on cpu);
-    // crate::tests_algorithms!(DVec2, f64, broadcast, Div::div, [2, 4], dvec2 on cpu);
-    // crate::tests_algorithms!(DVec3, f64, broadcast, Div::div, [2, 4], dvec3 on cpu);
-    // crate::tests_algorithms!(DVec4, f64, broadcast, Div::div, [2, 4], dvec4 on cpu);
+    crate::tests_algorithms!(Vec2, f32, broadcast, Div::div, [4, 8], vec2 on cpu and gpu);
+    crate::tests_algorithms!(Vec3, f32, broadcast, Div::div, [4, 8], vec3 on cpu and gpu);
+    crate::tests_algorithms!(Vec4, f32, broadcast, Div::div, [4, 8], vec4 on cpu);
+    crate::tests_algorithms!(DVec2, f64, broadcast, Div::div, [2, 4], dvec2 on cpu);
+    crate::tests_algorithms!(DVec3, f64, broadcast, Div::div, [2, 4], dvec3 on cpu);
+    crate::tests_algorithms!(DVec4, f64, broadcast, Div::div, [2, 4], dvec4 on cpu);
 }

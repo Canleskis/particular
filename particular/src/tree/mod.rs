@@ -5,7 +5,7 @@ use std::ops::{Add, Sub};
 
 pub use partition::*;
 
-/// Index of a [`Node`] in a [`Graph`].
+/// Index of a [`Node`] in a [`Tree`].
 pub type NodeID = u32;
 
 /// Generic tree data structure.
