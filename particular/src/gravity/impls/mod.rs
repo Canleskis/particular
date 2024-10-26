@@ -122,7 +122,7 @@ where
         fn sum<V: std::ops::Add<Output = V> + Default>(p: impl Iterator<Item = V>) -> V {
             p.fold(V::default(), V::add)
         }
-        
+
         let tot = particles.clone().map(|p| p.m).sum();
         let com = if tot == S::default() {
             sum(particles.clone().map(|p| p.position)) / S::from_primitive(particles.len())

@@ -5,7 +5,7 @@ use particular::gravity::newtonian::Acceleration;
 
 const DT: f32 = 1.0 / 50.0;
 
-// `Body` needs to implement the `Position` and `Mass` traits to allow for gravitational 
+// `Body` needs to implement the `Position` and `Mass` traits to allow for gravitational
 // interactions to be computed.
 #[derive(Debug, Position, Mass)]
 struct Body {

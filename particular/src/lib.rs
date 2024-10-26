@@ -1,7 +1,7 @@
 #![warn(missing_docs)]
 //! # Particular
 //!
-//! Particular is a crate providing a simple way to compute N-body interaction of particles in
+//! Particular is a crate that provides a simple way to compute N-body interactions of particles in
 //! Rust.
 //!
 //! ## Goals
@@ -36,14 +36,14 @@
 //! nature, but a common example is the gravitational interaction between particles, which is
 //! provided by the [`gravity`] module and the main focus of the library.  
 //! This module provides implementations using popular vector math libraries such as `glam` and
-//! `nalgebra`. You you will need to enable the corresponding features to use them.
+//! `nalgebra`. You will need to enable the corresponding features to use them.
 //!
 //! ### Getting started
 //!
 //! The [`Position`] and [`Mass`] traits provide methods to retrieve the position, mass and
 //! gravitational parameter of a particle. Implementing these traits for a type will result in
 //! multiple blanket implementations that will allow it to be used with all available algorithms for
-//! computing different interactions.
+//! computing gravitational interactions.
 //!
 //! #### Implementing the [`Position`] and [`Mass`] trait
 //!
@@ -80,7 +80,7 @@
 //! #### Computing and using the gravitational interaction
 //!
 //! In order to compute the gravitational interaction between particles, you can use the various
-//! methods implemented on storages of particles.  
+//! traits implemented on storages of particles.  
 //! Note that most algorithms return iterators that borrow the particles, and as such, rust's
 //! borrowing rules will prevent you from mutating these particles as you iterate the computed
 //! interactions, even if the interaction does not use the fields you are mutating. You can either
@@ -203,9 +203,9 @@
 //!
 //! Implementing [`Interaction<Between<&YourParticle, &YourParticle>>`] for `YourInteraction` allows
 //! it to be used with the CPU brute-force algorithms. Other algorithms may require you to implement
-//! other traits to be used, namely [`SimdInteraction`], [`ReduceSimdInteraction`],
-//! [`BarnesHutInteraction`] and [`TreeInteraction`]. Refer to the documentation of the specific
-//! algorithms for more information.
+//! other traits to be used, namely [`PairInteraction`], [`SimdInteraction`],
+//! [`ReduceSimdInteraction`], [`BarnesHutInteraction`] and [`TreeInteraction`]. Refer to the
+//! documentation of the specific algorithms for more information.
 //!
 //! ##### Example
 //!

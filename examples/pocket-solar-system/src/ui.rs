@@ -273,9 +273,8 @@ trait DurationSlider<'a> {
         delta: Duration,
         precision: usize,
     ) -> egui::Slider<'a> {
-        egui::Slider::new(value, range).custom_formatter(move |s, _| {
-            format_duration(delta.mul_f64(s), precision)
-        })
+        egui::Slider::new(value, range)
+            .custom_formatter(move |s, _| format_duration(delta.mul_f64(s), precision))
     }
 }
 

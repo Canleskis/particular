@@ -8,7 +8,7 @@
 [![Crates.io](https://img.shields.io/crates/v/particular)](https://crates.io/crates/particular)
 [![Docs](https://docs.rs/particular/badge.svg)](https://docs.rs/particular)
 
-Particular is a crate providing a simple way to compute N-body interaction of particles in
+Particular is a crate that provides a simple way to compute N-body interactions of particles in
 Rust.
 
 Please note that this branch is for development purposes and may not represent the latest stable
@@ -24,9 +24,9 @@ that can easily be integrated into existing game and physics engines. Thus it do
 anything related to numerical integration or other similar tools and instead only focuses on the
 calculations of the interactions between particles.
 
-In order to do this, `particular` provides multiple algorithms to compute the
-interactions between particles, allowing users to choose the one that best fits their needs in
-terms of performance and accuracy.
+In order to do this, `particular` provides multiple algorithms to compute the interactions between
+particles, allowing users to choose the one that best fits their needs in terms of performance and
+accuracy.
 
 ### Computation algorithms
 
@@ -49,14 +49,14 @@ different algorithms to compute interactions between particles. These interactio
 nature, but a common example is the gravitational interaction between particles, which is
 provided by the [`gravity`] module and the main focus of the library.  
 This module provides implementations using popular vector math libraries such as `glam` and
-`nalgebra`. You you will need to enable the corresponding features to use them.
+`nalgebra`. You will need to enable the corresponding features to use them.
 
 ### Getting started
 
 The [`Position`] and [`Mass`] traits provide methods to retrieve the position, mass and
 gravitational parameter of a particle. Implementing these traits for a type will result in
 multiple blanket implementations that will allow it to be used with all available algorithms for
-computing different interactions.
+computing gravitational interactions.
 
 #### Implementing the [`Position`] and [`Mass`] trait
 
@@ -94,7 +94,7 @@ assert_eq!(particle.mu(), 5.0);
 #### Computing and using the gravitational interaction
 
 In order to compute the gravitational interaction between particles, you can use the various
-methods implemented on storages of particles.  
+traits implemented on storages of particles.  
 Note that most algorithms return iterators that borrow the particles, and as such, rust's
 borrowing rules will prevent you from mutating these particles as you iterate the computed
 interactions, even if the interaction does not use the fields you are mutating. You can either
@@ -194,7 +194,7 @@ let accelerations = between.barnes_hut(0.5, Acceleration::checked()).collect::<V
 
 Implementing [`Interaction`] for `YourInteraction` allows
 it to be used with the CPU brute-force algorithms. Other algorithms may require you to implement
-other traits to be used, namely [`SimdInteraction`], [`ReduceSimdInteraction`],
+other traits to be used, namely  [`PairInteraction`], [`SimdInteraction`], [`ReduceSimdInteraction`],
 [`BarnesHutInteraction`] and [`TreeInteraction`]. Refer to the documentation of the specific
 algorithms for more information.
 
@@ -265,6 +265,7 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 [`RootedOrthtree`]: https://docs.rs/particular/latest/particular/storage/struct.RootedOrthtree.html
 [`Between`]: https://docs.rs/particular/latest/particular/struct.Between.html
 [`Interaction`]: https://docs.rs/particular/latest/particular/trait.Interaction.html
+[`PairInteraction`]: https://docs.rs/particular/latest/particular/trait.PairInteraction.html
 [`SimdInteraction`]: https://docs.rs/particular/latest/particular/trait.SimdInteraction.html
 [`ReduceSimdInteraction`]: https://docs.rs/particular/latest/particular/trait.ReduceSimdInteraction.html
 [`BarnesHutInteraction`]: https://docs.rs/particular/latest/particular/trait.BarnesHutInteraction.html
