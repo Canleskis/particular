@@ -369,6 +369,15 @@ pub trait Interaction<Storage> {
     fn compute(&mut self, storage: Storage) -> Self::Output;
 }
 
+/// Trait to implement optimised pair computation of an interaction.
+pub trait PairInteraction<P> {
+    /// The computed interaction.
+    type Output;
+
+    /// Returns the computed interactions between two distinct particles.
+    fn compute_pair(&mut self, pair: Between<P, P>) -> (Self::Output, Self::Output);
+}
+
 /// Trait to define how particles of type `P` are converted to SIMD particles for an interaction.
 pub trait SimdInteraction<const L: usize, P> {
     /// The SIMD particle that the interaction is computed with.

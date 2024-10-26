@@ -5,9 +5,8 @@ use crate::{
         newtonian::{AccelerationAt, AccelerationPaired, ToSimd, TreeData},
         Distance, IntoArray, Norm, Position, Reduce,
     },
-    sequential::InteractionPair,
-    BarnesHutInteraction, Between, Interaction, ReduceSimdInteraction, SimdInteraction,
-    TreeInteraction,
+    BarnesHutInteraction, Between, Interaction, PairInteraction, ReduceSimdInteraction,
+    SimdInteraction, TreeInteraction,
 };
 
 /// Algorithm to compute the gravitational acceleration between two point-masses using Newton's law
@@ -100,7 +99,7 @@ where
     }
 }
 
-impl<const CHECKED: bool, S, P> InteractionPair<&P> for AccelerationSoftened<S, CHECKED>
+impl<const CHECKED: bool, S, P> PairInteraction<&P> for AccelerationSoftened<S, CHECKED>
 where
     P: AccelerationPaired<Softening = S> + ?Sized,
 {

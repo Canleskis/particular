@@ -5,9 +5,8 @@ use crate::{
         newtonian::{AccelerationAt, AccelerationPaired, ToSimd, TreeData},
         Distance, IntoArray, Norm, Position, Reduce,
     },
-    sequential::InteractionPair,
-    BarnesHutInteraction, Between, Interaction, ReduceSimdInteraction, SimdInteraction,
-    TreeInteraction,
+    BarnesHutInteraction, Between, Interaction, PairInteraction, ReduceSimdInteraction,
+    SimdInteraction, TreeInteraction,
 };
 
 /// [`Interaction`] representing the gravitational acceleration between two point-masses using
@@ -93,7 +92,7 @@ where
     }
 }
 
-impl<const CHECKED: bool, P> InteractionPair<&P> for Acceleration<CHECKED>
+impl<const CHECKED: bool, P> PairInteraction<&P> for Acceleration<CHECKED>
 where
     P: AccelerationPaired + ?Sized,
     P::Softening: Default,

@@ -1,8 +1,8 @@
 use crate::{
     storage::{Ordered, Reordered, RootedOrthtree},
     tree::{BoundingBox, Const, MidPoint, MinMax, Node, SubDivide},
-    BarnesHutInteraction, Between, Interaction, ReduceSimdInteraction, SimdInteraction,
-    TreeInteraction,
+    BarnesHutInteraction, Between, Interaction, PairInteraction, ReduceSimdInteraction,
+    SimdInteraction, TreeInteraction,
 };
 use std::ops::{Add, AddAssign, Mul, Sub};
 
@@ -208,58 +208,6 @@ where
     }
 }
 
-/// A Brute-force algorithm using one CPU thread that converts scalar values to SIMD values before
-/// doing the computation.
-///
-/// To use particles `P1` and `P2` with this algorithm, the interaction `T` should implement
-/// [`SimdInteraction<LANES, P1>`], [`SimdInteraction<LANES, P2>`] and
-/// [`ReduceSimdInteraction<Between<&P1Simd, &P2Simd>>`] where `P1Simd` and `P2Simd` are the
-/// respective SIMD values of `P1` and `P2` defined by the [`SimdInteraction`] implementations.
-#[derive(Clone, Copy, Default, Debug)]
-pub struct BruteForceSimd<const L: usize, T>(pub T);
-
-// We don't implement `Interaction<Between<&P1, &[P2]>>` because we don't want to reallocate the
-// SIMD values each inner iteration.
-impl<const L: usize, P1, P2Simd, U, R, T> Interaction<Between<&P1, &[P2Simd]>>
-    for BruteForceSimd<L, T>
-where
-    U: Add<Output = U> + Default,
-    T: SimdInteraction<L, P1>
-        + for<'a> ReduceSimdInteraction<Between<&'a T::Simd, &'a P2Simd>, Output = U, Reduced = R>
-        + Clone,
-{
-    type Output = R;
-
-    #[inline]
-    fn compute(&mut self, Between(affected, affecting): Between<&P1, &[P2Simd]>) -> Self::Output {
-        let affected = &T::lanes_splat(affected);
-        T::reduce_sum(BruteForce(self.0.clone()).compute(Between(affected, affecting)))
-    }
-}
-
-impl<'a, const L: usize, P1, P2, T> Interaction<Between<&'a [P1], &[P2]>> for BruteForceSimd<L, T>
-where
-    T: SimdInteraction<L, P2> + Clone,
-{
-    type Output = Interactions<Self, std::slice::Iter<'a, P1>, Vec<T::Simd>>;
-
-    #[inline]
-    fn compute(&mut self, Between(affected, affecting): Between<&'a [P1], &[P2]>) -> Self::Output {
-        let simd_affecting = T::values_to_simd_vec(affecting);
-        Interactions::new(self.clone(), affected.iter(), simd_affecting)
-    }
-}
-
-/// Trait to implement optimised pair computation of an interaction. Such implementations are used
-///  by the [`BruteForcePairs`] algorithm.
-pub trait InteractionPair<P> {
-    /// The computed interaction.
-    type Output;
-
-    /// Returns the computed interactions between two distinct particles.
-    fn compute_pair(&mut self, pair: Between<P, P>) -> (Self::Output, Self::Output);
-}
-
 /// Brute-force algorithm for computing a subset of pair-wise interactions.
 ///
 /// See [`BruteForcePairs`] for an ergonomic way to use this algorithm.
@@ -285,7 +233,7 @@ impl<T> RestrictedBruteForce<T> {
 impl<P, U, T> Interaction<&[P]> for RestrictedBruteForce<T>
 where
     U: AddAssign + Default,
-    T: for<'a> InteractionPair<&'a P, Output = U>,
+    T: for<'a> PairInteraction<&'a P, Output = U>,
 {
     type Output = Vec<U>;
 
@@ -329,7 +277,7 @@ pub struct BruteForcePairs<T>(pub T);
 impl<P, U, T> Interaction<&[P]> for BruteForcePairs<T>
 where
     U: AddAssign + Default,
-    T: for<'a> InteractionPair<&'a P, Output = U> + Clone,
+    T: for<'a> PairInteraction<&'a P, Output = U> + Clone,
 {
     type Output = std::vec::IntoIter<U>;
 
@@ -344,7 +292,7 @@ where
 impl<P, U, T> Interaction<&Ordered<P>> for BruteForcePairs<T>
 where
     U: AddAssign + Default,
-    T: for<'a> InteractionPair<&'a P, Output = U> + Clone,
+    T: for<'a> PairInteraction<&'a P, Output = U> + Clone,
 {
     type Output = std::vec::IntoIter<U>;
 
@@ -425,7 +373,7 @@ impl<'a, P, F, U, T> Interaction<&'a Reordered<'_, P, F>> for BruteForcePairs<T>
 where
     F: Clone,
     U: AddAssign + Default,
-    T: for<'b> InteractionPair<&'b P, Output = U> + Clone,
+    T: for<'b> PairInteraction<&'b P, Output = U> + Clone,
 {
     type Output = ReorderedInteractions<std::slice::Iter<'a, P>, F, U>;
 
@@ -436,6 +384,48 @@ where
             RestrictedBruteForce::new(reordered.affecting_len(), self.0.clone())
                 .compute(reordered.reordered()),
         )
+    }
+}
+
+/// A Brute-force algorithm using one CPU thread that converts scalar values to SIMD values before
+/// doing the computation.
+///
+/// To use particles `P1` and `P2` with this algorithm, the interaction `T` should implement
+/// [`SimdInteraction<LANES, P1>`], [`SimdInteraction<LANES, P2>`] and
+/// [`ReduceSimdInteraction<Between<&P1Simd, &P2Simd>>`] where `P1Simd` and `P2Simd` are the
+/// respective SIMD values of `P1` and `P2` defined by the [`SimdInteraction`] implementations.
+#[derive(Clone, Copy, Default, Debug)]
+pub struct BruteForceSimd<const L: usize, T>(pub T);
+
+// We don't implement `Interaction<Between<&P1, &[P2]>>` because we don't want to reallocate the
+// SIMD values each inner iteration.
+impl<const L: usize, P1, P2Simd, U, R, T> Interaction<Between<&P1, &[P2Simd]>>
+    for BruteForceSimd<L, T>
+where
+    U: Add<Output = U> + Default,
+    T: SimdInteraction<L, P1>
+        + for<'a> ReduceSimdInteraction<Between<&'a T::Simd, &'a P2Simd>, Output = U, Reduced = R>
+        + Clone,
+{
+    type Output = R;
+
+    #[inline]
+    fn compute(&mut self, Between(affected, affecting): Between<&P1, &[P2Simd]>) -> Self::Output {
+        let affected = &T::lanes_splat(affected);
+        T::reduce_sum(BruteForce(self.0.clone()).compute(Between(affected, affecting)))
+    }
+}
+
+impl<'a, const L: usize, P1, P2, T> Interaction<Between<&'a [P1], &[P2]>> for BruteForceSimd<L, T>
+where
+    T: SimdInteraction<L, P2> + Clone,
+{
+    type Output = Interactions<Self, std::slice::Iter<'a, P1>, Vec<T::Simd>>;
+
+    #[inline]
+    fn compute(&mut self, Between(affected, affecting): Between<&'a [P1], &[P2]>) -> Self::Output {
+        let simd_affecting = T::values_to_simd_vec(affecting);
+        Interactions::new(self.clone(), affected.iter(), simd_affecting)
     }
 }
 
