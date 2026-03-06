@@ -191,12 +191,12 @@ mod tests {
 
     crate::tests_algorithms!(SVector::<f32, 2>, f32, repeat, div, [4, 8], vec2 on cpu and gpu);
     crate::tests_algorithms!(SVector::<f32, 3>, f32, repeat, div, [4, 8], vec3 on cpu and gpu);
-    crate::tests_algorithms!(SVector::<f32, 4>, f32, repeat, div, [4, 8],vec4 on cpu);
+    crate::tests_algorithms!(SVector::<f32, 4>, f32, repeat, div, [4, 8], vec4 on cpu);
     crate::tests_algorithms!(SVector::<f32, 5>, f32, repeat, div, [4, 8], vec5 on cpu);
     crate::tests_algorithms!(SVector::<f32, 6>, f32, repeat, div, [4, 8], vec6 on cpu);
     crate::tests_algorithms!(SVector::<f64, 2>, f64, repeat, div, [4], dvec2 on cpu);
     crate::tests_algorithms!(SVector::<f64, 3>, f64, repeat, div, [4], dvec3 on cpu);
-    crate::tests_algorithms!(SVector::<f64, 4>,f64, repeat, div, [4], dvec4 on cpu);
+    crate::tests_algorithms!(SVector::<f64, 4>, f64, repeat, div, [4], dvec4 on cpu);
     crate::tests_algorithms!(SVector::<f64, 5>, f64, repeat, div, [4], dvec5 on cpu);
     crate::tests_algorithms!(SVector::<f64, 6>, f64, repeat, div, [4], dvec6 on cpu);
 }

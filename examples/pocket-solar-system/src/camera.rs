@@ -47,11 +47,11 @@ pub fn camera_controls(
     *radius -= *radius * scroll * 0.2;
     *radius = radius.clamp(orbit.min_distance, 10000.0);
 
-    let delta = input_mouse
-        .pressed(MouseButton::Right)
-        .then(|| motion_events.read().map(|ev| ev.delta).sum::<Vec2>())
-        .unwrap_or_default()
-        / window_size
+    let delta = (if input_mouse.pressed(MouseButton::Right) {
+        motion_events.read().map(|ev| ev.delta).sum::<Vec2>()
+    } else {
+        Default::default()
+    }) / window_size
         * std::f32::consts::PI;
     motion_events.clear();
 

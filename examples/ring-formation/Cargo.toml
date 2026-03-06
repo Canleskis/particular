@@ -10,7 +10,7 @@ particular = { path = "../../particular", features = ["glam"] }
 bevy = "0.12.1"
 bevy_rapier3d = { version = "0.23", features = ["simd-stable"] }
 bevy_egui = "0.24"
-rand = "0"
+rand = "0.8"
 humantime = "2"
 
 [package.metadata.particular.rs]

@@ -9,7 +9,7 @@ use crate::{
     Between, Interaction,
 };
 
-/// Trait to compute the interaction between particles using different parallel algorithms.
+/// Trait to compute the interaction between particles using different GPU algorithms.
 pub trait GpuCompute<T>: Sized {
     /// Returns the interaction(s) between these particles using a brute-force algorithm performed
     /// on the GPU.
@@ -81,6 +81,7 @@ pub trait InteractionShader<P1, P2> {
     }
 }
 
+#[expect(clippy::large_enum_variant)]
 enum GpuResourcesState {
     New(MemoryStrategy),
     Init(WgpuResources),

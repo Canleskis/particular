@@ -126,6 +126,8 @@ where
             }
 
             self.nodes[id] = Node::Internal(SizedOrthant {
+                // Because this function is recursive, the compiler fails when passing the functions
+                // as references.
                 orthant: result
                     .map(|(data, bbox)| self.build_node_with(&data, coordinates, compute, bbox)),
                 bbox,

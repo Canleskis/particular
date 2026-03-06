@@ -20,7 +20,7 @@ impl DynamicBuffer {
         device: &wgpu::Device,
         queue: &'a wgpu::Queue,
         len: u64,
-    ) -> wgpu::QueueWriteBufferView {
+    ) -> wgpu::QueueWriteBufferView<'a> {
         assert_ne!(len, 0, "Cannot write with a length of 0");
 
         let size = len * self.item_size;
@@ -239,7 +239,7 @@ impl WgpuResources {
         device: &wgpu::Device,
         queue: &'a wgpu::Queue,
         len: u64,
-    ) -> wgpu::QueueWriteBufferView {
+    ) -> wgpu::QueueWriteBufferView<'a> {
         self.buffer_output.resize(device, len);
         self.buffer_affected.write_with(device, queue, len)
     }
@@ -251,7 +251,7 @@ impl WgpuResources {
         device: &wgpu::Device,
         queue: &'a wgpu::Queue,
         len: u64,
-    ) -> wgpu::QueueWriteBufferView {
+    ) -> wgpu::QueueWriteBufferView<'a> {
         self.buffer_affecting.write_with(device, queue, len)
     }
 

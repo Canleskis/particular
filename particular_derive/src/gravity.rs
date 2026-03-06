@@ -50,7 +50,7 @@ pub fn impl_mass(input: syn::Result<syn::DeriveInput>) -> syn::Result<proc_macro
             })?),
         _ => Err(syn::Error::new(
             proc_macro2::Span::call_site(),
-            "the `ToPointMass` trait can only be derived for struct types",
+            "the `Mass` trait can only be derived for struct types",
         )),
     }?;
 
